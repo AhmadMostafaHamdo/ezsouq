@@ -1,0 +1,47 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@font-face {
+  font-family: "Expo Arabic Book";
+  src: url("./style/fonts/ExpoArabic-Book.woff2") format("woff2"),
+    url("./style/fonts/ExpoArabic-Book.woff") format("woff");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Cairo";
+  src: url("./style/fonts/Cairo-Light.woff2") format("woff2"),
+    url("./style/fonts/Cairo-Light.woff") format("woff");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+:root {
+  font-size: calc(14px + 0.25vw);
+}
+html {
+  font-family: "Expo Arabic Book";
+}
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+button {
+  cursor: pointer;
+  outline: none;
+}
+input {
+  outline: none;
+  border: 1px solid;
+}
+@media (max-width: 576px) {
+}
+
+@media (max-width: 767px) {
+}
+@media (max-width: 991px) {
+}
+@media (max-width: 1999px) {
+}
