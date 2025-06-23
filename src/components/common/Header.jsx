@@ -1,11 +1,13 @@
 import { Link } from "react-router";
 import logo from "../../assets/images/logoWithTitleWhite.svg";
+import menu from "../../assets/images/menu.svg";
 import search from "../../assets/images/search.svg";
 import { selectOptions } from "../../data/filterData";
 const Header = () => {
   return (
-    <div className="flex items-center pt-[2.5rem]  px-[3.125rem] text-white bg-primary ">
-      <img src={logo} className="!w-[150px] !h-[50px] ml-[66px]" />
+    <div className="flex items-center justify-between pt-[2.5rem]  px-[3.125rem] text-white bg-primary ">
+      <img src={menu} className="w-[22.5px] h-[15px] ml-[66px] md:hidden"/>
+      <img src={logo} className="!w-[150px] !h-[50px] md:ml-[66px]" />
       <div className="hidden md:flex w-[32.3125rem] h-[3rem]  items-center font-sans bg-main rounded-md px-[18px]">
         <select className="outline-none  cursor-pointer font-bold text-[14px] bg-main ml-3">
           {selectOptions.map((option, index) => (
