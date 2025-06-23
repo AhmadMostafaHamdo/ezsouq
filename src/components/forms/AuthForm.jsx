@@ -7,7 +7,6 @@ import { Link } from "react-router";
 import DividerWithText from "../dividerWithText/DividerWithText";
 import loginImage from "../../assets/images/loginImage.svg";
 import googleIcon from "../../assets/images/googleLogo.svg";
-import { useEffect } from "react";
 const AuthForm = ({ fields, schema, btnAuth }) => {
   const form = useForm({
     mode: "onChange",
@@ -23,7 +22,9 @@ const AuthForm = ({ fields, schema, btnAuth }) => {
   } = form;
   const onSubmit = (data) => {
     reset();
+    console.log(data);
   };
+
   return (
     <div className=" flex-center h-screen  overflow-hidden">
       <FormProvider {...form}>

@@ -22,10 +22,10 @@ const Footer = () => {
           className=" bottom-[-5vw] right-[0]  absolute w-[16vw] h-[16vw]"
         />
         <div>
-          <img src={logo} className="w-[200px] h-[88px] mr-[66px]" />
+          <img src={logo} className="w-[130px] md:w-[200px] h-[88px] mr-[66px]" />
         </div>
         <div>
-          <ul className="font-semibold text-[20px] h-[200px] flex-center gap-2 flex-col">
+          <ul className="font-semibold text-[1.2rem] h-[200px] flex-center gap-2 flex-col">
             {ulLinks.map((link, index) => (
               <li key={index}>
                 <Link to={link.link}>{link.name}</Link>
@@ -35,8 +35,8 @@ const Footer = () => {
         </div>
         <div className="w-[150px] ">
           <ul className="flex items-center flex-col gap-3">
-            <li className="mb-[15px]">
-              <Link to="" className="font-bold text-[24px]">
+            <li className="mb-[.9rem]">
+              <Link to="" className="font-bold text-[1.5rem]">
                 تواصل معنا
               </Link>
             </li>
