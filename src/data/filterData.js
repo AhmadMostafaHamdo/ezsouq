@@ -87,3 +87,9 @@ export const selectOptions = ["جميع التصنيفات", "سيارات", "ع
    { name: "إعلاناتي", link: "" },
    { name: "اتصل بنا", link: "" },
  ];
+ export const sortOptions = [
+   { value: "newest", label: "الأحدث" },
+   { value: "oldest", label: "الأقدم" },
+   { value: "price-low", label: "الأقل سعراً" },
+   { value: "price-high", label: "الأعلى سعراً" },
+ ];

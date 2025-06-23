@@ -1,7 +1,6 @@
 import { Link } from "react-router";
 import logo from "../../assets/images/logoWithTitleWhite.svg";
 import search from "../../assets/images/search.svg";
-import { useState } from "react";
 import { selectOptions } from "../../data/filterData";
 const Header = () => {
   return (
@@ -10,7 +9,7 @@ const Header = () => {
       <div className="w-[32.3125rem] h-[3rem] flex items-center font-sans bg-main rounded-md px-[18px]">
         <select className="outline-none  cursor-pointer font-bold text-[14px] bg-main ml-3">
           {selectOptions.map((option, index) => (
-            <option value={option[index]}>{option}</option>
+            <option key={index} value={option[index]}>{option}</option>
           ))}
         </select>
         <div className="border-0 border-r border-white flex items-center">

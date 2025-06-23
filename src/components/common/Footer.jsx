@@ -12,7 +12,7 @@ import { ulLinks } from "../../data/filterData";
 const Footer = () => {
   return (
     <div className="font-sans pt-8 text-white relative bg-primary overflow-hidden">
-      <div className="flex-between w-[80vw]">
+      <div className="flex flex-col items-center md:flex-row md:flex-between w-[100vw] md:w-[80vw]">
         <img
           src={Ellipse1}
           className="top-[-5vw] left-[-5vw] absolute w-[20vw] h-[20vw] "
