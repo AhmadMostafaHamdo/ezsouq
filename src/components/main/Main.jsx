@@ -4,12 +4,12 @@ import animationData from "../../assets/lottifiles/web home animation.json";
 
 const Main = () => {
   return (
-    <div className="h-[636px] w-[100vw] text-white font-sans flex justify-between  bg-primary">
+    <div className="h-[636px] w-[100vw] text-white font-sans  flex justify-between  bg-primary">
       <div className="w-[50vw" style={{ paddingRight: "50px" }}>
-        <h1 className="text-[36px] text-nowrap font-[800] mt-[161px]">
+        <h1 className="text-[24px] md:text-[36px] text-nowrap font-[800] mt-[161px]">
           بيع، اشتري، وابدأ تجارتك من مكانك
         </h1>
-        <p className="w-[464px] font-bold mt-[35px]">
+        <p className="w-[464px] font-bold mt-[35px] text-[1rem]">
           كل ما تحتاجه من عقارات، سيارات، إلكترونيات وأكثر  <br/>في منصة سورية
           موثوقة.
         </p>

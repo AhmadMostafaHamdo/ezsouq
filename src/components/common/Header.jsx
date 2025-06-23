@@ -6,10 +6,12 @@ const Header = () => {
   return (
     <div className="flex items-center pt-[2.5rem]  px-[3.125rem] text-white bg-primary ">
       <img src={logo} className="!w-[150px] !h-[50px] ml-[66px]" />
-      <div className="w-[32.3125rem] h-[3rem] flex items-center font-sans bg-main rounded-md px-[18px]">
+      <div className="hidden md:flex w-[32.3125rem] h-[3rem]  items-center font-sans bg-main rounded-md px-[18px]">
         <select className="outline-none  cursor-pointer font-bold text-[14px] bg-main ml-3">
           {selectOptions.map((option, index) => (
-            <option key={index} value={option[index]}>{option}</option>
+            <option key={index} value={option[index]}>
+              {option}
+            </option>
           ))}
         </select>
         <div className="border-0 border-r border-white flex items-center">
@@ -23,14 +25,14 @@ const Header = () => {
           />
         </div>
       </div>
-      <div className="w-[14.75rem]  flex items-center justify-end  flex-1">
+      <div className="w-[14.75rem] hidden md:flex items-center justify-end  flex-1">
         <Link
           to="/login"
           className="bg-main  hover:bg-primary  rounded-[10px] h-[2.93rem] flex-center px-[8px] ml-[1.25rem]"
         >
           تسجيل دخول
         </Link>
-        <Link to="/register" >إنشاء حساب</Link>
+        <Link to="/register">إنشاء حساب</Link>
       </div>
     </div>
   );
