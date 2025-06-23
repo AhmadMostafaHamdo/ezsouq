@@ -34,6 +34,7 @@ export default {
       },
       boxShadow: {
         custom: "0px 2px 13.7px 0px rgba(0, 0, 0, 0.1)",
+        card: "0px 4px 16px 0px #2F2E411A",
       },
     },
     screens: {
@@ -50,6 +51,11 @@ export default {
         ".flex-center": {
           display: "flex",
           "justify-content": "center",
+          "align-items": "center",
+        },
+        ".flex-between": {
+          display: "flex",
+          "justify-content": "space-between",
           "align-items": "center",
         },
       });

@@ -1,13 +1,15 @@
 import Footer from "../components/common/Footer";
 import Header from "../components/common/Header";
 import Main from "../components/main/Main";
+import Filters from "../components/website/Filters";
 
 const Home = () => {
   return (
-    <div className="bg-primary">
+    <div className="overflow-x-hidden">
       <Header />
-      <Main/>
-      {/* <Footer /> */}
+      <Main />
+      <Filters />
+      <Footer />
     </div>
   );
 };
