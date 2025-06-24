@@ -67,3 +67,9 @@ input {
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
 }
+@layer utilities {
+  .backdrop-blur {
+    -webkit-backdrop-filter: blur(0);
+    backdrop-filter: blur(0);
+  }
+}

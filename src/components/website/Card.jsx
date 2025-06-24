@@ -11,10 +11,10 @@ const Card = ({
   price,
 }) => {
   return (
-    <div className="p-[.625rem]  [.75rem] [1.375rem] w-[100vw] md:w-[80vw] lg:w-[42vw] shadow-card bg-white rounded-[8px]">
+    <div className="p-[.625rem]  [.75rem] [1.375rem] w-[80vw] md:w-[80vw] lg:w-[42vw] shadow-card bg-white rounded-[8px]">
       <div className="flex-between">
         <div className="flex items-center">
-          <div className="text-[.75rem] font-normal ml-[5px] text-[#A3A0DD] text-nowrap w-[10.81rem]">
+          <div className="text-[.75rem] font-normal ml-[12px] text-[#A3A0DD] text-nowrap w-[10.81rem]">
             <div className="flex-between mb-[.5rem]">
               <p>{publishedDate}</p>
               <p>بواسطة {publisher}</p>

@@ -14,7 +14,7 @@ const  Main = () => {
         </p>
         <Link
           to=""
-          className="rounded-xl mt-[55px] bg-white w-[262px] h-[70px] font-bold text-primary block flex-center text-[1rem]"
+          className="rounded-xl  mt-[55px] bg-white w-[42vw] md:w-[262px] h-[7vh] md:h-[70px] font-bold text-primary block flex-center text-[1rem]"
         >
           نشر إعلان
         </Link>
