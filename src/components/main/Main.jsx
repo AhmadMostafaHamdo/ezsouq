@@ -1,14 +1,14 @@
 import { Link } from "react-router";
 import Lottie from "lottie-react";
 import animationData from "../../assets/lottifiles/web home animation.json";
-const Main = () => {
+const  Main = () => {
   return (
-    <div className="md:h-[636px] w-[100vw] p-4 md:p-0 text-white font-sans flex-col-reverse md:flex-row flex   bg-primary">
-      <div className="w-[50vw" style={{ paddingRight: "50px" }}>
-        <h1 className="text-[24px]  md:text-[36px] text-nowrap font-[800] md:mt-[161px]">
+    <div className="md:h-[636px] w-[100vw]  pb-4 md:px-20 text-white font-sans flex-col-reverse md:flex-row flex   bg-primary">
+      <div className="w-[100vw] md:w-[50vw] flex flex-col items-center container">
+        <h1 className="text-[24px] md:text-[1.5rem] lg:text-[2.25rem]  text-nowrap font-[800] md:mt-[161px]">
           بيع، اشتري، وابدأ تجارتك من مكانك
         </h1>
-        <p className="w-[464px] font-bold mt-[35px] text-[1rem]">
+        <p className="w-[464px] font-bold text-center mt-[35px] text-[1rem]">
           كل ما تحتاجه من عقارات، سيارات، إلكترونيات وأكثر <br />
           في منصة سورية موثوقة.
         </p>
@@ -27,5 +27,4 @@ const Main = () => {
     </div>
   );
 };
-
 export default Main;

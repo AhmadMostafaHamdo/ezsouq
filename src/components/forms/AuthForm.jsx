@@ -1,4 +1,4 @@
-import { useForm, FormProvider, useFormContext } from "react-hook-form";
+import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import logo from "../../assets/images/logoWithTitle.svg";
 import Input from "../inputs/Input";
@@ -7,13 +7,16 @@ import { Link } from "react-router";
 import DividerWithText from "../dividerWithText/DividerWithText";
 import loginImage from "../../assets/images/loginImage.svg";
 import googleIcon from "../../assets/images/googleLogo.svg";
+import { useDispatch, useSelector } from "react-redux";
+import { thunkAuth } from "../../store/auth/thunk/authThunk";
 const AuthForm = ({ fields, schema, btnAuth }) => {
+  const dispatch = useDispatch();
+  const { user, error } = useSelector((state) => state.auth);
   const form = useForm({
     mode: "onChange",
     resolver: zodResolver(schema),
     shouldUnregister: false,
   });
-
   const {
     handleSubmit,
     reset,
@@ -21,10 +24,10 @@ const AuthForm = ({ fields, schema, btnAuth }) => {
     formState: { errors, isSubmitting },
   } = form;
   const onSubmit = (data) => {
-    reset();
-    console.log(data);
+    const { name, infoContact, password } = data;
+    dispatch(thunkAuth({ name, infoContact, password }));
+    // reset();
   };
-
   return (
     <div className=" flex-center h-screen  overflow-hidden">
       <FormProvider {...form}>
@@ -68,7 +71,8 @@ const AuthForm = ({ fields, schema, btnAuth }) => {
                       placeholder={input.placeholder}
                     />
                     <p className="text-red my-1  h-[18px] text-[12px]">
-                      {errors[input.name]?.message}
+                      {errors[input.name]?.message ||
+                        (input.name === "infoContact" && error)}
                     </p>
                   </div>
                 ))}
