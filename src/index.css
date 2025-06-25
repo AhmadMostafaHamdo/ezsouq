@@ -73,3 +73,6 @@ input {
     backdrop-filter: blur(0);
   }
 }
+html {
+  line-height: 1.8;
+}

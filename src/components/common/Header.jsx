@@ -4,7 +4,7 @@ import logo from "../../assets/images/logoWithTitleWhite.svg";
 import menuIcon from "../../assets/images/menu.svg";
 import searchIcon from "../../assets/images/search.svg";
 import close from "../../assets/images/close.png";
-import { selectOptions } from "../../data/filterData";
+import SearchInput from "./SearchInput";
 
 const Header = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -14,8 +14,8 @@ const Header = () => {
   const toggleSearch = () => setIsSearchVisible(!isSearchVisible);
 
   return (
-    <header className="bg-primary text-white p-4 md:px-12 lg:px-20 md:py-6 shadow-md">
-      <div className="flex items-center justify-between">
+    <header className="bg-primary text-white  md:px-12 lg:px-20 md:py-6 shadow-md">
+      <div className="flex items-center justify-between container">
         <button
           onClick={toggleSidebar}
           className="md:hidden w-8 h-8 flex items-center justify-center"
@@ -44,8 +44,12 @@ const Header = () => {
           </div>
         )}
 
-        <div className="flex-1 flex justify-end md:flex-none md:mr-16">
-          <img src={logo} alt="Logo" className="w-40 h-14 object-contain" />
+        <div className="flex-1 flex justify-end ml-[-2.1rem] md:flex-none ">
+          <img
+            src={logo}
+            alt="Logo"
+            className="w-40 h-14 md:scale-[1.7] object-contain"
+          />
         </div>
 
         <div className="hidden md:flex flex-1 mx-8 max-w-xl h-12 bg-main rounded-lg shadow-sm">
@@ -110,39 +114,7 @@ const Header = () => {
   );
 };
 
-const SearchInput = ({ mobile = false }) => {
-  const handleSearch = (e) => {
-    e.preventDefault();
-    console.log("تم تنفيذ البحث");
-  };
-
-  return (
-    <form
-      onSubmit={handleSearch}
-      className={`flex w-full h-12 items-center font-sans bg-main rounded-lg px-4 ${
-        mobile ? "border border-gray-600 shadow-md" : ""
-      }`}
-    >
-      <select className="outline-none cursor-pointer font-bold text-sm bg-main ml-3 text-primary-dark">
-        {selectOptions.map((option, index) => (
-          <option key={index} value={option[index]}>
-            {option}
-          </option>
-        ))}
-      </select>
-      <div className="border-r border-gray-300 flex items-center flex-1">
-        <input
-          type="text"
-          className="h-full w-full px-2 border-0 bg-main placeholder-gray-400 text-sm focus:outline-none"
-          placeholder="ابحث هنا..."
-        />
-        <button type="submit" className="ml-3 mr-2 w-5 h-5 text-gray-500">
-          <img src={searchIcon} alt="Search" />
-        </button>
-      </div>
-    </form>
-  );
-};
+<SearchInput />;
 
 const AuthLinks = ({ mobile = false }) => (
   <div

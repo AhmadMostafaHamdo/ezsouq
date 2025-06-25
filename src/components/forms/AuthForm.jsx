@@ -9,6 +9,7 @@ import loginImage from "../../assets/images/loginImage.svg";
 import googleIcon from "../../assets/images/googleLogo.svg";
 import { useDispatch, useSelector } from "react-redux";
 import { thunkAuth } from "../../store/auth/thunk/authThunk";
+import axios from "axios";
 const AuthForm = ({ fields, schema, btnAuth }) => {
   const dispatch = useDispatch();
   const { user, error } = useSelector((state) => state.auth);
@@ -23,9 +24,20 @@ const AuthForm = ({ fields, schema, btnAuth }) => {
     register,
     formState: { errors, isSubmitting },
   } = form;
-  const onSubmit = (data) => {
+  const onSubmit = async (data) => {
     const { name, infoContact, password } = data;
-    dispatch(thunkAuth({ name, infoContact, password }));
+    try {
+      const res = await axios.post("/register", {
+        name,
+        infoContact,
+        password,
+      });
+      console.log(res);
+      return res.data;
+    } catch (error) {
+      return console.log(error);
+    }
+    // dispatch(thunkAuth({ name, infoContact, password }));
     // reset();
   };
   return (
