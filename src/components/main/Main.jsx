@@ -7,7 +7,7 @@ const Main = () => {
     <div className="flex w-screen flex-col-reverse bg-primary pb-4 font-sans text-white md:h-[636px] md:flex-row md:px-20">
       {/* Text Content Section */}
       <div className="container flex w-screen flex-col items-center md:w-[50vw] md:pr-0 lg:pr-[4.7rem]">
-        <h1 className="mt-20 text-nowrap text-[24px] font-[800] md:text-[1.5rem] lg:text-[2.25rem]">
+        <h1 className="mt-12 text-nowrap text-[24px] font-[800] md:text-[1.5rem] lg:text-[2.25rem]">
           بيع، اشتري، وابدأ تجارتك من مكانك
         </h1>
 
