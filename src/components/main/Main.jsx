@@ -5,7 +5,7 @@ const  Main = () => {
   return (
     <div className="md:h-[636px] w-[100vw]  pb-4 md:px-20 text-white font-sans flex-col-reverse md:flex-row flex   bg-primary">
       <div className="w-[100vw] md:w-[50vw] flex flex-col items-center md:pr-[4.7rem] container">
-        <h1 className="text-[24px] md:text-[1.5rem] lg:text-[2.25rem]  text-nowrap mt-3 font-[800] md:mt-[161px]">
+        <h1 className="text-[24px] md:text-[1.5rem] lg:text-[2.25rem]  text-nowrap mt-6 font-[800] md:mt-[161px]">
           بيع، اشتري، وابدأ تجارتك من مكانك
         </h1>
         <p className="w-[464px] font-bold text-center mt-[2.3rem] text-[1rem]">
