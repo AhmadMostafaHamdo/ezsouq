@@ -28,6 +28,7 @@ const SearchInput = ({ mobile = false }) => {
           placeholder="ابحث هنا..."
         />
         <button
+        
           type="submit"
           className="ml-3 mr-2 w-5 h-5 text-gray-500 md:hidden"
         >
