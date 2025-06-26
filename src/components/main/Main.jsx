@@ -4,10 +4,10 @@ import animationData from "../../assets/lottifiles/web home animation.json";
 
 const Main = () => {
   return (
-    <div className="flex w-screen pt-48 flex-col-reverse bg-primary pb-24 font-sans text-white md:h-[636px] md:flex-row md:px-20">
+    <div className="flex w-screen   pt-24  md:pt-44 flex-col-reverse bg-primary pb-24 font-sans text-white md:h-[636px] md:flex-row md:px-20">
       {/* Text Content Section */}
       <div className="container flex w-screen justify-center flex-col items-start md:w-[50vw] md:pr-0 lg:pr-[4.7rem]">
-        <h1 className="mt-4  text-nowrap text-[24px] font-[800] md:text-[1.5rem] lg:text-[2.25rem]">
+        <h1 className="mt-8  text-wrap w-[300px] md:w-fit md:text-nowrap text-[24px] font-[800] md:text-[1.5rem] lg:text-[2.25rem]">
           بيع، اشتري، وابدأ تجارتك من مكانك
         </h1>
 
@@ -26,7 +26,7 @@ const Main = () => {
 
       {/* Animation Section */}
       <div className="flex w-full items-center justify-center md:justify-end">
-        <div className="mt-4 md:mt-0 ml-[-2rem] w-[70%] transform md:ml-20 md:-translate-x-[2rem] md:-translate-y-[20vh] scale-[1.2] md:scale-[2.2] lg:-translate-y-[10px] lg:translate-x-[0px] lg:scale-[1.4]">
+        <div className="mt-4 md:mt-0 ml-[-2rem] w-[70%] transform md:ml-20 md:-translate-x-[2rem] md:-translate-y-[20vh] scale-[1.4] md:scale-[2.2] lg:-translate-y-[10px] lg:translate-x-[0px] lg:scale-[1.4]">
           <Lottie animationData={animationData} loop={false} />
         </div>
       </div>

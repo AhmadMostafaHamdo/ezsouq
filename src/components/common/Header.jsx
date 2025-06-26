@@ -55,7 +55,7 @@ const Header = () => {
 console.log(isScrolled);
   return (
     <header
-      className={`bg-primary text-white pt-2   md:px-12 lg:px-20 md:py-6 fixed  w-full  md:${
+      className={`bg-primary text-white pt-8   md:px-12 lg:px-20 md:py-6 fixed  w-full  md:${
         isScrolled ? "backdrop-blur-[38.1px] z-10 from-primary" : ""
       } `}
     >
