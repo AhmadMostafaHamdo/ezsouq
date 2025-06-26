@@ -5,6 +5,7 @@ export const thunkAuth = createAsyncThunk(
   async (data, { rejectWithValue }) => {
     try {
       const res = await axios.post("/register", data);
+      console.log(res);
       return res.data;
     } catch (error) {
       return rejectWithValue(error.response?.data?.message);

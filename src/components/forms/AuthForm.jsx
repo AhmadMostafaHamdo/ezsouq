@@ -24,22 +24,13 @@ const AuthForm = ({ fields, schema, btnAuth }) => {
     register,
     formState: { errors, isSubmitting },
   } = form;
-  const onSubmit = async (data) => {
+  const onSubmit = (data) => {
     const { name, infoContact, password } = data;
-    try {
-      const res = await axios.post("/register", {
-        name,
-        infoContact,
-        password,
-      });
-      console.log(res);
-      return res.data;
-    } catch (error) {
-      return console.log(error);
-    }
-    // dispatch(thunkAuth({ name, infoContact, password }));
+    console.log({ name, infoContact, password });
+    dispatch(thunkAuth({ name, infoContact, password }));
     // reset();
   };
+
   return (
     <div className=" flex-center h-screen  overflow-hidden">
       <FormProvider {...form}>

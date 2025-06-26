@@ -1,6 +1,6 @@
 const IconFilter = ({ items, selectedItem, onSelect }) => {
   return (
-    <div className="flex items-center mr-[1.31rem] mt-[12px] w-[7.125rem]">
+    <div className="flex items-center  mt-[12px] w-[7.125rem]">
       {items.map((item, index) => (
         <button
           key={index}
