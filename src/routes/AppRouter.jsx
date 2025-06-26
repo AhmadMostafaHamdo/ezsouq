@@ -3,8 +3,8 @@ import { lazy } from "react";
 import SuspenseFallback from "../feedback/suspenseFallback/suspenseFallback";
 import ForgotPassword from "../pages/ForgotPassword";
 import VerifyCode from "../pages/VerifyCode";
-const App = lazy(() => import("../pages/OfferDetails"));
-const OfferDetails = lazy(() => import("../App"));
+const App = lazy(() => import("../App"));
+const OfferDetails = lazy(() => import("../pages/OfferDetails"));
 const Login = lazy(() => import("../pages/Login"));
 const Register = lazy(() => import("../pages/Register"));
 const router = createBrowserRouter([
