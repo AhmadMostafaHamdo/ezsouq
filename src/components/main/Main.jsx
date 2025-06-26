@@ -4,7 +4,7 @@ import animationData from "../../assets/lottifiles/web home animation.json";
 
 const Main = () => {
   return (
-    <div className="flex w-screen mt-24 flex-col-reverse bg-primary pb-24 font-sans text-white md:h-[636px] md:flex-row md:px-20">
+    <div className="flex w-screen pt-48 flex-col-reverse bg-primary pb-24 font-sans text-white md:h-[636px] md:flex-row md:px-20">
       {/* Text Content Section */}
       <div className="container flex w-screen justify-center flex-col items-start md:w-[50vw] md:pr-0 lg:pr-[4.7rem]">
         <h1 className="mt-4  text-nowrap text-[24px] font-[800] md:text-[1.5rem] lg:text-[2.25rem]">

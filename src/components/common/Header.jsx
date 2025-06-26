@@ -52,11 +52,11 @@ const Header = () => {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
-
+console.log(isScrolled);
   return (
     <header
-      className={`bg-primary text-white pt-2   md:px-12 lg:px-20 md:py-6 fixed md:z-10 w-full  md:${
-        isScrolled ? "backdrop-blur-[38.1px] from-primary" : ""
+      className={`bg-primary text-white pt-2   md:px-12 lg:px-20 md:py-6 fixed  w-full  md:${
+        isScrolled ? "backdrop-blur-[38.1px] z-10 from-primary" : ""
       } `}
     >
       <div className="container flex items-center justify-between">
