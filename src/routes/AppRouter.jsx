@@ -1,9 +1,10 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { lazy } from "react";
 import SuspenseFallback from "../feedback/suspenseFallback/suspenseFallback";
-import App from "../App";
 import ForgotPassword from "../pages/ForgotPassword";
 import VerifyCode from "../pages/VerifyCode";
+const App = lazy(() => import("../pages/OfferDetails"));
+const OfferDetails = lazy(() => import("../App"));
 const Login = lazy(() => import("../pages/Login"));
 const Register = lazy(() => import("../pages/Register"));
 const router = createBrowserRouter([
@@ -12,6 +13,14 @@ const router = createBrowserRouter([
     element: (
       <SuspenseFallback>
         <App />
+      </SuspenseFallback>
+    ),
+  },
+  {
+    path: "/offer-details",
+    element: (
+      <SuspenseFallback>
+        <OfferDetails />
       </SuspenseFallback>
     ),
   },
