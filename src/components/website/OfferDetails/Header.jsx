@@ -7,8 +7,8 @@ import { nav } from "../../../data/offerDetails";
 const Header = () => {
   return (
     <div className="bg-primary text-white font-sans font-bold text-[.87rem]">
-      <div className="container flex items-center justify-between">
-        <img src={logo} className="w-24 h-24 ml-16" />
+      <div className="container flex items-center justify-between ">
+        <img src={logo} className="w-20 h-20 ml-16" />
         <div className="flex-1">
           <ul className="flex items-center justify-start ">
             {nav.map((link, index) => (
@@ -29,7 +29,11 @@ const Header = () => {
         </div>
         <div className="flex-center gap-4">
           <img src={search} className="w-6 h-6" />
-          <img src={heart} className="w-6 h-6" style={{stroke:'white',fill:'red'}}/>
+          <img
+            src={heart}
+            className="w-6 h-6"
+            style={{ stroke: "white", fill: "red" }}
+          />
           <div>
             <img src={personal} className="w-10 h-10" />
           </div>

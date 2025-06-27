@@ -4,7 +4,7 @@ import Main from "../components/website/OfferDetails/Main";
 
 const OfferDetails = () => {
   return (
-    <div className="">
+    <div>
       <Header />
       <Main />
     </div>

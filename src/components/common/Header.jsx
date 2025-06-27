@@ -52,10 +52,9 @@ const Header = () => {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
-  console.log(isScrolled);
   return (
     <header
-      className={`bg-primary text-white pt-8 z-10   md:px-12 lg:px-20 md:py-6  fixed  w-full  md:${
+      className={`bg-primary text-white pt-4 z-10   md:px-12 lg:px-20 md:py-6  fixed  w-full  md:${
         isScrolled ? "backdrop-blur-[38.1px]   from-primary" : ""
       } `}
     >
