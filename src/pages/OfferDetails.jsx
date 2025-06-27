@@ -4,7 +4,7 @@ import Main from "../components/website/OfferDetails/Main";
 
 const OfferDetails = () => {
   return (
-    <div>
+    <div className="md:max-h-screen md:overflow-hidden">
       <Header />
       <Main />
     </div>

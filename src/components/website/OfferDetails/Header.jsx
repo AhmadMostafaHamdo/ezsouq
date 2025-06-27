@@ -1,4 +1,5 @@
-import { NavLink } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
+import menu from "../../../assets/images/menu.svg";
 import logo from "../../../assets/images/logoWithTitleWhite.svg";
 import search from "../../../assets/images/search.svg";
 import heart from "../../../assets/images/heart.svg";
@@ -8,9 +9,23 @@ const Header = () => {
   return (
     <div className="bg-primary text-white font-sans font-bold text-[.87rem]">
       <div className="container flex items-center justify-between ">
+        <img
+          src={menu}
+          alt=""
+          className="w-[1.87rem] h-[1.87rem] lg:hidden ml-8"
+        />
         <img src={logo} className="w-20 h-20 ml-16" />
         <div className="flex-1">
-          <ul className="flex items-center justify-start ">
+          <div className=" hidden md:flex justify-end lg:hidden">
+            <Link
+              to=""
+              className="ml-12 px-6 py-2 rounded-[10px] bg-[#9B95FF]"
+            >
+              نشر إعلان
+            </Link>
+          </div>
+
+          <ul className="hidden lg:flex items-center justify-start">
             {nav.map((link, index) => (
               <li key={index} className="">
                 <NavLink
@@ -28,7 +43,7 @@ const Header = () => {
           </ul>
         </div>
         <div className="flex-center gap-4">
-          <img src={search} className="w-6 h-6" />
+          <img src={search} className="w-4 h-4" />
           <img
             src={heart}
             className="w-6 h-6"
