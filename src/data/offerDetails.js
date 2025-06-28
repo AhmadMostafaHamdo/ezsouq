@@ -4,8 +4,9 @@ import time from "../assets/images/timeIconDetails.svg";
 import iconProfile from "../assets/images/profileIcon.svg";
 import phoneIcon from "../assets/images/phoneIcon.svg";
 import whatsIcon from "../assets/images/whatsIcon.svg";
-import carOffer from "../assets/images/car-offer.svg";
-
+import carFront from "../assets/images/carFront.jpeg";
+import carBack from "../assets/images/carBack.jpeg";
+import carSide from "../assets/images/carSide.jpeg";
 export const nav = [
   { link: "/", name: "الرئيسية" },
   { link: "/latest", name: "الاحدث" },
@@ -27,10 +28,10 @@ export const infoContact = [
 ];
 export const carImages = [
   {
-    id: 1,img: carOffer,
+    id: 1,img: carFront,
   },  {
-    id: 2,img: carOffer,
+    id: 2,img: carBack,
   },  {
-    id: 3,img: carOffer,
+    id: 3,img: carSide,
   },
 ];

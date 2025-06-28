@@ -7,6 +7,7 @@ const App = lazy(() => import("../App"));
 const OfferDetails = lazy(() => import("../pages/OfferDetails"));
 const Login = lazy(() => import("../pages/Login"));
 const Register = lazy(() => import("../pages/Register"));
+const Profile = lazy(()=>import('../pages/Profile'))
 const router = createBrowserRouter([
   {
     path: "/",
@@ -21,6 +22,14 @@ const router = createBrowserRouter([
     element: (
       <SuspenseFallback>
         <OfferDetails />
+      </SuspenseFallback>
+    ),
+  },
+  {
+    path: "/profile",
+    element: (
+      <SuspenseFallback>
+        <Profile />
       </SuspenseFallback>
     ),
   },
