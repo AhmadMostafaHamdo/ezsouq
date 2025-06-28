@@ -76,28 +76,6 @@ export const cards = [
     price: "42,000,000 ل.س",
     img: car,
   },
-  ,
-  {
-    publishedDate: "منذ 3 أيام",
-    title: "تويوتا كورولا 2015",
-    publisher: "أحمد عبداللًه",
-    governorate: "الحسكة",
-    city: "القامشلي",
-    type: "اوتوماتيك",
-    price: "42,000,000 ل.س",
-    img: car,
-  },
-  ,
-  {
-    publishedDate: "منذ 3 أيام",
-    title: "تويوتا كورولا 2015",
-    publisher: "أحمد عبداللًه",
-    governorate: "الحسكة",
-    city: "القامشلي",
-    type: "اوتوماتيك",
-    price: "42,000,000 ل.س",
-    img: car,
-  },
 ];
 export const selectOptions = ["جميع التصنيفات", "سيارات", "عقارات", "أجهزة"];
  export const ulLinks = [

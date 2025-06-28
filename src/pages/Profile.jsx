@@ -1,9 +1,11 @@
 import Header from "../components/website/OfferDetails/Header";
+import { Outlet } from "react-router";
 
 const Profile = () => {
   return (
-    <div>
+    <div className="font-sans  bg-[#F7F7FF]">
       <Header />
+      <Outlet />
     </div>
   );
 };
