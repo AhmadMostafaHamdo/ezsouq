@@ -50,7 +50,7 @@ const AuthForm = ({ fields, schema, btnAuth }) => {
                 <h1 className="text-primary text-[1.56rem]  font-bold">
                   أهلا بعودتك !
                 </h1>
-                <p className="font-sans text-[#282828] text-[1.25rem] mb-5 w-full lg:w-[23.56rem]">
+                <p className="font-sans text-[#282828] text-center text-[1.25rem] mb-5 w-full lg:w-[23.56rem]">
                   سجّل الدخول للوصول إلى حسابك ومتابعة نشاطك.
                 </p>
                 <img src={loginImage} className="max-w-[40vw] h-[100vh]" />
