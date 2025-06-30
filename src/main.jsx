@@ -5,7 +5,7 @@ import { Provider } from "react-redux";
 import { store, persistor } from "./store";
 import { PersistGate } from "redux-persist/integration/react";
 import axios from "axios";
-axios.defaults.baseURL = "http://31.97.47.215:3010";
+axios.defaults.baseURL = "https://ezsouq.store";
 createRoot(document.getElementById("root")).render(
   <Provider store={store}>
     <PersistGate loading={null} persistor={persistor}>

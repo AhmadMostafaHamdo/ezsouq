@@ -5,7 +5,6 @@ import start from "../../../assets/images/start.svg";
 import leftArrow from "../../../assets/images/leftArrow.svg";
 import rightArrow from "../../../assets/images/rightArrow.svg";
 import { carImages, details, infoContact } from "../../../data/offerDetails";
-import Footer from "../../common/Footer";
 import { Link } from "react-router";
 
 const Main = () => {
@@ -30,8 +29,8 @@ const Main = () => {
     setSelectedImage(carImages[previousIndex]);
   };
   return (
-    <div className="font-sans bg-[#F7F7FF] md:pt-2 overflow-x-hidden md:overflow-hidden h-[195vh]">
-      <div className="container items-center md:items-start flex flex-col  md:flex-row  md:gap-8 lg:gap-11">
+    <div className="font-sans bg-[#F7F7FF] md:pt-2 overflow-x-hidden h-fit">
+      <div className="container items-center md:items-start flex flex-col  md:flex-row  md:gap-8 lg:gap-11 pt-[5rem]">
         {/* right section */}
         <div className=" flex flex-col items-center w-fit gap-6 md:mt-5">
           <div className="w-[100vw] h-[30vh] md:h-[53vh] md:w-[50vh] lg:w-[60vh] md:rounded-2xl relative">
@@ -58,12 +57,12 @@ const Main = () => {
               </button>
             </div>
           </div>
-          <div className="hidden md:flex gap-[.1rem]">
+          <div className="hidden md:flex gap-[.3rem]">
             {carImages.map((img) => (
               <img
                 src={img.img}
                 alt=""
-                className={`w-20 cursor-pointer rounded-[3px] border-2 ${
+                className={`w-20 cursor-pointer rounded-[6px] border-2 ${
                   selectedImage.id === img.id
                     ? "border-[#6C63FF] shadow-[0px_4px_12px_6px_rgba(63,61,86,0.3)]"
                     : "border-[#D9D9D9]"
@@ -105,7 +104,7 @@ const Main = () => {
                 <img
                   src={img.img}
                   alt=""
-                  className={`w-20 cursor-pointer rounded-[3px] border-2 ${
+                  className={`w-20 cursor-pointer rounded-[6px] border-2 ${
                     selectedImage.id === img.id
                       ? "border-[#6C63FF] box-shadow-[0px 4px 15.6px 8px rgba(63, 61, 86, 0.3)]"
                       : "border-[#D9D9D9]"
@@ -126,7 +125,7 @@ const Main = () => {
             <h3 className="text-[#3F3D56] text-[1.1rem] my-2 font-normal">
               معلومات الناشر
             </h3>
-            <div className="flex-between bg-white p-4 rounded-lg">
+            <div className="flex-between bg-white p-3 rounded-lg">
               <div>
                 <img
                   src={personalImg}
@@ -144,23 +143,27 @@ const Main = () => {
                   </li>
                 ))}
               </div>
-              <div>
-                <p className="flex items-center justify-end mb-4">
-                  <img src={start} alt="" />
-                  <span className="mr-1">4.8</span>
+              <div className="flex flex-col items-end gap-4">
+                <p className="flex items-center justify-end mb-6">
+                  <img src={start} alt="" className="w-4 h-4 " />
+                  <span className="mr-1 font-normal text-[.9rem] text-[#1D2232]">
+                    4.8
+                  </span>
                 </p>
-                <Link to='/profile' className="bg-primary p-2 text-white rounded-md font-bold text-[.75rem]">
+                <Link
+                  to="/profile"
+                  className="bg-primary p-2 text-white rounded-md font-bold text-[.75rem]"
+                >
                   عرض الملف الشخصي
                 </Link>
               </div>
             </div>
           </div>
-          <p className="text-center text-[12px] font-normal text-[#7E7E7E] pt-5 pb-10">
-            ابلاغ عن هذا الإعلان
-          </p>
         </div>
       </div>
-      <Footer />
+      <p className="text-center text-[12px] font-normal text-[#7E7E7E] pt-5 pb-10 underline cursor-pointer">
+        ابلاغ عن هذا الإعلان
+      </p>
     </div>
   );
 };

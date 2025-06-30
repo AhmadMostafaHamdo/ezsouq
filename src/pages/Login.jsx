@@ -2,7 +2,7 @@ import AuthForm from "../components/forms/AuthForm";
 import { loginField } from "../components/inputs/inputFields";
 import { loginSchema } from "../validation/auth";
 
-const Register = () => {
+const Login = () => {
   return (
     <AuthForm
       fields={loginField}
@@ -12,4 +12,4 @@ const Register = () => {
   );
 };
 
-export default Register;
+export default Login;

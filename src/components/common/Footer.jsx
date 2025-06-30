@@ -11,7 +11,7 @@ import { ulLinks } from "../../data/filterData";
 
 const Footer = () => {
   return (
-    <div className="font-sans pt-8 text-white relative bg-primary overflow-hidden">
+    <div className="font-sans pt-8 text-white relative bg-primary overflow-x-hidden">
       <div className="flex flex-col items-center md:flex-row md:flex-between w-[100vw] md:w-[80vw]">
         <img
           src={Ellipse1}
@@ -25,7 +25,7 @@ const Footer = () => {
           <img src={logo} className="w-[130px] md:w-[200px] h-[88px] mr-[66px]" />
         </div>
         <div>
-          <ul className="font-semibold text-[1.2rem] h-[200px] flex-center gap-2 flex-col">
+          <ul className="font-semibold text-[1.2rem] h-[200px] flex  gap-2 flex-col">
             {ulLinks.map((link, index) => (
               <li key={index}>
                 <Link to={link.link}>{link.name}</Link>
@@ -34,7 +34,7 @@ const Footer = () => {
           </ul>
         </div>
         <div className="w-[150px] ">
-          <ul className="flex items-center flex-col gap-3">
+          <ul className="flex flex-col gap-3">
             <li className="mb-[.9rem]">
               <Link to="" className="font-bold text-[1.5rem]">
                 تواصل معنا

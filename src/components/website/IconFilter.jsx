@@ -12,7 +12,11 @@ const IconFilter = ({ items, selectedItem, onSelect }) => {
             src={item.img}
             alt={item.title}
             className={`w-9 h-9 md:w-[3.62rem] md:h-[3.68rem] ${
-              selectedItem === item.title ? "opacity-100 scale-110" : "opacity-60"
+              item.title === "منوعات" ? "md:w-[2.7rem]" : ""
+            } ${
+              selectedItem === item.title
+                ? "opacity-100 scale-110"
+                : "opacity-60"
             }`}
           />
           <span

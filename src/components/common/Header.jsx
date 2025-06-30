@@ -15,7 +15,7 @@ const AuthLinks = ({ isMobile = false }) => (
   >
     <Link
       to="/login"
-      className={`px-6 py-3 rounded-lg font-medium text-center ${
+      className={`px-6 py-[.6rem] rounded-lg font-medium text-center ${
         isMobile
           ? "bg-white hover:bg-gray-100 text-primary"
           : "bg-secondary hover:bg-secondary-dark text-primary text-nowrap"
@@ -54,8 +54,10 @@ const Header = () => {
   }, []);
   return (
     <header
-      className={`bg-primary text-white pt-4 z-10   md:px-12 lg:px-20 md:py-6  fixed  w-full  md:${
-        isScrolled ? "backdrop-blur-[38.1px]   from-primary" : ""
+      className={`bg-primary text-white pt-4 z-10   md:px-12 lg:px-20 md:py-3  fixed  w-full  md:${
+        isScrolled
+          ? "backdrop-blur-[20px]  bg-[#0F00FF80]"
+          : ""
       } `}
     >
       <div className="container flex items-center justify-between">
@@ -93,12 +95,12 @@ const Header = () => {
             <img
               src={logo}
               alt="Logo"
-              className="object-contain w-40 h-14 md:scale-[1.7]"
+              className="object-contain w-40 h-12 md:scale-[1.7]"
             />
           </div>
         )}
         {/* Desktop Search Input */}
-        <div className="hidden md:flex flex-1 mx-8 max-w-xl h-12 bg-main rounded-lg shadow-sm">
+        <div className="hidden md:flex flex-1 mx-8 max-w-xl h-10 bg-main rounded-lg shadow-sm">
           <SearchInput />
         </div>
         {/* Desktop Auth Links */}

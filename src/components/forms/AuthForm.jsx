@@ -3,16 +3,17 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import logo from "../../assets/images/logoWithTitle.svg";
 import Input from "../inputs/Input";
 import ImageSlider from "../slider/Swiper";
-import { Link } from "react-router";
+import { Link } from "react-router-dom";
 import DividerWithText from "../dividerWithText/DividerWithText";
 import loginImage from "../../assets/images/loginImage.svg";
 import googleIcon from "../../assets/images/googleLogo.svg";
 import { useDispatch, useSelector } from "react-redux";
 import { thunkAuth } from "../../store/auth/thunk/authThunk";
-import axios from "axios";
+import { ToastContainer } from "react-toastify";
 const AuthForm = ({ fields, schema, btnAuth }) => {
+  const isLogin = btnAuth !== "إنشاء حساب";
   const dispatch = useDispatch();
-  const { user, error } = useSelector((state) => state.auth);
+  const { user, error, loading } = useSelector((state) => state.auth);
   const form = useForm({
     mode: "onChange",
     resolver: zodResolver(schema),
@@ -26,44 +27,50 @@ const AuthForm = ({ fields, schema, btnAuth }) => {
   } = form;
   const onSubmit = (data) => {
     const { name, infoContact, password } = data;
-    console.log({ name, infoContact, password });
-    dispatch(thunkAuth({ name, infoContact, password }));
-    // reset();
+    const info = isLogin
+      ? { infoContact, password }
+      : { name, infoContact, password };
+    dispatch(thunkAuth({ info, isLogin }));
+    reset();
   };
-
   return (
     <div className=" flex-center h-screen  overflow-hidden">
       <FormProvider {...form}>
+        <ToastContainer />
         <form
           onSubmit={handleSubmit(onSubmit)}
-          className="w-[90vw]  md:[90vw] max-h-[96vh]  flex-center shadow-custom"
+          className="w-[100vw] h-[100vh]  flex-center shadow-custom"
         >
           {/* right */}
-          <div className="hidden md:block w-[35vw]">
-            {btnAuth === "إنشاء حساب" ? (
+          <div className="hidden md:block w-[40vw] h-[100vh]">
+            {!isLogin ? (
               <ImageSlider />
             ) : (
-              <div className="w-[35vw] p-3 h-[96vh] bg-secondary flex flex-col items-center justify-evenly">
+              <div className="w-[40vw] p-3 h-[100vh] bg-secondary flex flex-col items-center justify-evenly">
                 <h1 className="text-primary text-[1.56rem]  font-bold">
                   أهلا بعودتك !
                 </h1>
                 <p className="font-sans text-[#282828] text-[1.25rem] mb-5 w-full lg:w-[23.56rem]">
                   سجّل الدخول للوصول إلى حسابك ومتابعة نشاطك.
                 </p>
-                <img src={loginImage} className="max-w-[40vw] max-h-[96vh]" />
+                <img src={loginImage} className="max-w-[40vw] h-[100vh]" />
               </div>
             )}
           </div>
           {/* left */}
-          <div className="w-full md:w-[55vw]  h-[96vh] bg-white ">
+          <div className="w-full md:w-[60vw]  h-[100vh] bg-white ">
             {btnAuth == "تسجيل الدخول" && (
               <div className="w-full flex justify-center h-[20vh]">
                 <img src={logo} alt="logo" />
               </div>
             )}
             <div className="w-full   sm:w-[400px]  lg:w-[487px] m-auto p-2 ">
-              <h1 className="mb-2 w-full font-normal m-auto">
-                {btnAuth !== "تسجيل الدخول" ? "إنشاء حساب" : "تسجيل الدخول"}
+              <h1
+                className={`${
+                  isLogin ? "mb-3" : "mb-2"
+                }  w-full font-normal m-auto`}
+              >
+                {!isLogin ? "إنشاء حساب" : "تسجيل الدخول"}
               </h1>
               <div className="m-auto w-full">
                 {fields.map((input, index) => (
@@ -75,7 +82,7 @@ const AuthForm = ({ fields, schema, btnAuth }) => {
                     />
                     <p className="text-red my-1  h-[18px] text-[12px]">
                       {errors[input.name]?.message ||
-                        (input.name === "infoContact" && error)}
+                        (input.name === "infoContact" && error && !isLogin)}
                     </p>
                   </div>
                 ))}
@@ -96,11 +103,15 @@ const AuthForm = ({ fields, schema, btnAuth }) => {
                 )}
                 <button
                   disabled={isSubmitting}
-                  className="w-full h-[40px] text-white bg-primary rounded-xl"
+                  className="w-full h-[2.9rem] text-white bg-primary rounded-xl"
                 >
                   {isSubmitting ? "جارٍ الإرسال" : btnAuth}
                 </button>
-                <p className="my-3  text-[12px] text-center font-normal ">
+                <p
+                  className={`${
+                    isLogin ? "my-5" : "my-3"
+                  }  text-[12px] text-center font-normal`}
+                >
                   لديك حساب بالفعل ؟
                   <Link
                     to={btnAuth == "تسجيل الدخول" ? "/register" : "/login"}
@@ -110,7 +121,11 @@ const AuthForm = ({ fields, schema, btnAuth }) => {
                   </Link>
                 </p>
                 <DividerWithText text="أو" />
-                <button className="flex-center p-2 font-sans font-medium text-[1rem] my-3 gap-2 shadow-custom rounded-xl w-full">
+                <button
+                  className={`flex-center ${
+                    isLogin ? "my-10" : "my-3 "
+                  } p-3 font-sans font-medium text-[.9rem] gap-2 shadow-[0px_2px_13.7px_0px_#0000001A] rounded-xl w-full`}
+                >
                   <img src={googleIcon} alt="googleLogo" /> تسجيل دخول بواسطة
                   Google
                 </button>

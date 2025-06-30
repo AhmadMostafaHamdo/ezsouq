@@ -12,42 +12,29 @@ const Card = ({
   price,
 }) => {
   return (
-    <Link to='/offer-details'>
-      <div className="p-[.625rem]  [.75rem] [1.375rem] w-[80vw] md:w-[80vw] lg:w-[42vw] shadow-card bg-white rounded-[8px]">
-        <div className="flex-between">
-          <div className="flex items-center">
-            <div className="text-[.75rem] font-normal ml-[12px] text-[#A3A0DD] text-nowrap w-[10.81rem]">
-              <div className="flex-between mb-[.5rem]">
-                <p>{publishedDate}</p>
-                <p>بواسطة {publisher}</p>
-              </div>
-              <img
-                src={img}
-                alt=""
-                className="w-[9.75rem] h-[9.75rem] object-cover"
-              />
-            </div>
-            <div>
-              <p className="text-[1rem] md:text-[1.5rem] text-[#3F3D56] font-normal">
-                {title}
-              </p>
-              <div className="font-normal text-[#A3A0DD] text-[10px] md:text-[1rem]">
-                <p>
-                  {governorate}-{city}
-                </p>
-                <p>{type}</p>
-              </div>
-              <p className="font-bold text-[12px] md:text-[1.25rem] text-[#3F3D56] mt-[1.187rem]">
-                {price}
-              </p>
-            </div>
+    <Link to="/offer-details">
+      <div className="p-[.5rem] w-[70vw] md:w-fit  [.75rem] [1.375rem]  shadow-card bg-white rounded-[8px]">
+        <div className="flex flex-col items-start w-[70vw] md:w-fit">
+          <div className="flex-between mb-[.6rem] w-full  font-normal text-[.75rem] text-[#A3A0DD]">
+            <p>{publishedDate}</p>
+            <p>بواسطة {publisher}</p>
+            <img src={heart} alt="" className="w-6 h-5 -translate-x-2" />
+            <p></p>
           </div>
-          <div className="self-start">
-            <img
-              src={heart}
-              alt=""
-              className=" w-[1.875rem] h-[1.56rem] flex-1"
-            />
+          <div className="w-full">
+            <img src={img} alt="" className="w-[60vw] h-40 md:w-full object-cover rounded-md" />
+          </div>
+          <div className="font-normal">
+            <p className="text-[1.25rem] text-[#3F3D56] mt-[.4rem]">{title}</p>
+            <p className="text-[#A3A0DD] text-[1rem]">
+              {governorate}-{city}
+            </p>
+            <div className="text-[.9rem] my-1">
+              <span className="ml-5 text-[#A3A0DD] font-bold">{type}</span>
+              <span className="text-[#3F3D56] text-[1rem] font-bold">
+                {price}
+              </span>
+            </div>
           </div>
         </div>
       </div>

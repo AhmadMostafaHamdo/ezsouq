@@ -10,11 +10,11 @@ const SearchInput = ({ mobile = false }) => {
   return (
     <form
       onSubmit={handleSearch}
-      className={`flex w-[78w] h-12 items-center font-sans bg-main rounded-lg px-4 ${
+      className={`flex w-[78w] h-10 items-center font-sans bg-main rounded-lg px-4 ${
         mobile ? "border border-gray-600 shadow-md" : ""
       }`}
     >
-      <select className="outline-none cursor-pointer font-bold text-sm bg-main ml-3 text-primary-dark">
+      <select className="outline-none cursor-pointer font-bold text-[.8rem] bg-main ml-3 text-primary-dark">
         {selectOptions.map((option, index) => (
           <option key={index} value={option[index]}>
             {option}

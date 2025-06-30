@@ -36,6 +36,15 @@ export default {
         custom: "0px 2px 13.7px 0px rgba(0, 0, 0, 0.1)",
         card: "0px 4px 16px 0px #2F2E411A",
       },
+      animation: {
+        wave: "wave 1.2s ease-in-out infinite",
+      },
+      keyframes: {
+        wave: {
+          "0%, 60%, 100%": { transform: "translateY(0)" },
+          "30%": { transform: "translateY(-10px)" },
+        },
+      },
     },
     screens: {
       sm: "576px",

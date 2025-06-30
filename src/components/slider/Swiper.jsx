@@ -7,13 +7,10 @@ import imgTwo from "../../assets/images/onBoardingTwo.svg";
 import imgThree from "../../assets/images/onBoardingThree.svg";
 import "swiper/css";
 import "swiper/css/autoplay";
-import { useFormContext } from "react-hook-form";
-import Logo from "../logo/Logo";
 
 const ImageSlider = () => {
   const [swiper, setSwiper] = useState(null);
   const [activeIndex, setActiveIndex] = useState(0);
-  const { register } = useFormContext();
 
   const slides = [
     {
@@ -54,7 +51,7 @@ const ImageSlider = () => {
   }, [swiper]);
 
   return (
-    <div className="w-[35vw] h-[96vh]  relative  bg-secondary">
+    <div className="w-[40vw] h-[100vh]  relative  bg-secondary">
       <div className="w-full flex justify-center h-[22vh]">
         <img src={logo} alt="logo" className="w-[164px]" />
       </div>
@@ -66,7 +63,7 @@ const ImageSlider = () => {
           disableOnInteraction: false,
         }}
         loop={true}
-        className="flex overflow-hidden shadow-lg h-[74vh]"
+        className="flex overflow-hidden shadow-lg h-[78vh]"
       >
         {slides.map((slide, index) => (
           <SwiperSlide key={slide.id} className="mb-6 overflow-hidden">

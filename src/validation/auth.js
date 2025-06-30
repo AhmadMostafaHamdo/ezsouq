@@ -23,7 +23,7 @@ export const registerSchema = z
   });
 
 export const loginSchema = z.object({
-  email: z
+  infoContact: z
     .string()
     .min(1, { message: "الايميل مطلوب" })
     .email("الايميل غير صحيح"),

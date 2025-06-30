@@ -58,7 +58,7 @@ const Filters = () => {
       />
 
       {/* Cards Grid */}
-      <div className="w-full flex justify-start md:justify-evenly items-center gap-[2.25rem] pl-[1rem] md:pl-[3.187rem] flex-wrap">
+      <div className="w-full flex justify-start md:justify-start  gap-[2.25rem] pl-[1rem] md:pl-[3.187rem] flex-wrap">
         {cards.map((card, index) => (
           <Card {...card} key={index} />
         ))}
