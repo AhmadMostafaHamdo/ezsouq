@@ -1,5 +1,5 @@
 import Lottie from "lottie-react";
-import loading from "../../assets/lottifiles/g3 2 (1).json";
+import loading from "../../assets/lottifiles/Animation - 1749642657146.json";
 
 const Loading = () => {
   return (
