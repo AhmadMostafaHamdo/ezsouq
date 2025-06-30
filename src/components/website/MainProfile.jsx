@@ -9,7 +9,7 @@ import ImgProfileWithButtons from "./ImgProfileWithButtons";
 const MainProfile = () => {
 
   return (
-    <div className="container pb-10">
+    <div className="container pb-10 pt-[5rem]">
         <ImgProfileWithButtons/>
       <div className="w-full flex justify-start md:justify-evenly items-center gap-[2.25rem] pl-[1rem] md:pl-[3.187rem] flex-wrap">
         {cards.map((card, index) => (
