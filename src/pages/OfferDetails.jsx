@@ -1,11 +1,15 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import Header from "../components/website/OfferDetails/Header";
 import Main from "../components/website/OfferDetails/Main";
 import Footer from "../components/common/Footer";
 
 const OfferDetails = () => {
+  const offer = useRef();
+  useEffect(() => {
+    offer.current.scrollIntoView();
+  }, []);
   return (
-    <div className=" md:overflow-x-hidden">
+    <div className="md:overflow-x-hidden" ref={offer}>
       <Header />
       <Main />
       <Footer />

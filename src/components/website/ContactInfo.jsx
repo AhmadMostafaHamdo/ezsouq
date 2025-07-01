@@ -3,7 +3,7 @@ import ImgProfileWithButtons from "./ImgProfileWithButtons";
 
 const ContactInfo = () => {
   return (
-    <div className="container font-sans pt-[5rem]">
+    <div className="container font-sans ">
       <ImgProfileWithButtons />
       <div className="flex-between flex-wrap gap-7 lg:w-[66vw] m-auto pt-3">
         {contactInfo.map((info, index) => (

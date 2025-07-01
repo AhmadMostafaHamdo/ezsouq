@@ -10,8 +10,8 @@ const ImgProfileWithButtons = () => {
   const location = useLocation();
 
   return (
-    <div>
-      <div className="flex flex-col items-center mt-4">
+    <div className="my-4">
+      <div className="flex flex-col items-center">
         <img
           src={personalImg}
           alt=""

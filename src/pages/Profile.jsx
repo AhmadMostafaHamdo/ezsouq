@@ -4,10 +4,12 @@ import { Outlet } from "react-router";
 
 const Profile = () => {
   return (
-    <div className="font-sans  bg-[#F7F7FF]">
+    <div className="font-sans  bg-[#F7F7FF] overflow-x-hidden">
       <Header />
-      <Outlet />
-      <Footer/>
+      <div className="pt-[5rem]">
+        <Outlet />
+      </div>
+      <Footer />
     </div>
   );
 };

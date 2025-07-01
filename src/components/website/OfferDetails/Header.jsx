@@ -8,19 +8,19 @@ import { nav } from "../../../data/offerDetails";
 import { useEffect, useState } from "react";
 const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
- useEffect(() => {
-   const handleScroll = () => {
-     const scrolled = window.scrollY > 10;
-     setIsScrolled(scrolled);
-   };
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrolled = window.scrollY > 10;
+      setIsScrolled(scrolled);
+    };
 
-   window.addEventListener("scroll", handleScroll);
-   return () => window.removeEventListener("scroll", handleScroll);
- }, []);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
   return (
     <div
-      className={`bg-primary text-white font-sans font-bold text-[.87rem] fixed w-full z-10 py-1 ${
-        isScrolled ? "backdrop-blur-[20px]  bg-[#0F00FF80]" : ""
+      className={`text-white font-sans font-bold text-[.87rem] fixed w-full z-10 py-1 ${
+        isScrolled ? "backdrop-blur-[20px]  bg-[#0F00FF80]" : "bg-primary"
       }`}
     >
       <div className="container flex items-center justify-between ">

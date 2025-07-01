@@ -54,6 +54,7 @@ input {
 }
 ::-webkit-scrollbar-thumb {
   background-color: #888;
+  cursor: pointer;
   transition: 1s;
   border-radius: 2px;
 }
