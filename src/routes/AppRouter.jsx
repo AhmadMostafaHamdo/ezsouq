@@ -1,8 +1,14 @@
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import {
+  createBrowserRouter,
+  RouterProvider,
+  useNavigate,
+} from "react-router-dom";
+import Cookies from "js-cookie";
 import { lazy } from "react";
 import SuspenseFallback from "../feedback/suspenseFallback/suspenseFallback";
 import ForgotPassword from "../pages/ForgotPassword";
 import VerifyCode from "../pages/VerifyCode";
+import RedirectIfAuthenticated from "./RedirectIfAuthenticated";
 const App = lazy(() => import("../App"));
 const OfferDetails = lazy(() => import("../pages/OfferDetails"));
 const Login = lazy(() => import("../pages/Login"));
@@ -36,14 +42,19 @@ const router = createBrowserRouter([
     ),
     children: [
       { index: true, element: <MainProfile /> },
-      { path: "contact-info", element: <ContactInfo /> },
+      {
+        path: "contact-info",
+        element: <ContactInfo />,
+      },
     ],
   },
   {
     path: "login",
     element: (
       <SuspenseFallback>
-        <Login />
+        <RedirectIfAuthenticated>
+          <Login />
+        </RedirectIfAuthenticated>
       </SuspenseFallback>
     ),
   },
@@ -67,7 +78,9 @@ const router = createBrowserRouter([
     path: "register",
     element: (
       <SuspenseFallback>
-        <Register />
+        <RedirectIfAuthenticated>
+          <Register />
+        </RedirectIfAuthenticated>
       </SuspenseFallback>
     ),
   },

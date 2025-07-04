@@ -1,6 +1,7 @@
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router-dom";
 import heart from "../../assets/images/heart.svg";
-
+import CardSketlon from "../../assets/sketlon/product";
+import Cookies from "js-cookie";
 const Card = ({
   title,
   governorate,
@@ -11,17 +12,30 @@ const Card = ({
   city,
   price,
 }) => {
+  const navigate = useNavigate();
+  const handleOfferClick = (e) => {
+    const token = Cookies.get("token");
+    if (!token) {
+      e.preventDefault();
+      navigate("/login");
+    } else {
+      navigate("/offer-details");
+    }
+  };
   return (
-    <Link to="/offer-details">
-      <div className="p-[.5rem] w-[86vw] md:w-fit  [.75rem] [1.375rem]  shadow-card bg-white rounded-[8px]">
-        <div className="flex flex-col items-start md:w-fit">
-          <div className="flex-between mb-[.6rem] w-full  font-normal text-[.75rem] text-[#A3A0DD]">
+    <CardSketlon isLoading={false}>
+      <div
+        onClick={handleOfferClick}
+        className="p-[.5rem] w-[86vw] md:w-60  [.75rem] [1.375rem]  shadow-card bg-white rounded-[8px] cursor-pointer"
+      >
+        <div className="flex flex-col items-start md:full">
+          <div className="flex-between mb-[.6rem] w-full  font-normal text-[.75rem] text-[#A3A0DD] h-30">
             <p>{publishedDate}</p>
             <p>بواسطة {publisher}</p>
             <img
               src={heart}
               alt=""
-              className="w-6 h-5 -translate-x-16 md:-translate-x-2"
+              className="w-6 h-5 -translate-x-16 md:-translate-x-6"
             />
             <p></p>
           </div>
@@ -46,7 +60,7 @@ const Card = ({
           </div>
         </div>
       </div>
-    </Link>
+    </CardSketlon>
   );
 };
 

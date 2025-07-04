@@ -3,6 +3,7 @@ import { cards } from "../../data/filterData";
 import Card from "./Card";
 import ImgProfileWithButtons from "./ImgProfileWithButtons";
 const MainProfile = () => {
+  
   return (
     <div className="container pb-10">
       <ImgProfileWithButtons />

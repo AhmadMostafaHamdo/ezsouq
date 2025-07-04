@@ -1,46 +1,24 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 import logo from "../../assets/images/logoWithTitleWhite.svg";
 import menuIcon from "../../assets/images/menu.svg";
 import searchIcon from "../../assets/images/search.svg";
 import closeIcon from "../../assets/images/close.png";
 import SearchInput from "./SearchInput";
+import Cookies from "js-cookie";
 import { ulLinks } from "../../data/filterData";
-
-const AuthLinks = ({ isMobile = false }) => (
-  <div
-    className={`flex ${
-      isMobile ? "flex-col space-y-4" : "items-center space-x-reverse space-x-4"
-    }`}
-  >
-    <Link
-      to="/login"
-      className={`px-6 py-[.6rem] rounded-lg font-medium text-center ${
-        isMobile
-          ? "bg-white hover:bg-gray-100 text-primary"
-          : "bg-secondary hover:bg-secondary-dark text-primary text-nowrap"
-      }`}
-    >
-      تسجيل دخول
-    </Link>
-    <Link
-      to="/register"
-      className={`px-6 py-3 rounded-lg font-medium text-nowrap text-center ${
-        isMobile
-          ? "text-white border-2 border-white"
-          : "text-white hover:text-secondary"
-      }`}
-    >
-      إنشاء حساب
-    </Link>
-  </div>
-);
+import { logout } from "../../store/auth/thunk/logout";
+import { useDispatch, useSelector } from "react-redux";
+import AuthLinks from "./AuthLinks";
 
 const Header = () => {
+  const navigate = useNavigate();
+  const { token } = useSelector((state) => state.auth);
+  console.log(token);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isSearchVisible, setIsSearchVisible] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
-
+  const dispatch = useDispatch();
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
   const toggleSearch = () => setIsSearchVisible(!isSearchVisible);
   useEffect(() => {
@@ -52,6 +30,11 @@ const Header = () => {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+  const handelLogout = () => {
+    console.log("first");
+    dispatch(logout());
+    navigate("/");
+  };
   return (
     <header
       className={` text-white pt-4 z-10   md:px-12 lg:px-20 md:py-3  fixed  w-full  md:${
@@ -62,7 +45,7 @@ const Header = () => {
         {/* Mobile Menu Button */}
         <button
           onClick={toggleSidebar}
-          className="flex items-center justify-center w-8 h-8 md:hidden"
+          className="flex-center w-8 h-8 md:hidden"
           aria-label="Toggle menu"
         >
           <img
@@ -75,7 +58,7 @@ const Header = () => {
         <div className="flex-center md:hidden">
           <button
             onClick={toggleSearch}
-            className="flex items-center justify-center w-8 h-8"
+            className="flex-center w-8 h-8"
             aria-label="Toggle search"
           >
             <img src={searchIcon} alt="Search" className="w-5 h-5" />
@@ -102,8 +85,21 @@ const Header = () => {
           <SearchInput />
         </div>
         {/* Desktop Auth Links */}
-        <div className="hidden md:flex items-center justify-start w-[14.75rem] text-sm space-x-reverse space-x-4">
-          <AuthLinks />
+        <div
+          className={`hidden md:flex items-center ${
+            token ? "justify-end" : "justify-start"
+          } w-[14.75rem] text-sm space-x-reverse space-x-4`}
+        >
+          {token ? (
+            <button
+              className="px-6 py-[.6rem] rounded-lg font-medium text-center bg-main"
+              onClick={handelLogout}
+            >
+              تسجيل الخروج
+            </button>
+          ) : (
+            <AuthLinks />
+          )}
         </div>
       </div>
 
@@ -144,7 +140,16 @@ const Header = () => {
             </nav>
 
             <div className="mt-12">
-              <AuthLinks isMobile />
+              {token ? (
+                <button
+                  className="px-6 py-[.6rem] rounded-lg font-medium text-center bg-main"
+                  onClick={handelLogout}
+                >
+                  تسجيل الخروج
+                </button>
+              ) : (
+                <AuthLinks isMobile />
+              )}
             </div>
           </div>
         </div>

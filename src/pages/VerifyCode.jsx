@@ -73,7 +73,7 @@ const VerifyCode = () => {
     console.log(data);
   };
   return (
-    <div className="h-[100vh] flex-center">
+    <div className="h-[100vh] flex-center font-sans">
       <div className="w-[90vw] h-[90vh] md:[90vw]  flex-center shadow-custom">
         <div className="hidden md:block w-[35vw]  bg-secondary h-[90vh]">
           {/* right */}
@@ -95,8 +95,8 @@ const VerifyCode = () => {
               <Logo />
             </div>
             <div className="h-[157px]">
-              <h1 className="text-primary font-bold text-[2.25rem] font-sans h-[67px]"></h1>
-              <p className="font-sans font-normal text-[#282828] text-[1.25rem] sm:text-[1.5rem] ">
+              <h1 className="text-primary font-bold text-[2.25rem]  h-[67px]"></h1>
+              <p className=" font-normal text-[#282828] text-[1.25rem] sm:text-[1.5rem] ">
                 لقد أرسلنا رمزًا مكوّنًا من 6 أرقام إلى بريدك الإلكتروني.
               </p>
             </div>
@@ -120,12 +120,12 @@ const VerifyCode = () => {
               </div>
               <button
                 type="submit"
-                className="w-full h-[56px] bg-primary text-white font-sans font-bold rounded-xl  py-4 px-2"
+                className="w-full h-[56px] bg-primary text-white  font-bold rounded-xl  py-4 px-2"
               >
                 تأكيد
               </button>
               <p className="text-red font-[14px] h-3"></p>
-              <p className="text-center font-sans text-[12px] text-primary cursor-pointer">
+              <p className="text-center  text-[12px] text-primary cursor-pointer">
                 إرسال الرمز مرة أخرى؟
               </p>
             </div>
