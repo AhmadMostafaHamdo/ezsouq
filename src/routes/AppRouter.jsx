@@ -16,6 +16,7 @@ const Register = lazy(() => import("../pages/Register"));
 const Profile = lazy(() => import("../pages/Profile"));
 const MainProfile = lazy(() => import("../components/website/MainProfile"));
 const ContactInfo = lazy(() => import("../components/website/ContactInfo"));
+const CreateOffer = lazy(() => import("../pages/CreateOffer"));
 const router = createBrowserRouter([
   {
     path: "/",
@@ -26,7 +27,7 @@ const router = createBrowserRouter([
     ),
   },
   {
-    path: "/offer-details",
+    path: "/offer-details/:id",
     element: (
       <SuspenseFallback>
         <OfferDetails />
@@ -47,6 +48,14 @@ const router = createBrowserRouter([
         element: <ContactInfo />,
       },
     ],
+  },
+  {
+    path: "/create-offer",
+    element: (
+      <SuspenseFallback>
+        <CreateOffer />
+      </SuspenseFallback>
+    ),
   },
   {
     path: "login",

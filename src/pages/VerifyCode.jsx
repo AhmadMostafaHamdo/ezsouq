@@ -69,9 +69,7 @@ const VerifyCode = () => {
       }
     }
   };
-  const onSubmit = (data) => {
-    console.log(data);
-  };
+  const onSubmit = (data) => {};
   return (
     <div className="h-[100vh] flex-center font-sans">
       <div className="w-[90vw] h-[90vh] md:[90vw]  flex-center shadow-custom">

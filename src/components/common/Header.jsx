@@ -14,7 +14,6 @@ import AuthLinks from "./AuthLinks";
 const Header = () => {
   const navigate = useNavigate();
   const { token } = useSelector((state) => state.auth);
-  console.log(token);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isSearchVisible, setIsSearchVisible] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
@@ -31,7 +30,6 @@ const Header = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
   const handelLogout = () => {
-    console.log("first");
     dispatch(logout());
     navigate("/");
   };

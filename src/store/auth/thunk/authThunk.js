@@ -6,7 +6,6 @@ export const thunkAuth = createAsyncThunk(
   async ({ info, isLogin }, { rejectWithValue }) => {
     try {
       const res = await axios.post(`/${isLogin ? "login" : "register"}`, info);
-      console.log(res);
       toast.success(
         `${isLogin ? "تم تسجيل الدخول بنجاح" : "تم إنشاء الحساب بنجاح"}`
       );

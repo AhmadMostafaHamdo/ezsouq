@@ -21,17 +21,22 @@ export const details = [
   { img: location, name: "دمشق - المزة" },
   { img: time, name: "منذ ثلاثة أيام" },
 ];
-export const infoContact = [
+export const email = [
   { img: iconProfile, info: "احمد حمدو" },
   { img: phoneIcon, info: "0987 123 456" },
   { img: whatsIcon, info: "0987 123 456" },
 ];
 export const carImages = [
   {
-    id: 1,img: carFront,
-  },  {
-    id: 2,img: carBack,
-  },  {
-    id: 3,img: carSide,
+    id: 1,
+    img: carFront,
+  },
+  {
+    id: 2,
+    img: carBack,
+  },
+  {
+    id: 3,
+    img: carSide,
   },
 ];

@@ -4,7 +4,6 @@ import { selectOptions } from "../../data/filterData";
 const SearchInput = ({ mobile = false }) => {
   const handleSearch = (e) => {
     e.preventDefault();
-    console.log("تم تنفيذ البحث");
   };
 
   return (

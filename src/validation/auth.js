@@ -3,7 +3,7 @@ import { z } from "zod";
 export const registerSchema = z
   .object({
     name: z.string().min(1, { message: "الاسم مطلوب" }),
-    infoContact: z
+    email: z
       .string()
       .min(1, { message: "الايميل مطلوب" })
       .email("الايميل غير صحيح"),
@@ -23,7 +23,7 @@ export const registerSchema = z
   });
 
 export const loginSchema = z.object({
-  infoContact: z
+  email: z
     .string()
     .min(1, { message: "الايميل مطلوب" })
     .email("الايميل غير صحيح"),

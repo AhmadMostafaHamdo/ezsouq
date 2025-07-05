@@ -4,11 +4,13 @@ import personalImg from "../../../assets/images/personal.svg";
 import start from "../../../assets/images/start.svg";
 import leftArrow from "../../../assets/images/leftArrow.svg";
 import rightArrow from "../../../assets/images/rightArrow.svg";
-import { carImages, details, infoContact } from "../../../data/offerDetails";
+import { carImages, details, email } from "../../../data/offerDetails";
 import { Link } from "react-router";
+import { useSelector } from "react-redux";
 
 const Main = () => {
   const [selectedImage, setSelectedImage] = useState(carImages[0]);
+  // const {}=useSelector(state=>state.prod)
   const handelSelectImage = (img) => {
     setSelectedImage(img);
   };
@@ -134,7 +136,7 @@ const Main = () => {
                 />
               </div>
               <div>
-                {infoContact.map((info, index) => (
+                {email.map((info, index) => (
                   <li key={index} className="flex items-center gap-2 mb-2">
                     <img src={info.img} alt="" />
                     <span className="font-normal text-[.7rem] lg:text-[.88rem] text-[#716D97]">

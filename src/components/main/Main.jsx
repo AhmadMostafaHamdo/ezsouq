@@ -17,7 +17,7 @@ const Main = () => {
         </p>
 
         <Link
-          to=""
+          to="/create-offer"
           className="mt-8  block h-[8vh] w-[70vw] flex-center rounded-xl bg-white text-[1rem] font-bold text-primary md:h-[60px] md:w-[262px]"
         >
           نشر إعلان

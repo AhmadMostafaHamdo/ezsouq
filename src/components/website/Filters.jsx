@@ -1,23 +1,36 @@
-import { useState } from "react";
-import {
-  governorates,
-  cities,
-  allCategory,
-  cards,
-  sortOptions,
-} from "../../data/filterData";
+import { useEffect, useState } from "react";
+import { allCategory, sortOptions } from "../../data/filterData";
 import scrollPostsIcon from "../../assets/images/Group 6.svg";
 import Card from "./Card";
 import TabFilter from "./TapFilter";
 import IconFilter from "./IconFilter";
 import SortDropdown from "./SortDropdown";
+import { useDispatch, useSelector } from "react-redux";
+import { productThunk } from "../../store/product/thunk/productThunk";
+import { thunkGovernorates } from "../../store/governorates/thunk/thunkGovernorates";
+import CardSkeleton from "../../assets/sketlon/product";
+import { thunkCities } from "../../store/cities/thunk/citiesThunk";
 
 const Filters = () => {
-  const [selectedGovernorate, setSelectedGovernor] = useState("الكل");
+  const [selectedGovernorate, setSelectedGovernor] = useState("اللاذقية");
   const [selectedCity, setSelectedCity] = useState("الكل");
   const [selectedCategory, setSelectedCategory] = useState("سيارات");
   const [sortBy, setSortBy] = useState("newest");
-
+  const dispatch = useDispatch();
+  const { products, loading } = useSelector((state) => state.products);
+  console.log(products)
+  useEffect(() => {
+    dispatch(productThunk());
+  }, [dispatch]);
+  const { governorates } = useSelector((state) => state.governorates);
+  const { cities } = useSelector((state) => state.cities);
+  console.log(cities);
+  useEffect(() => {
+    dispatch(thunkGovernorates());
+  }, [dispatch]);
+  useEffect(() => {
+    dispatch(thunkCities(selectedGovernorate));
+  }, [dispatch]);
   return (
     <div className="pr-[1rem] md:pr-[3.25rem] font-sans bg-[#F7F7FF] pt-[1.625rem] pb-[5rem]">
       {/* Governorate Filter */}
@@ -59,9 +72,17 @@ const Filters = () => {
 
       {/* Cards Grid */}
       <div className="w-full flex justify-start md:justify-start  gap-[2.25rem] pl-[1rem] md:pl-[3.187rem] flex-wrap">
-        {cards.map((card, index) => (
-          <Card {...card} key={index} />
-        ))}
+        {products.map((product, index) =>
+          loading ? (
+            Array.from({ length: products.length }).map((_, index) => (
+              <div key={index}>
+                <CardSkeleton />
+              </div>
+            ))
+          ) : (
+            <Card {...product} key={index} />
+          )
+        )}
       </div>
 
       {/* Show More */}

@@ -15,7 +15,6 @@ export const logout = createAsyncThunk("/logout", async () => {
     );
     return res.data;
   } catch (error) {
-    console.log(error);
   } finally {
     Cookies.remove("token");
   }
