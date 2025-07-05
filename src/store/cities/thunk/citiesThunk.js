@@ -5,7 +5,7 @@ export const thunkCities = createAsyncThunk(
   "/user/cities",
   async (governorateName, { rejectWithValue }) => {
     try {
-      console.log(governorateName)
+      console.log(governorateName);
       const res = await axios.get("user/cities", {
         name: governorateName,
       });

@@ -14,7 +14,7 @@ export const nav = [
   { link: "/cars", name: "سيارات" },
   { link: "/real-estate", name: "عقارات" },
   { link: "/techniques", name: "تقنيات" },
-  { link: "/post-offer", name: "نشر اعلان" },
+  { link: "/create-offer", name: "نشر اعلان" },
 ];
 export const details = [
   { img: car, name: "أوتوماتيك" },

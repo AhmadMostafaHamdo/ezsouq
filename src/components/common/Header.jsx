@@ -36,7 +36,9 @@ const Header = () => {
   return (
     <header
       className={` text-white pt-4 z-10   md:px-12 lg:px-20 md:py-3  fixed  w-full  md:${
-        isScrolled ? "backdrop-blur-[20px]  bg-[#0F00FF80]" : "bg-primary"
+        isScrolled
+          ? "bg-gradient-to-b bg-primary to-primary-dark p-6  backdrop-blur-[38.1px]"
+          : "bg-primary"
       } `}
     >
       <div className="container flex items-center justify-between">
@@ -88,16 +90,7 @@ const Header = () => {
             token ? "justify-end" : "justify-start"
           } w-[14.75rem] text-sm space-x-reverse space-x-4`}
         >
-          {token ? (
-            <button
-              className="px-6 py-[.6rem] rounded-lg font-medium text-center bg-main"
-              onClick={handelLogout}
-            >
-              تسجيل الخروج
-            </button>
-          ) : (
-            <AuthLinks />
-          )}
+          <AuthLinks />
         </div>
       </div>
 
@@ -138,16 +131,7 @@ const Header = () => {
             </nav>
 
             <div className="mt-12">
-              {token ? (
-                <button
-                  className="px-6 py-[.6rem] rounded-lg font-medium text-center bg-main"
-                  onClick={handelLogout}
-                >
-                  تسجيل الخروج
-                </button>
-              ) : (
-                <AuthLinks isMobile />
-              )}
+              <AuthLinks isMobile />
             </div>
           </div>
         </div>

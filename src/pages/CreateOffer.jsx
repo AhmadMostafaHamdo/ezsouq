@@ -1,12 +1,12 @@
-import Header from "../components/website/OfferDetails/Header";
+import HeaderLogin from "../components/website/OfferDetails/HeaderLogin";
 import Footer from "../components/common/Footer";
 import MainCreateOffer from "../components/main/MainCreateOffer";
 
 const CreateOffer = () => {
   return (
     <div>
-      <Header />
-      <MainCreateOffer/>
+      <HeaderLogin />
+      <MainCreateOffer />
       <Footer />
     </div>
   );

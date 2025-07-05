@@ -6,7 +6,7 @@ import heart from "../../../assets/images/heart.svg";
 import personal from "../../../assets/images/personal.svg";
 import { nav } from "../../../data/offerDetails";
 import { useEffect, useState } from "react";
-const Header = () => {
+const HeaderLogin = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   useEffect(() => {
     const handleScroll = () => {
@@ -32,7 +32,10 @@ const Header = () => {
         <img src={logo} className="w-20 h-18 ml-16" />
         <div className="flex-1">
           <div className=" hidden md:flex justify-end lg:hidden">
-            <Link to="" className="ml-12 px-6 py-2 rounded-[10px] bg-[#9B95FF]">
+            <Link
+              to="/create-offer"
+              className="ml-12 px-6 py-2 rounded-[10px] bg-[#9B95FF]"
+            >
               نشر إعلان
             </Link>
           </div>
@@ -70,4 +73,4 @@ const Header = () => {
   );
 };
 
-export default Header;
+export default HeaderLogin;

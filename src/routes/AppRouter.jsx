@@ -9,6 +9,8 @@ import SuspenseFallback from "../feedback/suspenseFallback/suspenseFallback";
 import ForgotPassword from "../pages/ForgotPassword";
 import VerifyCode from "../pages/VerifyCode";
 import RedirectIfAuthenticated from "./RedirectIfAuthenticated";
+import Main from "../components/main/Main";
+import Filters from "../components/website/Filters";
 const App = lazy(() => import("../App"));
 const OfferDetails = lazy(() => import("../pages/OfferDetails"));
 const Login = lazy(() => import("../pages/Login"));
@@ -25,30 +27,50 @@ const router = createBrowserRouter([
         <App />
       </SuspenseFallback>
     ),
-  },
-  {
-    path: "/offer-details/:id",
-    element: (
-      <SuspenseFallback>
-        <OfferDetails />
-      </SuspenseFallback>
-    ),
-  },
-  {
-    path: "/profile",
-    element: (
-      <SuspenseFallback>
-        <Profile />
-      </SuspenseFallback>
-    ),
     children: [
-      { index: true, element: <MainProfile /> },
       {
-        path: "contact-info",
-        element: <ContactInfo />,
+        index: true,
+        element: (
+          <>
+            <Main />
+            <Filters />
+          </>
+        ),
+      },
+      {
+        path: "offer-details/:id",
+        element: (
+          <SuspenseFallback>
+            <OfferDetails />
+          </SuspenseFallback>
+        ),
+      },
+      {
+        path: "/profile",
+        element: (
+          <SuspenseFallback>
+            <Profile />
+          </SuspenseFallback>
+        ),
+        children: [
+          { index: true, element: <MainProfile /> },
+          {
+            path: "contact-info",
+            element: <ContactInfo />,
+          },
+        ],
+      },
+      {
+        path: "/create-offer",
+        element: (
+          <SuspenseFallback>
+            <CreateOffer />
+          </SuspenseFallback>
+        ),
       },
     ],
   },
+
   {
     path: "/create-offer",
     element: (

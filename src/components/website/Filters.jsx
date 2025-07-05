@@ -18,7 +18,7 @@ const Filters = () => {
   const [sortBy, setSortBy] = useState("newest");
   const dispatch = useDispatch();
   const { products, loading } = useSelector((state) => state.products);
-  console.log(products)
+  console.log(products);
   useEffect(() => {
     dispatch(productThunk());
   }, [dispatch]);
@@ -30,7 +30,7 @@ const Filters = () => {
   }, [dispatch]);
   useEffect(() => {
     dispatch(thunkCities(selectedGovernorate));
-  }, [dispatch]);
+  }, [dispatch, selectedGovernorate]);
   return (
     <div className="pr-[1rem] md:pr-[3.25rem] font-sans bg-[#F7F7FF] pt-[1.625rem] pb-[5rem]">
       {/* Governorate Filter */}
