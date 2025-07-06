@@ -19,7 +19,7 @@ const HeaderLogin = () => {
   }, []);
   return (
     <div
-      className={`text-white font-sans font-bold text-[.87rem] fixed w-full z-10 py-1 ${
+      className={`text-white font-sans font-bold text-[.87rem] fixed w-full z-10  ${
         isScrolled ? "backdrop-blur-[20px]  bg-[#0F00FF80]" : "bg-primary"
       }`}
     >
@@ -47,7 +47,7 @@ const HeaderLogin = () => {
                   to={link.link}
                   className={({ isActive }) =>
                     isActive
-                      ? "px-4 py-2 rounded-[10px] bg-[#9B95FF]"
+                      ? "px-4 py-1 rounded-[10px] bg-[#9B95FF]"
                       : "px-4 py-2 rounded-[10px]"
                   }
                 >

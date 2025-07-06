@@ -4,10 +4,9 @@ import MainCreateOffer from "../components/main/MainCreateOffer";
 
 const CreateOffer = () => {
   return (
-    <div>
+    <div className="font-sans">
       <HeaderLogin />
       <MainCreateOffer />
-      <Footer />
     </div>
   );
 };

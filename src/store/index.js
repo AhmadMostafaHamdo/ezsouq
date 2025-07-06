@@ -3,6 +3,7 @@ import auth from "./auth/authSlice";
 import products from "./product/productSlice";
 import governorates from "./governorates/governoratesSlice";
 import cities from "./cities/sliceCities";
+import steps from "./steps/stepsSlice";
 import storage from "redux-persist/lib/storage";
 import {
   FLUSH,
@@ -30,11 +31,16 @@ const persistCities = {
   key: "cities",
   storage,
 };
+const persistSteps = {
+  key: "cities",
+  storage,
+};
 const rootReducer = combineReducers({
   auth: persistReducer(persistAuth, auth),
   products: persistReducer(persistProducts, products),
   governorates: persistReducer(persistGovernorates, governorates),
   cities: persistReducer(persistCities, cities),
+  steps: persistReducer(persistSteps, steps),
 });
 export const store = configureStore({
   reducer: rootReducer,

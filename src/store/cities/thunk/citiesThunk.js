@@ -7,7 +7,9 @@ export const thunkCities = createAsyncThunk(
     try {
       console.log(governorateName);
       const res = await axios.get("user/cities", {
-        name: governorateName,
+        params: {
+          name: governorateName, 
+        },
       });
       return res.data;
     } catch (error) {
