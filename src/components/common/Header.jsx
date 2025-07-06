@@ -1,23 +1,18 @@
 import { useEffect, useState } from "react";
-import { Link, Navigate, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import logo from "../../assets/images/logoWithTitleWhite.svg";
 import menuIcon from "../../assets/images/menu.svg";
 import searchIcon from "../../assets/images/search.svg";
 import closeIcon from "../../assets/images/close.png";
 import SearchInput from "./SearchInput";
-import Cookies from "js-cookie";
 import { ulLinks } from "../../data/filterData";
-import { logout } from "../../store/auth/thunk/logout";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import AuthLinks from "./AuthLinks";
 
 const Header = () => {
-  const navigate = useNavigate();
-  const { token } = useSelector((state) => state.auth);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isSearchVisible, setIsSearchVisible] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
-  const dispatch = useDispatch();
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
   const toggleSearch = () => setIsSearchVisible(!isSearchVisible);
   useEffect(() => {
@@ -29,17 +24,11 @@ const Header = () => {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
-  const handelLogout = () => {
-    dispatch(logout());
-    navigate("/");
-  };
   return (
     <header
-      className={` text-white pt-4 z-10   md:px-12 lg:px-20 md:py-3  fixed  w-full  md:${
-        isScrolled
-          ? "bg-gradient-to-b bg-primary to-primary-dark p-6  backdrop-blur-[38.1px]"
-          : "bg-primary"
-      } `}
+      className={`text-white font-sans py-1 font-bold text-[.87rem] fixed w-full z-10  ${
+        isScrolled ? "backdrop-blur-[20px]  bg-[#0F00FF80]" : "bg-primary"
+      }`}
     >
       <div className="container flex items-center justify-between">
         {/* Mobile Menu Button */}
@@ -86,9 +75,7 @@ const Header = () => {
         </div>
         {/* Desktop Auth Links */}
         <div
-          className={`hidden md:flex items-center ${
-            token ? "justify-end" : "justify-start"
-          } w-[14.75rem] text-sm space-x-reverse space-x-4`}
+          className={`hidden md:flex items-center w-[14.75rem] text-sm space-x-reverse space-x-4`}
         >
           <AuthLinks />
         </div>

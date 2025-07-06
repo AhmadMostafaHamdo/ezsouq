@@ -8,7 +8,7 @@ const AuthLinks = ({ isMobile = false }) => (
   >
     <Link
       to="/login"
-      className={`px-6 py-[.6rem] rounded-lg font-medium text-center ${
+      className={`px-6 py-[.5rem] rounded-lg font-medium text-center ${
         isMobile
           ? "bg-white hover:bg-gray-100 text-primary"
           : "bg-secondary hover:bg-secondary-dark text-primary text-nowrap"
