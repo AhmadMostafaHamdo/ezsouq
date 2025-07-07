@@ -2,11 +2,15 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import uploadImage from "../../assets/images/uploadImage.svg";
 import closeImg from "../../assets/images/closeImg.svg";
 import addImg from "../../assets/images/addImg.svg";
+import Select from "../select/Select";
+import { useSelector } from "react-redux";
+import InputCreateOffer from "../inputs/InputCreateOffer";
 
 const StepOne = () => {
   const imgFile = useRef(null);
   const [images, setImages] = useState([]);
   const imageUrlsRef = useRef([]);
+  const { governorates } = useSelector((state) => state.governorates);
 
   const imageUrls = useMemo(() => {
     imageUrlsRef.current.forEach((url) => URL.revokeObjectURL(url));
@@ -37,12 +41,7 @@ const StepOne = () => {
           <option value="">اللاذقية</option>
         </select>
 
-        <select className="w-full p-2 bg-white rounded-[5px] outline-none cursor-pointer  border-[1px] border-solid border-[#B9B5FF]">
-          <option value="">المحافظة</option>
-          <option value="">الحسكة</option>
-          <option value="">درعا</option>
-          <option value="">اللاذقية</option>
-        </select>
+        {/* <Select options={governorates} /> */}
 
         <select className="w-full p-2 bg-white rounded-[5px] outline-none cursor-pointer  border-[1px] border-solid border-[#B9B5FF]">
           <option value="">المنطقة</option>
@@ -55,13 +54,7 @@ const StepOne = () => {
           className="w-full h-24 outline-none border-solid border-[1px] p-2 rounded-[5px] border-[#B9B5FF]"
           placeholder="وصف..."
         ></textarea>
-
-        <input
-          type="text"
-          placeholder="السعر"
-          className="w-full border-solid border-[1px] p-2 rounded-[5px] border-[#B9B5FF]"
-        />
-
+        <InputCreateOffer name="السعر" />
         <div
           onClick={handelImage}
           className="flex-between w-full border-solid border-[1px] p-2 rounded-[5px] cursor-pointer border-[#B9B5FF]"
@@ -105,7 +98,6 @@ const StepOne = () => {
             className="cursor-pointer"
           />
         </div>
-       
       </form>
     </div>
   );

@@ -18,13 +18,11 @@ const Filters = () => {
   const [sortBy, setSortBy] = useState("newest");
   const dispatch = useDispatch();
   const { products, loading } = useSelector((state) => state.products);
-  console.log(products);
   useEffect(() => {
     dispatch(productThunk());
   }, [dispatch]);
   const { governorates } = useSelector((state) => state.governorates);
   const { cities } = useSelector((state) => state.cities);
-  console.log(cities);
   useEffect(() => {
     dispatch(thunkGovernorates());
   }, [dispatch]);
@@ -40,6 +38,7 @@ const Filters = () => {
         selectedItem={selectedGovernorate}
         onSelect={setSelectedGovernor}
         className="overflow-x-auto scrollbar-hide"
+        type={"governorate"}
       />
 
       {/* City Filter */}
@@ -51,8 +50,7 @@ const Filters = () => {
         selectedItem={selectedCity}
         onSelect={setSelectedCity}
         className="overflow-hidden"
-      />
-
+        type={"city"}      />
       {/* Category Filter */}
       <h1 className="font-normal text-[1.25rem] md:text-[1.75rem] mb-[.5rem] mt-[1.875rem]">
         التصنيفات

@@ -115,7 +115,7 @@ const AuthForm = ({ fields, schema, btnAuth }) => {
                 </button>
                 <p
                   className={`${
-                    isLogin ? "my-5" : "my-3"
+                    isLogin ? "my-5" : "my-6 md:my-3"
                   }  text-[12px] text-center font-normal`}
                 >
                   لديك حساب بالفعل ؟
@@ -123,13 +123,13 @@ const AuthForm = ({ fields, schema, btnAuth }) => {
                     to={btnAuth == "تسجيل الدخول" ? "/register" : "/login"}
                     className="mr-1 w-[80%] text-primary font-medium"
                   >
-                    {btnAuth === "تسجيل الدخول" ? "إنشاء حساب" : "تسجيل الدخول"}
+                    {isLogin ? "إنشاء حساب" : "تسجيل الدخول"}
                   </Link>
                 </p>
                 <DividerWithText text="أو" />
                 <button
                   className={`flex-center ${
-                    isLogin ? "my-10" : "my-3 "
+                    isLogin ? "my-10" : "my-10 md:my-3 "
                   } p-3 font-sans font-medium text-[.9rem] gap-2 shadow-[0px_2px_13.7px_0px_#0000001A] rounded-xl w-full`}
                 >
                   <img src={googleIcon} alt="googleLogo" /> تسجيل دخول بواسطة

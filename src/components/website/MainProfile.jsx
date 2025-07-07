@@ -1,15 +1,15 @@
 import React from "react";
-import { cards } from "../../data/filterData";
 import Card from "./Card";
 import ImgProfileWithButtons from "./ImgProfileWithButtons";
+import { useSelector } from "react-redux";
 const MainProfile = () => {
-  
+  const { products } = useSelector((state) => state.products);
   return (
     <div className="container pb-10">
       <ImgProfileWithButtons />
       <div className="w-full flex justify-start md:justify-evenly items-center gap-[2.25rem] pl-[1rem] md:pl-[3.187rem] flex-wrap">
-        {cards.map((card, index) => (
-          <Card {...card} key={index} />
+        {products.map((product, index) => (
+          <Card {...product} key={index} />
         ))}
       </div>
     </div>

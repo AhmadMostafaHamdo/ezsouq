@@ -2,6 +2,7 @@ import React from "react";
 import Stepper from "../stepper/Stepper";
 import StepOne from "../stepper/StepOne";
 import { useDispatch, useSelector } from "react-redux";
+import StepTwoTec from "../stepper/StepTwoTec";
 import StepTwoCar from "../stepper/StepTwoCar";
 import arrowLeft from "../../assets/images/Arrow-left.svg";
 import arrowRight from "../../assets/images/arrowRight.svg";
@@ -17,15 +18,15 @@ const MainCreateOffer = () => {
     dispatch(stepDecrease());
   };
   return (
-    <div className="bg-[#F7F7FF] flex-center flex-col py-6">
+    <div className="bg-[#F7F7FF] flex-center flex-col pt-6 pb-20">
       <h1 className="font-normal text-[2rem] mt-10">نشر إعلان</h1>
       <Stepper />
       {currentStep === 1 ? (
-        <div >
+        <div>
           <StepOne />
         </div>
       ) : (
-        <StepTwoCar />
+        <StepTwoCar/>
       )}
       <div className="flex-between w-[80vw] md:w-[60vw] lg:w-[40vw]">
         <button

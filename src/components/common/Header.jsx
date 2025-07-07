@@ -6,7 +6,6 @@ import searchIcon from "../../assets/images/search.svg";
 import closeIcon from "../../assets/images/close.png";
 import SearchInput from "./SearchInput";
 import { ulLinks } from "../../data/filterData";
-import { useSelector } from "react-redux";
 import AuthLinks from "./AuthLinks";
 
 const Header = () => {
