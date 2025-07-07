@@ -18,7 +18,7 @@ const MainCreateOffer = () => {
     dispatch(stepDecrease());
   };
   return (
-    <div className="bg-[#F7F7FF] flex-center flex-col pt-6 pb-20">
+    <div className="bg-[#F7F7FF] flex-center flex-col pt-6 pb-28">
       <h1 className="font-normal text-[2rem] mt-10">نشر إعلان</h1>
       <Stepper />
       {currentStep === 1 ? (
@@ -26,7 +26,7 @@ const MainCreateOffer = () => {
           <StepOne />
         </div>
       ) : (
-        <StepTwoCar/>
+        <StepTwoTec />
       )}
       <div className="flex-between w-[80vw] md:w-[60vw] lg:w-[40vw]">
         <button

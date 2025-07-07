@@ -1,4 +1,22 @@
+import { useEffect, useState } from "react";
+
 const TabFilter = ({ items, selectedItem, onSelect, className = "", type }) => {
+  const [selectedValue, setSelectedValue] = useState("");
+
+  useEffect(() => {
+    if (items.length > 0 && !selectedValue) {
+      const initialValue = type === "governorate" ? items[0]?.name : items[0];
+      setSelectedValue(initialValue);
+      onSelect?.(initialValue);
+    }
+  }, [items, selectedValue, type]);
+
+  const handleSelect = (e) => {
+    const value = e.target.value;
+    setSelectedValue(value);
+    onSelect?.(value);
+  };
+
   return (
     <div
       className={`flex font-normal text-[14px] md:text-[1.2rem] text-[#3F3D56] ${className}`}

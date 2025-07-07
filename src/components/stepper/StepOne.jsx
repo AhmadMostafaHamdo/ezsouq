@@ -1,16 +1,27 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { thunkCities } from "../../store/cities/thunk/citiesThunk";
 import uploadImage from "../../assets/images/uploadImage.svg";
 import closeImg from "../../assets/images/closeImg.svg";
 import addImg from "../../assets/images/addImg.svg";
 import Select from "../select/Select";
-import { useSelector } from "react-redux";
 import InputCreateOffer from "../inputs/InputCreateOffer";
 
 const StepOne = () => {
+  const dispatch = useDispatch();
   const imgFile = useRef(null);
   const [images, setImages] = useState([]);
+  const [selectedGovernorate, setSelectedGovernorate] = useState("");
+  const [selectedCity, setSelectedCity] = useState("");
   const imageUrlsRef = useRef([]);
   const { governorates } = useSelector((state) => state.governorates);
+  const { cities } = useSelector((state) => state.cities);
+
+  useEffect(() => {
+    if (selectedGovernorate) {
+      dispatch(thunkCities(selectedGovernorate));
+    }
+  }, [selectedGovernorate, dispatch]);
 
   const imageUrls = useMemo(() => {
     imageUrlsRef.current.forEach((url) => URL.revokeObjectURL(url));
@@ -24,6 +35,7 @@ const StepOne = () => {
       imageUrlsRef.current.forEach((url) => URL.revokeObjectURL(url));
     };
   }, []);
+
   const handelImage = () => {
     imgFile.current.click();
   };
@@ -31,30 +43,25 @@ const StepOne = () => {
   const removeImage = (index) => {
     setImages((prev) => prev.filter((_, i) => i !== index));
   };
+
   return (
     <div className="w-[80vw] md:w-[60vw] lg:w-[45vw]">
       <form className="w-full flex-center flex-col gap-3 text-[#B9B5FF]">
-        <select className="w-full p-2 bg-white rounded-[5px] outline-none cursor-pointer border-[1px] border-solid border-[#B9B5FF]">
-          <option value="">التصنيف</option>
-          <option value="">الحسكة</option>
-          <option value="">درعا</option>
-          <option value="">اللاذقية</option>
-        </select>
+        <Select
+          options={governorates}
+          type="governorate"
+          onSelect={setSelectedGovernorate}
+        />
 
-        {/* <Select options={governorates} /> */}
-
-        <select className="w-full p-2 bg-white rounded-[5px] outline-none cursor-pointer  border-[1px] border-solid border-[#B9B5FF]">
-          <option value="">المنطقة</option>
-          <option value="">الحسكة</option>
-          <option value="">درعا</option>
-          <option value="">اللاذقية</option>
-        </select>
+        <Select options={cities} type="city" onSelect={setSelectedCity} />
 
         <textarea
           className="w-full h-24 outline-none border-solid border-[1px] p-2 rounded-[5px] border-[#B9B5FF]"
           placeholder="وصف..."
         ></textarea>
+
         <InputCreateOffer name="السعر" />
+
         <div
           onClick={handelImage}
           className="flex-between w-full border-solid border-[1px] p-2 rounded-[5px] cursor-pointer border-[#B9B5FF]"
