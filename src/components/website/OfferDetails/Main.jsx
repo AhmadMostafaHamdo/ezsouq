@@ -12,12 +12,13 @@ import car from "../../../assets/images/carIconDetails.svg";
 import location from "../../../assets/images/locationIcondDetails.svg";
 import time from "../../../assets/images/timeIconDetails.svg";
 import TimeAgo from "../../TimeAgo";
+
 const Main = () => {
   const { product } = useSelector((state) => state.products);
-  console.log(product);
   const [selectedImage, setSelectedImage] = useState("");
   const { id } = useParams();
   const dispatch = useDispatch();
+
   useEffect(() => {
     dispatch(productThunkById(id));
   }, [dispatch, id]);
@@ -33,7 +34,10 @@ const Main = () => {
   };
 
   const previousImg = () => {
-    const currentIndex = product?.main_photos?.indexOf(selectedImage);
+    // التحقق من وجود الصور
+    if (!product?.main_photos?.length) return;
+
+    const currentIndex = product.main_photos.indexOf(selectedImage);
     if (currentIndex === -1) return;
 
     const previousIndex =
@@ -43,7 +47,10 @@ const Main = () => {
   };
 
   const nextImg = () => {
-    const currentIndex = product?.main_photos?.indexOf(selectedImage);
+    // التحقق من وجود الصور
+    if (!product?.main_photos?.length) return;
+
+    const currentIndex = product.main_photos.indexOf(selectedImage);
     if (currentIndex === -1) return;
 
     const nextIndex = (currentIndex + 1) % product.main_photos.length;
@@ -51,6 +58,9 @@ const Main = () => {
   };
 
   if (!product) return <div>Loading...</div>;
+
+  // الحصول على الصور بشكل آمن
+  const mainPhotos = product?.main_photos || [];
 
   return (
     <div className="font-sans bg-[#F7F7FF] md:pt-2 overflow-x-hidden h-fit">
@@ -63,9 +73,12 @@ const Main = () => {
                 src={`https://ezsouq.store/uploads/images/${selectedImage}`}
                 alt="Main product"
                 className="md:h-full h-full w-full object-contain md:rounded-2xl bg-[#F7F7FF]"
+                loading="lazy"
               />
             )}
-            {product.main_photos.length > 1 && (
+
+            {/* التحقق من وجود أكثر من صورة قبل عرض أزرار التنقل */}
+            {mainPhotos.length > 1 && (
               <div className="absolute flex justify-between w-[92%] left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2">
                 <button
                   className="w-8 h-8 bg-[#F7F7FF] backdrop-blur flex items-center justify-center rounded-md"
@@ -84,9 +97,9 @@ const Main = () => {
           </div>
 
           {/* Desktop Thumbnails */}
-          {product.main_photos.length > 1 && (
+          {mainPhotos.length > 1 && (
             <div className="hidden md:flex gap-[.3rem]">
-              {product.main_photos.map((img, index) => (
+              {mainPhotos.map((img, index) => (
                 <img
                   src={`https://ezsouq.store/uploads/images/${img}`}
                   alt={`Thumbnail ${index + 1}`}
@@ -97,6 +110,7 @@ const Main = () => {
                   }`}
                   key={index}
                   onClick={() => handelSelectImage(img)}
+                  loading="lazy"
                 />
               ))}
             </div>
@@ -123,26 +137,26 @@ const Main = () => {
 
           <ul className="my-2">
             <li className="flex gap-2 items-center mb-2 font-normal text-[#716D97]">
-              <img src={car} />
+              <img src={car} alt="Car icon" />
               <span className="text-[1rem]">{product?.name}</span>
             </li>
             <li className="flex gap-2 items-center mb-2 font-normal text-[#716D97]">
-              <img src={location} />
+              <img src={location} alt="Location icon" />
               <span className="text-[1rem]">
                 {product?.Governorate_name} - {product?.city}
               </span>
             </li>
             <li className="flex gap-2 items-center mb-2 font-normal text-[#716D97]">
-              <img src={time} />
+              <img src={time} alt="Time icon" />
               <span className="text-[1rem]">
                 {<TimeAgo postDate={product?.createdAt} />}
               </span>
             </li>
 
             {/* Mobile Thumbnails */}
-            {product.main_photos.length > 1 && (
+            {mainPhotos.length > 1 && (
               <div className="md:hidden flex my-4 gap-2 overflow-x-auto">
-                {product.main_photos.map((img, index) => (
+                {mainPhotos.map((img, index) => (
                   <img
                     src={`https://ezsouq.store/uploads/images/${img}`}
                     alt={`Thumbnail ${index + 1}`}
@@ -153,6 +167,7 @@ const Main = () => {
                     }`}
                     key={index}
                     onClick={() => handelSelectImage(img)}
+                    loading="lazy"
                   />
                 ))}
               </div>
