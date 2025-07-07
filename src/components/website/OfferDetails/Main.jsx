@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import heartDetails from "../../../assets/images/heartDeatails.svg";
 import personalImg from "../../../assets/images/personal.svg";
 import start from "../../../assets/images/start.svg";
@@ -12,12 +12,16 @@ import car from "../../../assets/images/carIconDetails.svg";
 import location from "../../../assets/images/locationIcondDetails.svg";
 import time from "../../../assets/images/timeIconDetails.svg";
 import TimeAgo from "../../TimeAgo";
+import Spinner from "../../../feedback/loading/Spinner";
+import ThumbnailImage from "../../../feedback/loading/ThumbnailImage";
 
 const Main = () => {
   const { product } = useSelector((state) => state.products);
   const [selectedImage, setSelectedImage] = useState("");
+  const [isImageLoaded, setIsImageLoaded] = useState(false);
   const { id } = useParams();
   const dispatch = useDispatch();
+  const imgRef = useRef(null);
 
   useEffect(() => {
     dispatch(productThunkById(id));
@@ -29,17 +33,29 @@ const Main = () => {
     }
   }, [product]);
 
+  // Reset image loaded state when image changes
+  useEffect(() => {
+    setIsImageLoaded(false);
+
+    // Check if image is already cached
+    if (imgRef.current?.complete) {
+      setIsImageLoaded(true);
+    }
+  }, [selectedImage]);
+
   const handelSelectImage = (img) => {
     setSelectedImage(img);
   };
 
+  const handleImageLoad = () => {
+    setIsImageLoaded(true);
+  };
+
   const previousImg = () => {
-    // التحقق من وجود الصور
     if (!product?.main_photos?.length) return;
 
     const currentIndex = product.main_photos.indexOf(selectedImage);
     if (currentIndex === -1) return;
-
     const previousIndex =
       (currentIndex - 1 + product.main_photos.length) %
       product.main_photos.length;
@@ -47,7 +63,6 @@ const Main = () => {
   };
 
   const nextImg = () => {
-    // التحقق من وجود الصور
     if (!product?.main_photos?.length) return;
 
     const currentIndex = product.main_photos.indexOf(selectedImage);
@@ -57,37 +72,53 @@ const Main = () => {
     setSelectedImage(product.main_photos[nextIndex]);
   };
 
-  if (!product) return <div>Loading...</div>;
+  if (!product)
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <Spinner className="w-12 h-12" />
+      </div>
+    );
 
-  // الحصول على الصور بشكل آمن
   const mainPhotos = product?.main_photos || [];
 
   return (
     <div className="font-sans bg-[#F7F7FF] md:pt-2 overflow-x-hidden h-fit">
       <div className="container items-center md:items-start flex flex-col md:flex-row md:gap-8 lg:gap-11 pt-[5rem]">
-        {/* Image Gallery Section */}
         <div className="flex flex-col items-center w-fit gap-6 md:mt-5">
-          <div className="w-[100vw] h-[30vh] md:h-[53vh] md:w-[50vh] lg:w-[60vh] md:rounded-2xl relative">
+          <div className="w-[100vw] h-[30vh] md:h-[53vh] md:w-[50vh] lg:w-[60vh] md:rounded-2xl relative bg-[#F7F7FF]">
             {selectedImage && (
-              <img
-                src={`https://ezsouq.store/uploads/images/${selectedImage}`}
-                alt="Main product"
-                className="md:h-full h-full w-full object-contain md:rounded-2xl bg-[#F7F7FF]"
-                loading="lazy"
-              />
+              <>
+                {!isImageLoaded && (
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <Spinner className="w-12 h-12" />
+                  </div>
+                )}
+
+                {/* Main Image */}
+                <img
+                  ref={imgRef}
+                  src={`https://ezsouq.store/uploads/images/${selectedImage}`}
+                  alt="Main product"
+                  className={`md:h-full h-full w-full object-contain md:rounded-2xl bg-[#F7F7FF] ${
+                    isImageLoaded ? "opacity-100" : "opacity-0"
+                  } transition-opacity duration-300`}
+                  loading="lazy"
+                  onLoad={handleImageLoad}
+                  onError={() => setIsImageLoaded(true)}
+                />
+              </>
             )}
 
-            {/* التحقق من وجود أكثر من صورة قبل عرض أزرار التنقل */}
             {mainPhotos.length > 1 && (
               <div className="absolute flex justify-between w-[92%] left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2">
                 <button
-                  className="w-8 h-8 bg-[#F7F7FF] backdrop-blur flex items-center justify-center rounded-md"
+                  className="w-8 h-8 bg-[#F7F7FF] backdrop-blur flex items-center justify-center rounded-md shadow-md"
                   onClick={previousImg}
                 >
                   <img src={rightArrow} alt="Previous" />
                 </button>
                 <button
-                  className="w-8 h-8 bg-[#F7F7FF] backdrop-blur flex items-center justify-center rounded-md"
+                  className="w-8 h-8 bg-[#F7F7FF] backdrop-blur flex items-center justify-center rounded-md shadow-md"
                   onClick={nextImg}
                 >
                   <img src={leftArrow} alt="Next" />
@@ -96,21 +127,14 @@ const Main = () => {
             )}
           </div>
 
-          {/* Desktop Thumbnails */}
           {mainPhotos.length > 1 && (
             <div className="hidden md:flex gap-[.3rem]">
               {mainPhotos.map((img, index) => (
-                <img
-                  src={`https://ezsouq.store/uploads/images/${img}`}
-                  alt={`Thumbnail ${index + 1}`}
-                  className={`w-20 h-16 object-contain cursor-pointer rounded-[6px] border-2 ${
-                    selectedImage === img
-                      ? "border-[#6C63FF] shadow-[0px_4px_12px_6px_rgba(63,61,86,0.3)]"
-                      : "border-[#D9D9D9]"
-                  }`}
+                <ThumbnailImage
                   key={index}
+                  src={img}
+                  isSelected={selectedImage === img}
                   onClick={() => handelSelectImage(img)}
-                  loading="lazy"
                 />
               ))}
             </div>
@@ -157,17 +181,11 @@ const Main = () => {
             {mainPhotos.length > 1 && (
               <div className="md:hidden flex my-4 gap-2 overflow-x-auto">
                 {mainPhotos.map((img, index) => (
-                  <img
-                    src={`https://ezsouq.store/uploads/images/${img}`}
-                    alt={`Thumbnail ${index + 1}`}
-                    className={`w-20 h-16 object-cover cursor-pointer rounded-[6px] border-2 ${
-                      selectedImage === img
-                        ? "border-[#6C63FF] shadow-[0px_4px_15.6px_8px_rgba(63,61,86,0.3)]"
-                        : "border-[#D9D9D9]"
-                    }`}
+                  <ThumbnailImage
                     key={index}
+                    src={img}
+                    isSelected={selectedImage === img}
                     onClick={() => handelSelectImage(img)}
-                    loading="lazy"
                   />
                 ))}
               </div>

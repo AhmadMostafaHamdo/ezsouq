@@ -12,7 +12,6 @@ const OfferDetails = () => {
     <div className="md:overflow-x-hidden" ref={offer}>
       <HeaderLogin />
       <Main />
-      <Footer />
     </div>
   );
 };
