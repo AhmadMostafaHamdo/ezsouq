@@ -13,7 +13,7 @@ import { thunkCities } from "../../store/cities/thunk/citiesThunk";
 
 const Filters = () => {
   const [selectedGovernorate, setSelectedGovernor] = useState("اللاذقية");
-  const [selectedCity, setSelectedCity] = useState("الكل");
+  const [selectedCity, setSelectedCity] = useState("جبلة");
   const [selectedCategory, setSelectedCategory] = useState("سيارات");
   const [sortBy, setSortBy] = useState("newest");
   const dispatch = useDispatch();
