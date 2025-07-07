@@ -4,7 +4,7 @@ import { productThunkById } from "./thunk/productThunkById";
 
 const initialState = {
   products: [],
-  product:[],
+  product: [],
   loading: false,
   error: null,
 };
@@ -25,18 +25,18 @@ const productSlice = createSlice({
       state.loading = false;
       state.error = action.payload;
     });
-     builder.addCase(productThunkById.pending, (state) => {
-       state.loading = true;
-       state.error = null;
-     });
-     builder.addCase(productThunkById.fulfilled, (state, action) => {
-       state.loading = false;
-       state.product = action.payload.items; 
-     });
-     builder.addCase(productThunkById.rejected, (state, action) => {
-       state.loading = false;
-       state.error = action.payload;
-     });
+    builder.addCase(productThunkById.pending, (state) => {
+      state.loading = true;
+      state.error = null;
+    });
+    builder.addCase(productThunkById.fulfilled, (state, action) => {
+      state.loading = false;
+      state.product = action.payload;
+    });
+    builder.addCase(productThunkById.rejected, (state, action) => {
+      state.loading = false;
+      state.error = action.payload;
+    });
   },
 });
 export default productSlice.reducer;

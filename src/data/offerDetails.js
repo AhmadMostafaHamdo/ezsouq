@@ -1,6 +1,4 @@
-import car from "../assets/images/carIconDetails.svg";
-import location from "../assets/images/locationIcondDetails.svg";
-import time from "../assets/images/timeIconDetails.svg";
+
 import iconProfile from "../assets/images/profileIcon.svg";
 import phoneIcon from "../assets/images/phoneIcon.svg";
 import whatsIcon from "../assets/images/whatsIcon.svg";
@@ -15,11 +13,6 @@ export const nav = [
   { link: "/real-estate", name: "عقارات" },
   { link: "/techniques", name: "تقنيات" },
   { link: "/create-offer", name: "نشر اعلان" },
-];
-export const details = [
-  { img: car, name: "أوتوماتيك" },
-  { img: location, name: "دمشق - المزة" },
-  { img: time, name: "منذ ثلاثة أيام" },
 ];
 export const email = [
   { img: iconProfile, info: "احمد حمدو" },
