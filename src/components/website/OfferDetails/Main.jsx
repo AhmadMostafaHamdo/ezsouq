@@ -14,6 +14,7 @@ import time from "../../../assets/images/timeIconDetails.svg";
 import TimeAgo from "../../TimeAgo";
 const Main = () => {
   const { product } = useSelector((state) => state.products);
+  console.log(product);
   const [selectedImage, setSelectedImage] = useState("");
   const { id } = useParams();
   const dispatch = useDispatch();
