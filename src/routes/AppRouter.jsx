@@ -82,11 +82,11 @@ const router = createBrowserRouter([
   {
     path: "login",
     element: (
-      <SuspenseFallback>
-        <RedirectIfAuthenticated>
+      <RedirectIfAuthenticated>
+        <SuspenseFallback>
           <Login />
-        </RedirectIfAuthenticated>
-      </SuspenseFallback>
+        </SuspenseFallback>
+      </RedirectIfAuthenticated>
     ),
   },
   {

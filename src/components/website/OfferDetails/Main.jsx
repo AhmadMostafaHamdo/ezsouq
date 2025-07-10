@@ -14,6 +14,7 @@ import time from "../../../assets/images/timeIconDetails.svg";
 import TimeAgo from "../../TimeAgo";
 import Spinner from "../../../feedback/loading/Spinner";
 import ThumbnailImage from "../../../feedback/loading/ThumbnailImage";
+import { userThunkById } from "../../../store/users/thunk/userThunkById";
 
 const Main = () => {
   const { product } = useSelector((state) => state.products);
@@ -22,11 +23,13 @@ const Main = () => {
   const { id } = useParams();
   const dispatch = useDispatch();
   const imgRef = useRef(null);
-
   useEffect(() => {
     dispatch(productThunkById(id));
   }, [dispatch, id]);
 
+  useEffect(() => {
+    dispatch(userThunkById(product?.Owner_id));
+  }, [dispatch, id]);
   useEffect(() => {
     if (product?.main_photos?.length) {
       setSelectedImage(product.main_photos[0]);

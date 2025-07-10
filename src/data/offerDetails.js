@@ -11,7 +11,7 @@ export const nav = [
   { link: "/others", name: "منوعات" },
   { link: "/cars", name: "سيارات" },
   { link: "/real-estate", name: "عقارات" },
-  { link: "/techniques", name: "تقنيات" },
+  { link: "/techniques", name: "موبايلات" },
   { link: "/create-offer", name: "نشر اعلان" },
 ];
 export const email = [

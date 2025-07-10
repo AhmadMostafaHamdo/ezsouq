@@ -4,6 +4,8 @@ import products from "./product/productSlice";
 import governorates from "./governorates/governoratesSlice";
 import cities from "./cities/sliceCities";
 import steps from "./steps/stepsSlice";
+import users from "./users/usersSlice";
+import wishlist from "./wishlist/wishlistSlice";
 import storage from "redux-persist/lib/storage";
 import {
   FLUSH,
@@ -35,12 +37,22 @@ const persistSteps = {
   key: "cities",
   storage,
 };
+const persistUsers = {
+  key: "users",
+  storage,
+};
+const persistWishlist = {
+  key: "wishlist",
+  storage,
+}
 const rootReducer = combineReducers({
   auth: persistReducer(persistAuth, auth),
   products: persistReducer(persistProducts, products),
   governorates: persistReducer(persistGovernorates, governorates),
   cities: persistReducer(persistCities, cities),
   steps: persistReducer(persistSteps, steps),
+  users: persistReducer(persistUsers, users),
+  wishlist: persistReducer(persistWishlist, wishlist),
 });
 export const store = configureStore({
   reducer: rootReducer,
