@@ -119,8 +119,7 @@ const Filters = () => {
       />
 
       {/* الترتيب */}
-      <div className="flex justify-between items-center mt-6 mb-4">
-        <h2 className="text-lg font-medium">المنتجات</h2>
+      <div className="flex justify-between items-center mt-6 mb-4 w-[86vw]">
         <SortDropdown
           options={sortOptions}
           selectedOption={filters.sortBy}
