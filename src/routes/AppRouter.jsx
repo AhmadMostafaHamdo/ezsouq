@@ -20,6 +20,7 @@ const MainProfile = lazy(() => import("../components/website/MainProfile"));
 const ContactInfo = lazy(() => import("../components/website/ContactInfo"));
 const CreateOffer = lazy(() => import("../pages/CreateOffer"));
 const Wishlist = lazy(() => import("../pages/Wishlist"));
+const PrivacyPolicy = lazy(() => import("../pages/PrivacyPolicy"));
 const router = createBrowserRouter([
   {
     path: "/",
@@ -47,10 +48,18 @@ const router = createBrowserRouter([
         ),
       },
       {
-        path: "/wishlist",
+        path: "wishlist",
         element: (
           <SuspenseFallback>
             <Wishlist />
+          </SuspenseFallback>
+        ),
+      },
+      {
+        path: "privacy-policy",
+        element: (
+          <SuspenseFallback>
+            <PrivacyPolicy />
           </SuspenseFallback>
         ),
       },

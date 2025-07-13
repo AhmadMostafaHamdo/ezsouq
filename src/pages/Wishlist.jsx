@@ -1,12 +1,12 @@
-import emptyWishlist from "../assets/images/emptyWishlist.svg";
+  import emptyWishlist from "../assets/images/emptyWishlist.svg";
 const Wishlist = () => {
   return (
     <div className="container">
       <div className=" pt-20">
-        <h1 className="font-normal text-[#2F2E41] text-[2rem]">
-          إعلاناتك المفضلة
-        </h1>
-        <div className="flex-center flex-col gap-4 mb-6">
+          <h1 className="font-normal text-[#2F2E41] text-[1.5rem]">
+            إعلاناتك المفضلة
+          </h1>
+        <div className="flex-center flex-col gap-4 mb-10">
           <img src={emptyWishlist} className="h-48" alt="" />
           <p className="font-semibold text-[#3F3D56] text-[1.5rem]">
             لم تقم بعد بإضافة أي إعلان إلى المفضلة

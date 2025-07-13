@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import heart from "../../assets/images/heart.svg";
+import heartempty from "../../assets/images/heartempty.svg";
 import Cookies from "js-cookie";
 import TimeAgo from "../TimeAgo";
 const Card = ({
@@ -36,7 +36,7 @@ const Card = ({
           </p>
           <p>بواسطة {Owner_id?.name}</p>
           <img
-            src={heart}
+            src={heartempty}
             alt=""
             className="w-6 h-5 -translate-x-12 md:-translate-x-2"
           />

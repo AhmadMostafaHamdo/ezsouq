@@ -102,9 +102,13 @@ const AuthForm = ({ fields, schema, btnAuth }) => {
                         {...register("checkbox")}
                         id="accept"
                       />
-                      <label htmlFor="accept" className="text-[12px]">
-                        أوافق على سياسة الخصوصية
-                      </label>
+                      <Link
+                        to="privacy-policy"
+                      >
+                        <label htmlFor="accept" className="text-[12px]">
+                          أوافق على سياسة الخصوصية
+                        </label>
+                      </Link>
                     </div>
                     <p className="text-red mb-1  h-[18px] text-[13px]">
                       {errors["checkbox"]?.message}

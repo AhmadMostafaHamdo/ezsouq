@@ -3,7 +3,8 @@ import menuIcon from "../../../assets/images/menu.svg";
 import logo from "../../../assets/images/logoWithTitleWhite.svg";
 import closeIcon from "../../../assets/images/close.png";
 import search from "../../../assets/images/search.svg";
-import heart from "../../../assets/images/heart.svg";
+import heartempty from "../../../assets/images/heartempty.svg";
+import heartFavorit from "../../../assets/images/heartFavorit.svg";
 import personal from "../../../assets/images/personal.svg";
 import { useEffect, useState } from "react";
 import { ulLinksLogin } from "../../../data/filterData";
@@ -11,8 +12,8 @@ import AuthLinks from "../../common/AuthLinks";
 const HeaderLogin = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [toggleHeart, setToggleHeart] = useState(false);
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
-
   useEffect(() => {
     const handleScroll = () => {
       const scrolled = window.scrollY > 10;
@@ -22,6 +23,9 @@ const HeaderLogin = () => {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+  const handleToggle = () => {
+    setToggleHeart((prev) => !prev);
+  };
   return (
     <div
       className={`text-white  font-bold text-[.87rem] fixed w-full z-10 pt-[1.5px] ${
@@ -72,12 +76,20 @@ const HeaderLogin = () => {
         </div>
         <div className="flex-center gap-4">
           <img src={search} className="w-4 h-4" />
-          <Link to="/wishlist">
-            <img
-              src={heart}
-              className="w-6 h-6"
-              style={{ stroke: "white", fill: "red" }}
-            />
+          <Link to="/wishlist" onClick={handleToggle}>
+            {toggleHeart ? (
+              <img
+                src={heartFavorit}
+                className="w-6 h-6"
+                style={{ stroke: "white", fill: "red" }}
+              />
+            ) : (
+              <img
+                src={heartempty}
+                className="w-6 h-6"
+                style={{ stroke: "white", fill: "red" }}
+              />
+            )}
           </Link>
           <div>
             <img src={personal} className="w-10 h-10" />
