@@ -3,7 +3,7 @@ import MainCreateOffer from "../components/main/MainCreateOffer";
 
 const CreateOffer = () => {
   return (
-    <div className="font-sans">
+    <div className="">
       <HeaderLogin />
       <MainCreateOffer />
     </div>

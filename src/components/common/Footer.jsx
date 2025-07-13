@@ -11,7 +11,7 @@ import { ulLinks } from "../../data/filterData";
 
 const Footer = () => {
   return (
-    <div className="font-sans pt-8 text-white relative bg-primary overflow-hidden">
+    <div className="pt-8 text-white relative bg-primary overflow-hidden">
       <div className="flex flex-col items-center md:flex-row md:flex-between w-[100vw] md:w-[80vw]">
         <img
           src={Ellipse1}
@@ -22,7 +22,11 @@ const Footer = () => {
           className=" bottom-[-5vw] right-[0]  absolute w-[16vw] h-[16vw]"
         />
         <div>
-          <img src={logo} className="w-[130px] md:w-[200px] h-[88px] mr-[66px]" />
+          <img
+            src={logo}
+            className="w-[130px] md:w-[200px] h-[88px] mr-[66px]"
+            loading="lazy"
+          />
         </div>
         <div>
           <ul className="font-semibold text-[1.2rem] h-[200px] flex  gap-2 flex-col">
@@ -41,22 +45,22 @@ const Footer = () => {
               </Link>
             </li>
             <li className="flex">
-              <img src={emailIcon} className="ml-[10px]" />
+              <img src={emailIcon} className="ml-[10px]" loading="lazy" />
               <Link to="" className="font-semibold text-[20px] text-[#D9D8FF]">
                 ezsouq@gmail.com
               </Link>
             </li>
             <li className="flex">
-              <img src={phoneIcone} className="ml-[10px]" />
+              <img src={phoneIcone} className="ml-[10px]" loading="lazy" />
               <Link to="" className="font-semibold text-[20px] text-[#D9D8FF] ">
                 099999999
               </Link>
             </li>
           </ul>
           <div className="flex-between mt-3">
-            <img src={instagram} />
-            <img src={facebook} />
-            <img src={whatsup} />
+            <img src={instagram} loading="lazy" />
+            <img src={facebook} loading="lazy" />
+            <img src={whatsup} loading="lazy" />
           </div>
         </div>
       </div>

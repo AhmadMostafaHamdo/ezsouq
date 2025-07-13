@@ -53,7 +53,7 @@ const ImageSlider = () => {
   return (
     <div className="w-[40vw] h-[100vh]  relative  bg-secondary">
       <div className="w-full flex justify-center h-[22vh]">
-        <img src={logo} alt="logo" className="w-[164px]" />
+        <img src={logo} alt="logo" className="w-[164px]" loading="lazy" />
       </div>
       <Swiper
         modules={[Autoplay]}
@@ -77,14 +77,14 @@ const ImageSlider = () => {
                 <h2
                   className={`${
                     slide.id === index + 1 ? "block" : "none"
-                  } font-sans font-bold`}
+                  }  font-bold`}
                 >
                   {slide.title}
                 </h2>
                 <p
                   className={` ${
                     slide.id === index + 1 ? "block" : "none"
-                  } w-[246px] text-sm  text-center font-sans`}
+                  } w-[246px] text-sm  text-center `}
                 >
                   {slide.desc}
                 </p>

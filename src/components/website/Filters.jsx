@@ -88,7 +88,7 @@ const Filters = () => {
   };
 
   return (
-    <div className="pr-4 md:pr-14 font-sans bg-[#F7F7FF] pt-6 pb-20">
+    <div className="pr-4 md:pr-14  bg-[#F7F7FF] pt-6 pb-20">
       {/* المحافظة */}
       <h1 className="text-xl md:text-2xl font-normal">المحافظة</h1>
       <TabFilter

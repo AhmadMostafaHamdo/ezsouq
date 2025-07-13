@@ -53,10 +53,14 @@ const AuthForm = ({ fields, schema, btnAuth }) => {
                 <h1 className="text-primary text-[1.56rem]  font-bold">
                   أهلا بعودتك !
                 </h1>
-                <p className="font-sans text-[#282828] text-center text-[1.25rem] mb-5 w-full lg:w-[23.56rem]">
+                <p className=" text-[#282828] text-center text-[1.25rem] mb-5 w-full lg:w-[23.56rem]">
                   سجّل الدخول للوصول إلى حسابك ومتابعة نشاطك.
                 </p>
-                <img src={loginImage} className="max-w-[40vw] h-[100vh]" />
+                <img
+                  src={loginImage}
+                  className="max-w-[40vw] h-[100vh]"
+                  loading="lazy"
+                />
               </div>
             )}
           </div>
@@ -64,7 +68,7 @@ const AuthForm = ({ fields, schema, btnAuth }) => {
           <div className="w-full md:w-[60vw]  h-[100vh] bg-white ">
             {btnAuth == "تسجيل الدخول" && (
               <div className="w-full flex justify-center h-[20vh]">
-                <img src={logo} alt="logo" />
+                <img src={logo} alt="logo" loading="lazy" />
               </div>
             )}
             <div className="w-full   sm:w-[400px]  lg:w-[487px] m-auto p-2 ">
@@ -130,10 +134,10 @@ const AuthForm = ({ fields, schema, btnAuth }) => {
                 <button
                   className={`flex-center ${
                     isLogin ? "my-10" : "my-10 md:my-3 "
-                  } p-3 font-sans font-medium text-[.9rem] gap-2 shadow-[0px_2px_13.7px_0px_#0000001A] rounded-xl w-full`}
+                  } p-3  font-medium text-[.9rem] gap-2 shadow-[0px_2px_13.7px_0px_#0000001A] rounded-xl w-full`}
                 >
-                  <img src={googleIcon} alt="googleLogo" /> تسجيل دخول بواسطة
-                  Google
+                  <img src={googleIcon} alt="googleLogo" loading="lazy" /> تسجيل
+                  دخول بواسطة Google
                 </button>
               </div>
             </div>

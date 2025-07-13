@@ -24,7 +24,7 @@ const HeaderLogin = () => {
   }, []);
   return (
     <div
-      className={`text-white font-sans font-bold text-[.87rem] fixed w-full z-10  ${
+      className={`text-white  font-bold text-[.87rem] fixed w-full z-10 pt-[1.5px] ${
         isScrolled
           ? " bg-gradient-to-b from-primary to-main  backdrop-blur-[38.1px]"
           : "bg-primary"
@@ -42,7 +42,7 @@ const HeaderLogin = () => {
             className="w-6 h-6"
           />
         </button>
-        <img src={logo} className="w-20 h-18 ml-16" />
+        <img src={logo} className="w-20 h-12 ml-16" />
         <div className="flex-1">
           <div className=" hidden md:flex justify-end lg:hidden">
             <Link
@@ -72,11 +72,13 @@ const HeaderLogin = () => {
         </div>
         <div className="flex-center gap-4">
           <img src={search} className="w-4 h-4" />
-          <img
-            src={heart}
-            className="w-6 h-6"
-            style={{ stroke: "white", fill: "red" }}
-          />
+          <Link to="/wishlist">
+            <img
+              src={heart}
+              className="w-6 h-6"
+              style={{ stroke: "white", fill: "red" }}
+            />
+          </Link>
           <div>
             <img src={personal} className="w-10 h-10" />
           </div>
@@ -94,13 +96,23 @@ const HeaderLogin = () => {
 
           <div className="relative z-10 w-80 h-full bg-gradient-to-b from-primary to-primary-dark p-6 shadow-xl backdrop-blur-[38.1px]">
             <div className="flex items-center justify-between mb-8">
-              <img src={logo} alt="Logo" className="w-32 h-auto" />
+              <img
+                src={logo}
+                alt="Logo"
+                className="w-32 h-auto"
+                loading="lazy"
+              />
               <button
                 onClick={toggleSidebar}
                 className="text-white"
                 aria-label="Close sidebar"
               >
-                <img src={closeIcon} alt="Close" className="w-8 h-8" />
+                <img
+                  src={closeIcon}
+                  alt="Close"
+                  className="w-8 h-8"
+                  loading="lazy"
+                />
               </button>
             </div>
 

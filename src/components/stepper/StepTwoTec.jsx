@@ -1,72 +1,120 @@
-import React, { useRef } from "react";
-import uploadVideo from "../../assets/images/uploadVideo.svg";
+import { useForm, FormProvider } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { stepTwoTecSchema } from "../../validation/createOffer";
 import InputCreateOffer from "../inputs/InputCreateOffer";
+import VideoUploader from "../common/VideoUploader";
 
-const StepTwoTec = () => {
-  const videoInputRef = useRef(null);
-
-  const handleVideoClick = () => {
-    videoInputRef.current?.click();
-  };
+const StepTwoTec = ({ onSubmit }) => {
+  const methods = useForm({
+    resolver: zodResolver(stepTwoTecSchema),
+    defaultValues: {
+      name: "",
+      deviceType: "",
+      color: "",
+      condition: "",
+      processor: "",
+      memory: "",
+      video: undefined,
+    },
+  });
 
   return (
-    <div className="w-[80vw] md:w-[60vw] lg:w-[45vw]">
-      <form className="w-full flex-center flex-col gap-3 text-[#B9B5FF] pb-6">
-        <InputCreateOffer name="الجهاز" />
-        <select className="w-full p-2 bg-white rounded-[5px] outline-none cursor-pointer border-[1px] border-solid border-[#B9B5FF]">
-          <option value="">النوع</option>
-          <option value="حسكة">الحسكة</option>
-          <option value="درعا">درعا</option>
-          <option value="اللاذقية">اللاذقية</option>
-        </select>
-        <InputCreateOffer name="اللون" />
-        <div className="flex self-start">
-          <div className="ml-6">
-            <input
-              type="radio"
-              id="new"
-              className="ml-2 cursor-pointer"
-              name="type"
-            />
-            <label htmlFor="new" className="cursor-pointer">
-              جديدة
-            </label>
-          </div>
-          <div>
-            <input
-              type="radio"
-              id="old"
-              className="ml-2 cursor-pointer"
-              name="type"
-            />
-            <label htmlFor="old" className="cursor-pointer">
-              مستعملة
-            </label>
-          </div>
-        </div>
-        <InputCreateOffer name="المعالج" />
-        <input
-          type="text"
-          placeholder="الذاكرة"
-          className="w-full border-solid border-[1px] p-2 rounded-[5px] border-[#B9B5FF]"
-        />
+    <FormProvider {...methods}>
+      <form
+        onSubmit={methods.handleSubmit(onSubmit)}
+        className="w-[80vw] md:w-[60vw] lg:w-[45vw] flex flex-col gap-3 text-[#B9B5FF] pb-6"
+      >
+        <InputCreateOffer placeholder="الجهاز" {...methods.register("name")} />
+        {methods.formState.errors.name && (
+          <p className="text-red-500">
+            {/* {methods.formState.errors.device.message} */}
+          </p>
+        )}
 
-        {/* إضافة فيديو */}
-        <div
-          onClick={handleVideoClick}
-          className="flex-between w-full border-solid border-[1px] p-2 rounded-[5px] border-[#B9B5FF] cursor-pointer"
+        <select
+          {...methods.register("deviceType")}
+          className="w-full p-2 bg-white rounded border border-[#B9B5FF]"
         >
-          <p>إضافة فيديو</p>
-          <img src={uploadVideo} alt="رفع فيديو" />
+          <option value="">النوع</option>
+          <option value="لابتوب">لابتوب</option>
+          <option value="موبايل">موبايل</option>
+          <option value="تابلت">تابلت</option>
+        </select>
+        {methods.formState.errors.deviceType && (
+          <p className="text-red-500">
+            {methods.formState.errors.deviceType.message}
+          </p>
+        )}
+
+        <InputCreateOffer placeholder="اللون" {...methods.register("color")} />
+        {methods.formState.errors.color && (
+          <p className="text-red-500">
+            {methods.formState.errors.color.message}
+          </p>
+        )}
+
+        <div className="flex self-start gap-6">
+          <label className="cursor-pointer">
+            <input
+              type="radio"
+              value="new"
+              {...methods.register("condition")}
+              className="ml-2"
+            />{" "}
+            جديدة
+          </label>
+          <label className="cursor-pointer">
+            <input
+              type="radio"
+              value="used"
+              {...methods.register("condition")}
+              className="ml-2"
+            />{" "}
+            مستعملة
+          </label>
         </div>
-        <input
-          type="file"
-          ref={videoInputRef}
-          accept="video/*"
-          className="hidden"
+        {methods.formState.errors.condition && (
+          <p className="text-red-500">
+            {methods.formState.errors.condition.message}
+          </p>
+        )}
+
+        <InputCreateOffer
+          placeholder="المعالج"
+          {...methods.register("processor")}
         />
+        {methods.formState.errors.processor && (
+          <p className="text-red-500">
+            {methods.formState.errors.processor.message}
+          </p>
+        )}
+
+        <InputCreateOffer
+          placeholder="الذاكرة"
+          {...methods.register("memory")}
+        />
+        {methods.formState.errors.memory && (
+          <p className="text-red-500">
+            {methods.formState.errors.memory.message}
+          </p>
+        )}
+
+        <VideoUploader name="video" label="إضافة فيديو" />
+        {methods.formState.errors.video && (
+          <p className="text-red-500">
+            {methods.formState.errors.video.message}
+          </p>
+        )}
+
+        <button
+          type="submit"
+          id="submit-step2"
+          className="self-end bg-primary text-white rounded-xl py-1 px-5"
+        >
+          حفظ ومتابعة
+        </button>
       </form>
-    </div>
+    </FormProvider>
   );
 };
 

@@ -85,7 +85,7 @@ const Main = () => {
   const mainPhotos = product?.main_photos || [];
 
   return (
-    <div className="font-sans bg-[#F7F7FF] md:pt-2 overflow-x-hidden h-fit">
+    <div className=" bg-[#F7F7FF] md:pt-2 overflow-x-hidden h-fit">
       <div className="container items-center md:items-start flex flex-col md:flex-row md:gap-8 lg:gap-11 pt-[5rem]">
         <div className="flex flex-col items-center w-fit gap-6 md:mt-5">
           <div className="w-[100vw] h-[30vh] md:h-[53vh] md:w-[50vh] lg:w-[60vh] md:rounded-2xl relative bg-[#F7F7FF]">
@@ -118,13 +118,13 @@ const Main = () => {
                   className="w-8 h-8 bg-[#F7F7FF] backdrop-blur flex items-center justify-center rounded-md shadow-md"
                   onClick={previousImg}
                 >
-                  <img src={rightArrow} alt="Previous" />
+                  <img src={rightArrow} alt="Previous" loading="lazy" />
                 </button>
                 <button
                   className="w-8 h-8 bg-[#F7F7FF] backdrop-blur flex items-center justify-center rounded-md shadow-md"
                   onClick={nextImg}
                 >
-                  <img src={leftArrow} alt="Next" />
+                  <img src={leftArrow} alt="Next" loading="lazy" />
                 </button>
               </div>
             )}
@@ -174,7 +174,7 @@ const Main = () => {
               </span>
             </li>
             <li className="flex gap-2 items-center mb-2 font-normal text-[#716D97]">
-              <img src={time} alt="Time icon" />
+              <img src={time} alt="Time icon" loading="lazy" />
               <span className="text-[1rem]">
                 {<TimeAgo postDate={product?.createdAt} />}
               </span>

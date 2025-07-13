@@ -9,7 +9,7 @@ const SearchInput = ({ mobile = false }) => {
   return (
     <form
       onSubmit={handleSearch}
-      className={`flex w-[78w] h-10 items-center font-sans bg-main rounded-lg px-4 ${
+      className={`flex w-[78w] h-10 items-center  bg-main rounded-lg px-4 ${
         mobile ? "border border-gray-600 shadow-md" : ""
       }`}
     >
@@ -27,11 +27,10 @@ const SearchInput = ({ mobile = false }) => {
           placeholder="ابحث هنا..."
         />
         <button
-        
           type="submit"
           className="ml-3 mr-2 w-5 h-5 text-gray-500 md:hidden"
         >
-          <img src={searchIcon} alt="Search" />
+          <img src={searchIcon} alt="Search" loading="lazy" />
         </button>
       </div>
     </form>

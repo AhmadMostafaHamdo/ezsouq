@@ -1,13 +1,15 @@
 import React from "react";
 
-const InputCreateOffer = ({ name }) => {
-  return (
+const InputCreateOffer = React.forwardRef(
+  ({ placeholder, type = "text", ...rest }, ref) => (
     <input
-      type="text"
-      placeholder={name}
-      className="w-full border-solid border-[1px] p-2 rounded-[5px] border-[#B9B5FF]"
+      ref={ref}
+      type={type}
+      placeholder={placeholder}
+      className="w-full border p-2 rounded border-[#B9B5FF]"
+      {...rest} /* يسمح بتمرير register */
     />
-  );
-};
+  )
+);
 
 export default InputCreateOffer;

@@ -71,7 +71,7 @@ const VerifyCode = () => {
   };
   const onSubmit = (data) => {};
   return (
-    <div className="h-[100vh] flex-center font-sans">
+    <div className="h-[100vh] flex-center ">
       <div className="w-[90vw] h-[90vh] md:[90vw]  flex-center shadow-custom">
         <div className="hidden md:block w-[35vw]  bg-secondary h-[90vh]">
           {/* right */}

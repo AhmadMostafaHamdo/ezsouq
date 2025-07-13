@@ -30,6 +30,7 @@ const ThumbnailImage = ({ src, isSelected, onClick }) => {
         onClick={onClick}
         onLoad={() => setIsLoaded(true)}
         onError={() => setIsLoaded(true)}
+        loading="lazy"
       />
     </div>
   );

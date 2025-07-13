@@ -25,7 +25,7 @@ const Header = () => {
   }, []);
   return (
     <header
-      className={`text-white font-sans py-1 font-bold text-[.87rem] fixed  w-full z-10  md:${
+      className={`text-white  py-1 font-bold text-[.87rem] fixed  w-full z-10  md:${
         isScrolled ? "backdrop-blur-[20px]  bg-[#0F00FF80]" : "bg-primary"
       }`}
     >
@@ -49,7 +49,12 @@ const Header = () => {
             className="flex-center w-8 h-8"
             aria-label="Toggle search"
           >
-            <img src={searchIcon} alt="Search" className="w-5 h-5" />
+            <img
+              src={searchIcon}
+              alt="Search"
+              className="w-5 h-5"
+              loading="lazy"
+            />
           </button>
         </div>
         {/* Mobile Search Input */}
