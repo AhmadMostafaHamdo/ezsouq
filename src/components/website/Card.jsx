@@ -46,7 +46,9 @@ const Card = ({
           <img
             src={`https://ezsouq.store/uploads/images/${main_photos?.[0]}`}
             alt=""
-            className="h-40 w-full object-cover rounded-md"
+            className="h-40 w-full object-cover rounded-md opacity-0"
+            onLoad={(e) => e.target.classList.add("opacity-100")}
+            loading="lazy"
           />
         </div>
         <div className="font-normal">

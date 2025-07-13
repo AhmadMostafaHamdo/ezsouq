@@ -6,6 +6,7 @@ import cities from "./cities/sliceCities";
 import steps from "./steps/stepsSlice";
 import users from "./users/usersSlice";
 import wishlist from "./wishlist/wishlistSlice";
+import productsByCat from "./getProductsByCat/getProductByCatSlice";
 import storage from "redux-persist/lib/storage";
 import {
   FLUSH,
@@ -44,7 +45,11 @@ const persistUsers = {
 const persistWishlist = {
   key: "wishlist",
   storage,
-}
+};
+const persistProductsByCat = {
+  key: "productsByCat",
+  storage,
+};
 const rootReducer = combineReducers({
   auth: persistReducer(persistAuth, auth),
   products: persistReducer(persistProducts, products),
@@ -53,6 +58,7 @@ const rootReducer = combineReducers({
   steps: persistReducer(persistSteps, steps),
   users: persistReducer(persistUsers, users),
   wishlist: persistReducer(persistWishlist, wishlist),
+  productsByCat: persistReducer(persistProductsByCat, productsByCat),
 });
 export const store = configureStore({
   reducer: rootReducer,

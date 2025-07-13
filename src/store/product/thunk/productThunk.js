@@ -16,7 +16,7 @@ export const productThunk = createAsyncThunk(
       if (filters.sortBy) queryParams.append("sortBy", filters.sortBy);
       if (filters.page) queryParams.append("page", filters.page);
       if (filters.limit) queryParams.append("limit", filters.limit);
-console.log(filters?.category);
+      console.log(filters?.category);
       // التصحيح: إضافة المسار الصحيح
       const url = `user/fliteredProducts?${queryParams.toString()}`;
       const res = await axios.get(url);

@@ -1,9 +1,4 @@
-import {
-  createBrowserRouter,
-  RouterProvider,
-  useNavigate,
-} from "react-router-dom";
-import Cookies from "js-cookie";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { lazy } from "react";
 import SuspenseFallback from "../feedback/suspenseFallback/suspenseFallback";
 import ForgotPassword from "../pages/ForgotPassword";
@@ -21,6 +16,9 @@ const ContactInfo = lazy(() => import("../components/website/ContactInfo"));
 const CreateOffer = lazy(() => import("../pages/CreateOffer"));
 const Wishlist = lazy(() => import("../pages/Wishlist"));
 const PrivacyPolicy = lazy(() => import("../pages/PrivacyPolicy"));
+const Cars = lazy(() => import("../pages/Cars"));
+const Tech = lazy(() => import("../pages/Tech"));
+const RealEstate = lazy(() => import("../pages/RealEstate"));
 const router = createBrowserRouter([
   {
     path: "/",
@@ -52,6 +50,30 @@ const router = createBrowserRouter([
         element: (
           <SuspenseFallback>
             <Wishlist />
+          </SuspenseFallback>
+        ),
+      },
+      {
+        path: "cars",
+        element: (
+          <SuspenseFallback>
+            <Cars />
+          </SuspenseFallback>
+        ),
+      },
+      {
+        path: "real-estate",
+        element: (
+          <SuspenseFallback>
+            <RealEstate />
+          </SuspenseFallback>
+        ),
+      },
+      {
+        path: "tech",
+        element: (
+          <SuspenseFallback>
+            <Tech />
           </SuspenseFallback>
         ),
       },

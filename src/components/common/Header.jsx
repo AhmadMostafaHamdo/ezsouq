@@ -25,7 +25,7 @@ const Header = () => {
   }, []);
   return (
     <header
-      className={`text-white  py-1 font-bold text-[.87rem] fixed  w-full z-10  md:${
+      className={`text-white  py-1 font-bold text-[.87rem] fixed  w-full z-10 bg-primary  md:${
         isScrolled ? "backdrop-blur-[20px]  bg-[#0F00FF80]" : "bg-primary"
       }`}
     >

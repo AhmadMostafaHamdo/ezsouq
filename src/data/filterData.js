@@ -15,8 +15,8 @@ export const ulLinksLogin = [
   { name: "الأحدث", link: "/newest" },
   { name: "منوعات", link: "/oldest" },
   { name: "سيارات", link: "/cars" },
-  { name: "عقارات", link: "/cars" },
-  { name: "موبايلات", link: "/tec" },
+  { name: "عقارات", link: "/real-estate" },
+  { name: "موبايلات", link: "/tech" },
   { name: "نشر إعلان", link: "/create-offer" },
 ];
 export const ulLinks = [

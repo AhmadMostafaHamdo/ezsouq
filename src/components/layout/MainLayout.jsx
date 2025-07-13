@@ -6,9 +6,11 @@ import Footer from "../common/Footer";
 
 export const MainLayout = () => {
   return (
-    <div className="overflow-x-hidden font-sans">
+    <div className="overflow-x-hidden font-sans flex flex-col min-h-[100vh]">
       {Cookies.get("token") ? <HeaderLogin /> : <Header />}
-      <Outlet />
+      <div className="min-h-[100vh]">
+        <Outlet />
+      </div>
       <Footer />
     </div>
   );
