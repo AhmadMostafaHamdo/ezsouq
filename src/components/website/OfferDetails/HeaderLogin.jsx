@@ -6,23 +6,15 @@ import search from "../../../assets/images/search.svg";
 import heartempty from "../../../assets/images/heartempty.svg";
 import heartFavorit from "../../../assets/images/heartFavorit.svg";
 import personal from "../../../assets/images/personal.svg";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { ulLinksLogin } from "../../../data/filterData";
-import AuthLinks from "../../common/AuthLinks";
+import Sidebar from "../../common/Sidebar";
+import { useScrolled } from "../../../hooks/useScrolled";
 const HeaderLogin = () => {
-  const [isScrolled, setIsScrolled] = useState(false);
+  const isScrolled = useScrolled(10);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [toggleHeart, setToggleHeart] = useState(false);
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
-  useEffect(() => {
-    const handleScroll = () => {
-      const scrolled = window.scrollY > 10;
-      setIsScrolled(scrolled);
-    };
-
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
   const handleToggle = () => {
     setToggleHeart((prev) => !prev);
   };
@@ -96,59 +88,12 @@ const HeaderLogin = () => {
           </div>
         </div>
       </div>
-
-      {/* Mobile Sidebar */}
-      {isSidebarOpen && (
-        <div className="fixed inset-0 z-50 flex">
-          <div
-            className="fixed inset-0 bg-black bg-opacity-50"
-            onClick={toggleSidebar}
-            aria-hidden="true"
-          />
-
-          <div className="relative z-10 w-80 h-full bg-gradient-to-b from-primary to-primary-dark p-6 shadow-xl backdrop-blur-[38.1px]">
-            <div className="flex items-center justify-between mb-8">
-              <img
-                src={logo}
-                alt="Logo"
-                className="w-32 h-auto"
-                loading="lazy"
-              />
-              <button
-                onClick={toggleSidebar}
-                className="text-white"
-                aria-label="Close sidebar"
-              >
-                <img
-                  src={closeIcon}
-                  alt="Close"
-                  className="w-8 h-8"
-                  loading="lazy"
-                />
-              </button>
-            </div>
-
-            <nav className="mt-8">
-              <ul className="space-y-6 text-lg">
-                {ulLinksLogin.map(({ link, name }) => (
-                  <li className="text-center" key={link}>
-                    <Link
-                      to={link}
-                      className="block py-2 transition-colors hover:text-secondary"
-                    >
-                      {name}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </nav>
-
-            <div className="mt-12">
-              <AuthLinks isMobile />
-            </div>
-          </div>
-        </div>
-      )}
+      <Sidebar
+        toggleSidebar={toggleSidebar}
+        logo={logo}
+        isSidebarOpen={isSidebarOpen}
+      />
+      {""}
     </div>
   );
 };
