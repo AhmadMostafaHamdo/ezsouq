@@ -25,6 +25,15 @@ export const ulLinks = [
   { name: "نشر إعلان", link: "" },
   { name: "إعلاناتي", link: "" },
   { name: "اتصل بنا", link: "" },
+  { name: "سياسة الخصوصية", link: "/privacy-policy" },
+];
+export const ulLinksFooter = [
+  { name: "الرئيسية", link: "" },
+  { name: "عنا", link: "" },
+  { name: "نشر إعلان", link: "" },
+  { name: "إعلاناتي", link: "" },
+  { name: "اتصل بنا", link: "" },
+  { name: "سياسة الخصوصية", link: "/privacy-policy" },
 ];
 export const sortOptions = [
   { value: "newest", label: "الأحدث" },

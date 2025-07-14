@@ -1,5 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm, FormProvider } from "react-hook-form"; // استيراد FormProvider
+import { useForm, FormProvider } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { stepOneSchema } from "../../validation/createOffer";
 import Select from "../select/Select";
@@ -12,7 +12,6 @@ const StepOne = ({ onSubmit }) => {
   const dispatch = useDispatch();
   const { governorates } = useSelector((state) => state.governorates);
   const { cities } = useSelector((state) => state.cities);
-
   const methods = useForm({
     resolver: zodResolver(stepOneSchema),
     defaultValues: {

@@ -19,6 +19,7 @@ const PrivacyPolicy = lazy(() => import("../pages/PrivacyPolicy"));
 const Cars = lazy(() => import("../pages/Cars"));
 const Tech = lazy(() => import("../pages/Tech"));
 const RealEstate = lazy(() => import("../pages/RealEstate"));
+const ContactUs = lazy(() => import("../pages/ContactUs"));
 const router = createBrowserRouter([
   {
     path: "/",
@@ -66,6 +67,14 @@ const router = createBrowserRouter([
         element: (
           <SuspenseFallback>
             <RealEstate />
+          </SuspenseFallback>
+        ),
+      },
+      {
+        path: "contact-us",
+        element: (
+          <SuspenseFallback>
+            <ContactUs />
           </SuspenseFallback>
         ),
       },

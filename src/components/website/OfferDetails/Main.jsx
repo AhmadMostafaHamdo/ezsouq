@@ -1,10 +1,13 @@
 import { useEffect, useState, useRef } from "react";
+
+import iconProfile from "../../../assets/images/profileIcon.svg";
+import phoneIcon from "../../../assets/images/phoneIcon.svg";
+import whatsIcon from "../../../assets/images/whatsIcon.svg";
 import heartDetails from "../../../assets/images/heartDeatails.svg";
 import personalImg from "../../../assets/images/personal.svg";
 import start from "../../../assets/images/start.svg";
 import leftArrow from "../../../assets/images/leftArrow.svg";
 import rightArrow from "../../../assets/images/rightArrow.svg";
-import { email } from "../../../data/offerDetails";
 import { Link, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { productThunkById } from "../../../store/product/thunk/productThunkById";
@@ -15,9 +18,9 @@ import TimeAgo from "../../TimeAgo";
 import Spinner from "../../../feedback/loading/Spinner";
 import ThumbnailImage from "../../../feedback/loading/ThumbnailImage";
 import { userThunkById } from "../../../store/users/thunk/userThunkById";
-
 const Main = () => {
   const { product } = useSelector((state) => state.products);
+  const { user } = useSelector((state) => state.users);
   const [selectedImage, setSelectedImage] = useState("");
   const [isImageLoaded, setIsImageLoaded] = useState(false);
   const { id } = useParams();
@@ -26,9 +29,8 @@ const Main = () => {
   useEffect(() => {
     dispatch(productThunkById(id));
   }, [dispatch, id]);
-
   useEffect(() => {
-    dispatch(userThunkById(product?.Owner_id));
+    dispatch(userThunkById(product?.Owner_id?._id));
   }, [dispatch, id]);
   useEffect(() => {
     if (product?.main_photos?.length) {
@@ -83,7 +85,6 @@ const Main = () => {
     );
 
   const mainPhotos = product?.main_photos || [];
-
   return (
     <div className=" bg-[#F7F7FF] md:pt-2 overflow-x-hidden h-fit">
       <div className="container items-center md:items-start flex flex-col md:flex-row md:gap-8 lg:gap-11 pt-[5rem]">
@@ -211,14 +212,24 @@ const Main = () => {
                 />
               </div>
               <div>
-                {email.map((info, index) => (
-                  <li key={index} className="flex items-center gap-2 mb-2">
-                    <img src={info.img} alt={info.info} />
-                    <span className="font-normal text-[.7rem] lg:text-[.88rem] text-[#716D97]">
-                      {info.info}
-                    </span>
-                  </li>
-                ))}
+                <li className="flex items-center gap-2 mb-2">
+                  <img src={iconProfile} alt="" />
+                  <span className="font-normal text-[.7rem] lg:text-[.88rem] text-[#716D97]">
+                    {user?.name}
+                  </span>
+                </li>
+                <li className="flex items-center gap-2 mb-2">
+                  <img src={phoneIcon} alt="" />
+                  <span className="font-normal text-[.7rem] lg:text-[.88rem] text-[#716D97]">
+                    {user?.email}
+                  </span>
+                </li>
+                <li className="flex items-center gap-2 mb-2">
+                  <img src={whatsIcon} alt="" />
+                  <span className="font-normal text-[.7rem] lg:text-[.88rem] text-[#716D97]">
+                    {user?.whats_app}
+                  </span>
+                </li>
               </div>
               <div className="flex flex-col items-end gap-4">
                 <p className="flex items-center justify-end mb-6">
@@ -229,7 +240,7 @@ const Main = () => {
                 </p>
                 <Link
                   to="/profile"
-                  className="bg-primary p-2 text-white rounded-md font-bold text-[.75rem]"
+                  className="bg-primary p-2 w-[118px] text-white rounded-md font-bold text-[.75rem]"
                 >
                   عرض الملف الشخصي
                 </Link>

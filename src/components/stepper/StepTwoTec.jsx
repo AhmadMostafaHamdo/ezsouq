@@ -17,7 +17,6 @@ const StepTwoTec = ({ onSubmit }) => {
       video: undefined,
     },
   });
-
   return (
     <FormProvider {...methods}>
       <form

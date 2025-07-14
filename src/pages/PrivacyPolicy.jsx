@@ -1,5 +1,6 @@
 import { Link } from "react-router";
 import security from "../assets/images/security.svg";
+import { useEffect, useRef } from "react";
 const PrivacyPolicy = () => {
   const sections = [
       {
@@ -54,9 +55,12 @@ const PrivacyPolicy = () => {
         ],
       },
     ];
-
+const offer = useRef();
+useEffect(() => {
+  offer.current.scrollIntoView();
+}, []);
   return (
-    <div className="pt-16">
+    <div className="pt-16" ref={offer}>
       <div className="container">
         <h1 className="font-normal text-[#23193E]  text-[1.5rem]">
           سياسة الخصوصية
@@ -65,18 +69,20 @@ const PrivacyPolicy = () => {
           نحن نُقدّر خصوصيتك ونحرص على حماية بياناتك الشخصية. توضح هذه السياسة
           كيفية جمع واستخدام ومشاركة المعلومات عند استخدامك لتطبيقنا.
         </p>
-        {sections.map((section, index) => (
-          <div key={index} className="mb-8">
-            <p className="text-[#23193E] text-[1.25rem] font-normal">
-              {section.title}
-            </p>
-            <div className="pr-2">
-              {section?.points?.map((point, index) => (
-                <li key={index}>{point}</li>
-              ))}
+        <div className="leading-10">
+          {sections.map((section, index) => (
+            <div key={index} className="mb-8">
+              <p className="text-[#23193E] text-[1.25rem] font-normal">
+                {section.title}
+              </p>
+              <div className="pr-2">
+                {section?.points?.map((point, index) => (
+                  <li key={index}>{point}</li>
+                ))}
+              </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
         <p className="text-[#23193E] text-[.87rem] text-center m-10">
           آخر تحديث: 11 يوليو 2025
         </p>
