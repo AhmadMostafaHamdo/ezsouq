@@ -9,9 +9,9 @@ const StepTwoTec = ({ onSubmit }) => {
     resolver: zodResolver(stepTwoTecSchema),
     defaultValues: {
       name: "",
-      deviceType: "",
+      Category_name: "",
       color: "",
-      condition: "",
+      isnew: "",
       processor: "",
       memory: "",
       video: undefined,
@@ -32,17 +32,17 @@ const StepTwoTec = ({ onSubmit }) => {
         )}
 
         <select
-          {...methods.register("deviceType")}
+          {...methods.register("Category_name")}
           className="w-full p-2 bg-white rounded border border-[#B9B5FF]"
         >
           <option value="">النوع</option>
-          <option value="لابتوب">لابتوب</option>
-          <option value="موبايل">موبايل</option>
-          <option value="تابلت">تابلت</option>
+          <option value="لابتوب">عقارات</option>
+          <option value="موبايلات">موبايلات</option>
+          <option value="تابلت">سيارات</option>
         </select>
-        {methods.formState.errors.deviceType && (
+        {methods.formState.errors.Category_name && (
           <p className="text-red-500">
-            {methods.formState.errors.deviceType.message}
+            {methods.formState.errors.Category_name.message}
           </p>
         )}
 
@@ -58,7 +58,7 @@ const StepTwoTec = ({ onSubmit }) => {
             <input
               type="radio"
               value="new"
-              {...methods.register("condition")}
+              {...methods.register("isnew")}
               className="ml-2"
             />{" "}
             جديدة
@@ -67,15 +67,15 @@ const StepTwoTec = ({ onSubmit }) => {
             <input
               type="radio"
               value="used"
-              {...methods.register("condition")}
+              {...methods.register("isnew")}
               className="ml-2"
             />{" "}
             مستعملة
           </label>
         </div>
-        {methods.formState.errors.condition && (
+        {methods.formState.errors.isnew && (
           <p className="text-red-500">
-            {methods.formState.errors.condition.message}
+            {methods.formState.errors.isnew.message}
           </p>
         )}
 

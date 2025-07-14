@@ -19,7 +19,7 @@
         carName: "",
         color: "",
         dealType: "",
-        condition: "",
+        isnew: "",
         video: undefined,
       },
     });
@@ -68,8 +68,8 @@
             <label className="block cursor-pointer">
               <input
                 type="radio"
-                value="new"
-                {...register("condition")}
+                value="جديدة"
+                {...register("isnew")}
                 className="ml-2"
               />
               جديدة
@@ -77,8 +77,8 @@
             <label className="block cursor-pointer">
               <input
                 type="radio"
-                value="used"
-                {...register("condition")}
+                value="مستعملة"
+                {...register("isnew")}
                 className="ml-2"
               />
               مستعملة
@@ -88,7 +88,7 @@
         {errors.dealType && (
           <p className="text-red-500">{errors.dealType.message}</p>
         )}
-        {errors.condition && (
+        {errors.isnew && (
           <p className="text-red-500">{errors.condition.message}</p>
         )}
 

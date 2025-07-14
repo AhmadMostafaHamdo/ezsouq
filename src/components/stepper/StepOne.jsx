@@ -20,7 +20,7 @@ const StepOne = ({ onSubmit }) => {
       city: "",
       description: "",
       price: "",
-      images: [],
+      main_photos: [],
     },
   });
   const {
@@ -66,11 +66,11 @@ const StepOne = ({ onSubmit }) => {
           <Error error={errors?.price?.message} />
 
           <ImageUploader
-            name="images"
+            name="main_photos"
             label="صور أخرى (يمكنك رفع أكثر من صورة)"
-            error={errors.images}
+            error={errors.main_photos}
           />
-          <Error error={errors?.images?.message} />
+          <Error error={errors?.main_photos?.message} />
           <button type="submit" id="submit-step1" className="hidden"></button>
         </form>
       </FormProvider>

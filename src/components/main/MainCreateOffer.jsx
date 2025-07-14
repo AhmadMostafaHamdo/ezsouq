@@ -25,18 +25,42 @@ const MainCreateOffer = () => {
 
   const handleStepTwoSubmit = async (data) => {
     setStepTwoData(data);
+
+    // ✅ دمج بيانات الخطوتين
     const finalData = { ...stepOneData, ...data };
     console.log("📦 إعلان كامل:", finalData);
-    try {
-      const res = await axios.post(
-        `/user/add_product?owner_id=${userId}`,
-        finalData
-      );
-      console.log(res.data);
-    } catch (error) {
-      console.log(error);
+
+    const formData = new FormData();
+
+    // ✅ ملء الحقول النصية (عدا الصور)
+    Object.entries(finalData).forEach(([key, value]) => {
+      if (key === "main_photos") return; // سنتعامل معها بشكل خاص
+      if (value !== undefined && value !== null) {
+        formData.append(key, value);
+      }
+    });
+
+    // ✅ رفع الصور
+    finalData.main_photos?.forEach((file) => {
+      formData.append("main_photos", file); // لا تستخدم [] ما لم يطلبها الـ backend
+    });
+
+    // ✅ التحقق من البيانات المُرسلة
+    console.log("🧪 FormData المرسلة:");
+    for (const [key, value] of formData.entries()) {
+      console.log(key, value);
     }
-    // dispatch(createOfferThunk(finalData));
+
+    try {
+      const res = await axios.post(`/user/add_product`, formData, {
+        params: { owner_id: userId }, // تم نقل owner_id إلى باراميتر URL
+        // ❌ لا تضع Content-Type يدوياً
+      });
+      console.log("✅ تم النشر بنجاح:", res.data);
+      
+    } catch (error) {
+      console.error("❌ فشل النشر:", error.response?.data || error.message);
+    }
   };
 
   return (

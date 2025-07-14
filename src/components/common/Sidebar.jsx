@@ -8,7 +8,7 @@ const Sidebar = ({ toggleSidebar, isSidebarOpen, logo }) => {
   const token = Cookies.get("token");
   return (
     <div
-      className={`fixed inset-y-0 right-0 w-80 h-full bg-gradient-to-b from-primary to-primary-dark p-6 shadow-xl backdrop-blur-[38.1px] transform transition-transform duration-300 ease-in-out ${
+      className={`fixed inset-y-0 right-0 w-80 h-full bg-gradient-to-b from-primary to-primary-dark p-6 shadow-xl backdrop-blur-[38.1px] transform transition-transform duration-300 ease-in-out   ${
         isSidebarOpen ? "translate-x-0" : "translate-x-full"
       }`}
     >

@@ -8,31 +8,31 @@ const ImageUploader = ({ label, name, error }) => {
   const fileInputRef = useRef(null);
   const imageUrlsRef = React.useRef([]);
 
-  const images = watch(name) || [];
+  const main_photos = watch(name) || [];
 
   const imageUrls = useMemo(() => {
     imageUrlsRef.current.forEach(URL.revokeObjectURL);
-    const newUrls = images.map((image) => URL.createObjectURL(image));
+    const newUrls = main_photos.map((image) => URL.createObjectURL(image));
     imageUrlsRef.current = newUrls;
     return newUrls;
-  }, [images]);
+  }, [main_photos]);
 
   const handleAddImages = useCallback(
     (e) => {
       if (e.target.files.length > 0) {
-        const newImages = [...images, ...Array.from(e.target.files)];
+        const newImages = [...main_photos, ...Array.from(e.target.files)];
         setValue(name, newImages, { shouldValidate: true });
       }
     },
-    [images, name, setValue]
+    [main_photos, name, setValue]
   );
 
   const removeImage = useCallback(
     (index) => {
-      const newImages = images.filter((_, i) => i !== index);
+      const newImages = main_photos.filter((_, i) => i !== index);
       setValue(name, newImages, { shouldValidate: true });
     },
-    [images, name, setValue]
+    [main_photos, name, setValue]
   );
 
   React.useEffect(() => {

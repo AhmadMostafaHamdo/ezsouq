@@ -4,7 +4,9 @@ export const stepOneSchema = z.object({
   city: z.string().min(1, "يجب اختيار المدينة"),
   description: z.string().min(1, "يجب كتابة وصف"),
   price: z.string().min(1, "يجب إدخال السعر"),
-  images: z.array(z.instanceof(File)).min(1, "يجب رفع صورة واحدة على الأقل"),
+  main_photos: z
+    .array(z.instanceof(File))
+    .min(1, "يجب رفع صورة واحدة على الأقل"),
 });
 /* الخطوة ٢ – سيارات (Home) */
 export const stepTwoHomeSchema = z.object({
@@ -13,7 +15,7 @@ export const stepTwoHomeSchema = z.object({
   dealType: z.enum(["rent", "sale"], {
     errorMap: () => ({ message: "اختر نوع العملية" }),
   }),
-  condition: z.enum(["new", "used"], {
+  isnew: z.enum(["جديدة", "مستعملة"], {
     errorMap: () => ({ message: "اختر الحالة" }),
   }),
   video: z.instanceof(File).optional(),
@@ -22,9 +24,9 @@ export const stepTwoHomeSchema = z.object({
 /* الخطوة ٢ – أجهزة تقنية (Tec) */
 export const stepTwoTecSchema = z.object({
   name: z.string().nonempty("يجب إدخال اسم الجهاز"),
-  deviceType: z.string().nonempty("يجب اختيار النوع"),
+  Category_name: z.string().nonempty("يجب اختيار النوع"),
   color: z.string().nonempty("يجب إدخال اللون"),
-  condition: z.enum(["new", "used"], {
+  isnew: z.enum(["new", "used"], {
     errorMap: () => ({ message: "اختر الحالة" }),
   }),
   processor: z.string().nonempty("يجب إدخال نوع المعالج"),

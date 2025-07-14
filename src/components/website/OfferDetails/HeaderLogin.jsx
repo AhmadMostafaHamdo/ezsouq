@@ -20,11 +20,7 @@ const HeaderLogin = () => {
   };
   return (
     <div
-      className={`text-white  font-bold text-[.87rem] fixed w-full z-10 py-[1.5px] ${
-        isScrolled
-          ? " bg-gradient-to-b from-primary to-main  backdrop-blur-[38.1px]"
-          : "bg-primary"
-      }`}
+      className={`bg-primary text-white  font-bold text-[.87rem] fixed w-full z-10 py-[1.5px] `}
     >
       <div className="container flex items-center justify-between ">
         <button
