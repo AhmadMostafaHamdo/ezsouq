@@ -14,7 +14,6 @@ const Profile = () => {
       <div className="pt-[5rem]">
         <Outlet />
       </div>
-      <Footer />
     </div>
   );
 };

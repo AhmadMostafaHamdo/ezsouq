@@ -30,9 +30,9 @@ export const ulLinks = [
 export const ulLinksFooter = [
   { name: "الرئيسية", link: "" },
   { name: "عنا", link: "" },
-  { name: "نشر إعلان", link: "" },
+  { name: "نشر إعلان", link: "/create-offer" },
   { name: "إعلاناتي", link: "" },
-  { name: "اتصل بنا", link: "" },
+  { name: "اتصل بنا", link: "/contact-us" },
   { name: "سياسة الخصوصية", link: "/privacy-policy" },
 ];
 export const sortOptions = [

@@ -1,4 +1,3 @@
-import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm, FormProvider } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { stepOneSchema } from "../../validation/createOffer";
@@ -7,6 +6,7 @@ import InputCreateOffer from "../inputs/InputCreateOffer";
 import ImageUploader from "../common/ImageUploader";
 import { thunkCities } from "../../store/cities/thunk/citiesThunk";
 import Error from "../../feedback/error/Error";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 const StepOne = ({ onSubmit }) => {
   const dispatch = useDispatch();

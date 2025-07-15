@@ -32,10 +32,10 @@ const router = createBrowserRouter([
       {
         index: true,
         element: (
-          <>
+          <SuspenseFallback>
             <Main />
             <Filters />
-          </>
+          </SuspenseFallback>
         ),
       },
       {
