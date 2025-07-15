@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import heartempty from "../../assets/images/heartempty.svg";
+import emptyHeart from "../../assets/images/emptyHeart.svg";
 import Cookies from "js-cookie";
 import TimeAgo from "../TimeAgo";
 const Card = ({
@@ -12,7 +12,6 @@ const Card = ({
   type,
   city,
   price,
-  loading,
 }) => {
   const navigate = useNavigate();
   const handleOfferClick = (e) => {
@@ -29,16 +28,16 @@ const Card = ({
       onClick={handleOfferClick}
       className="p-[.5rem] w-[86vw] md:w-60  [.75rem] [1.375rem]  shadow-card bg-white rounded-[8px] cursor-pointer"
     >
-      <div className="flex flex-col items-start md:full">
+      <div className="flex flex-col items-start md:w-full">
         <div className="flex-between mb-[.6rem] w-full  font-normal text-[.75rem] text-[#A3A0DD] h-30">
           <p>
             <TimeAgo postDate={createdAt} />
           </p>
-          <p>بواسطة {Owner_id?.name}</p>
+          <p className="mr-1">بواسطة {Owner_id?.name}</p>
           <img
-            src={heartempty}
+            src={emptyHeart}
             alt=""
-            className="w-6 h-5 -translate-x-12 md:-translate-x-2"
+            className="w-6 h-5 mr-auto"
           />
           <p></p>
         </div>

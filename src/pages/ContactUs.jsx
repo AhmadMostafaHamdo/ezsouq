@@ -16,7 +16,7 @@ const ContactUs = () => {
     contact.current.scrollIntoView();
   }, []);
   return (
-    <div className="pt-20 bg-[#F7F7FF] pb-8" ref={contact}>
+    <div className="pt-20 pb-8" ref={contact}>
       <div className="container flex gap-40">
         <div>
           <h1 className="font-normal text-[#2F2E41] text-[1.5rem] leading-9 mb-3">

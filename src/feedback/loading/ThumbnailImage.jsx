@@ -14,8 +14,8 @@ const ThumbnailImage = ({ src, isSelected, onClick }) => {
   return (
     <div className="relative">
       {!isLoaded && (
-        <div className="absolute inset-0 flex items-center justify-center bg-[#F7F7FF] rounded-[6px]">
-          <Spinner className="w-4 h-4" />
+        <div className="absolute inset-0 flex items-center justify-center">
+          <Spinner className="w-8 h-8" />
         </div>
       )}
       <img

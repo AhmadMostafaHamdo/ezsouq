@@ -3,7 +3,7 @@ import menuIcon from "../../../assets/images/menu.svg";
 import logo from "../../../assets/images/logoWithTitleWhite.svg";
 import closeIcon from "../../../assets/images/close.png";
 import search from "../../../assets/images/search.svg";
-import heartempty from "../../../assets/images/heartempty.svg";
+import emptyHeart from "../../../assets/images/emptyHeart.svg";
 import heartFavorit from "../../../assets/images/heartFavorit.svg";
 import personal from "../../../assets/images/personal.svg";
 import { useState } from "react";
@@ -63,7 +63,9 @@ const HeaderLogin = () => {
           </ul>
         </div>
         <div className="flex-center gap-4">
-          <img src={search} className="w-4 h-4" />
+          <Link to="/search">
+            <img src={search} className="w-4 h-4" />
+          </Link>
           <Link to="/wishlist" onClick={handleToggle}>
             {toggleHeart ? (
               <img
@@ -73,7 +75,7 @@ const HeaderLogin = () => {
               />
             ) : (
               <img
-                src={heartempty}
+                src={emptyHeart}
                 className="w-6 h-6"
                 style={{ stroke: "white", fill: "red" }}
               />

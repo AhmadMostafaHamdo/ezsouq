@@ -146,7 +146,7 @@ const Main = () => {
         </div>
 
         {/* Product Details Section */}
-        <div className="w-full md:w-[50vw] pt-4 md:pt-2 pb-1">
+        <div className="w-full md:w-[70vw] pt-4 md:pt-2 pb-1">
           <div className="flex justify-between md:block">
             <div className="md:flex md:justify-between">
               <h1 className="text-nowrap text-[1.2rem] md:text-[1.5rem] lg:text-[1.8rem] text-[#3F3D56] font-bold">
@@ -240,7 +240,7 @@ const Main = () => {
                 </p>
                 <Link
                   to="/profile"
-                  className="bg-primary p-2 w-[118px] text-white rounded-md font-bold text-[.75rem]"
+                  className="bg-primary p-2 w-fit md:w-[120px] lg:w-fit  text-white rounded-md font-bold text-[.75rem]"
                 >
                   عرض الملف الشخصي
                 </Link>

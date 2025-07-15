@@ -8,7 +8,7 @@ export const MainLayout = () => {
   return (
     <div className="overflow-x-hidden font-sans flex flex-col min-h-[100vh]">
       {Cookies.get("token") ? <HeaderLogin /> : <Header />}
-      <div className="min-h-[100vh]">
+      <div className="min-h-[100vh] bg-[#F7F7FF]">
         <Outlet />
       </div>
       <Footer />
