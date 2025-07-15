@@ -21,6 +21,7 @@ const Tech = lazy(() => import("../pages/Tech"));
 const RealEstate = lazy(() => import("../pages/RealEstate"));
 const ContactUs = lazy(() => import("../pages/ContactUs"));
 const Search = lazy(() => import("../pages/Search"));
+const Report = lazy(() => import("../pages/Report"));
 const router = createBrowserRouter([
   {
     path: "/",
@@ -76,6 +77,14 @@ const router = createBrowserRouter([
         element: (
           <SuspenseFallback>
             <ContactUs />
+          </SuspenseFallback>
+        ),
+      },
+      {
+        path: "/report",
+        element: (
+          <SuspenseFallback>
+            <Report />
           </SuspenseFallback>
         ),
       },

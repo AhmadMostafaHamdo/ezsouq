@@ -1,8 +1,13 @@
+import { useEffect, useRef } from "react";
 import filter from "../assets/images/filter.svg";
 import searchFilter from "../assets/images/searchFilter.svg";
 const Search = () => {
+    const contact = useRef();
+    useEffect(() => {
+      contact.current.scrollIntoView();
+    }, []);
   return (
-    <div className="bg-[#F7F7FF]">
+    <div className="bg-[#F7F7FF]" ref={contact}>
       <div className="container pt-20 ">
         <div className="flex items-center gap-10">
           <h1 className="font-normal text-[#2F2E41] text-[1.5rem] leading-9 mb-3">

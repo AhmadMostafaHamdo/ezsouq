@@ -249,9 +249,11 @@ const Main = () => {
           </div>
         </div>
       </div>
-      <p className="text-center text-[12px] font-normal text-[#7E7E7E] pt-5 pb-10 underline cursor-pointer">
-        ابلاغ عن هذا الإعلان
-      </p>
+      <Link to="/report">
+        <p className="text-center text-[12px] font-normal text-[#7E7E7E] pt-5 pb-10 underline cursor-pointer">
+          ابلاغ عن هذا الإعلان
+        </p>
+      </Link>
     </div>
   );
 };
