@@ -3,7 +3,7 @@ import { reportData } from "../data/report";
 
 const Report = () => {
   const [selected, setSelected] = useState(false);
-  const [message, setMessage] = useState(false);
+  const [message, setMessage] = useState("");
   const report = useRef();
   useEffect(() => {
     report.current.scrollIntoView();
@@ -11,27 +11,28 @@ const Report = () => {
   return (
     <div
       ref={report}
-      className="fixed top-0 left-0 w-full h-screen bg-[#23193E] backdrop-blur-[20px] opacity-[.57] z-10"
+      className="fixed top-0 left-0 w-full h-screen bg-[#23193E]/[.57] backdrop-blur-[20] z-10"
     >
       <div>
-        <div className="absolute rounded-xl font-normal opacity-1 p-5 z-20 bg-white top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+        <div className="absolute rounded-xl font-normal p-5 z-20 bg-white top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
           <h1 className="text-center">إبلاغ عن إعلان</h1>
           <div>
             {reportData.map((report, index) => (
-              <div>
+              <div key={index}>
                 <input
                   type="radio"
                   name="report"
                   id={report.id}
-                  className=""
                   onChange={() => setSelected(true)}
                 />
-                <label
+                
+                <labelيرجى
+                  توضيح
                   htmlFor={report.id}
                   className="text-[1rem] text-[#B9B5FF] mr-3"
                 >
                   {report.label}
-                </label>
+                </labelيرجى>
               </div>
             ))}
             <textarea
@@ -41,7 +42,7 @@ const Report = () => {
               className="min-h-20 max-h-20 outline-none rounded-[5px] p-2 border border-solid-1 border-[#B9B5FF] my-4"
             ></textarea>
             <button
-              disabled={selected}
+              disabled={!selected || message.length === 0}
               className={`block m-auto ${
                 selected && message.length > 0 ? "bg-primary" : "bg-[#C5C5C5]"
               } text-white rounded-lg w-full p-1`}
