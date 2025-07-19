@@ -1,21 +1,24 @@
 import { useDispatch, useSelector } from "react-redux";
 import emptyWishlist from "../assets/images/emptyWishlist.svg";
-import { useEffect } from "react";
-import { userThunkById } from "../store/users/thunk/userThunkById";
+import { useEffect, useRef } from "react";
 import { getAllWishes } from "../store/wishlist/thunk/getAllWishProduct";
 import Card from "../components/website/Card";
 const Wishlist = () => {
   const dispatch = useDispatch();
+  const ref = useRef();
   const { products = [] } = useSelector((state) => state.wishlist);
   useEffect(() => {
+    ref.current.scrollIntoView();
     dispatch(getAllWishes());
-  }, [dispatch]);
+  }, [dispatch, products]);
   return (
-    <div className="container">
+    <div className="container" ref={ref}>
       <div className=" py-20">
-        {products ? (
+        {Array.isArray(products) && products.length > 0 ? (
           <div className="flex-between flex-wrap gap-5">
-         {   products.map((product) => <Card {...product} />)}
+            {products.map((product) => (
+              <Card key={product._id} {...product} />
+            ))}
           </div>
         ) : (
           <>

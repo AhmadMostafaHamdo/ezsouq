@@ -30,7 +30,7 @@ const HeaderLogin = () => {
       <div className="container flex items-center justify-between ">
         <button
           onClick={toggleSidebar}
-          className="flex-center w-8 h-8 md:hidden"
+          className="flex-center w-8 h-8 lg:hidden"
           aria-label="Toggle menu"
         >
           <img

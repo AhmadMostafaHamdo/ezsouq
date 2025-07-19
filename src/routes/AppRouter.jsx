@@ -22,6 +22,7 @@ const RealEstate = lazy(() => import("../pages/RealEstate"));
 const ContactUs = lazy(() => import("../pages/ContactUs"));
 const Search = lazy(() => import("../pages/Search"));
 const Report = lazy(() => import("../pages/Report"));
+const Commits = lazy(() => import("../pages/Commits"));
 const router = createBrowserRouter([
   {
     path: "/",
@@ -93,6 +94,14 @@ const router = createBrowserRouter([
         element: (
           <SuspenseFallback>
             <Search />
+          </SuspenseFallback>
+        ),
+      },
+      {
+        path: "commits/:id",
+        element: (
+          <SuspenseFallback>
+            <Commits />
           </SuspenseFallback>
         ),
       },

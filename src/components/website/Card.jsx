@@ -1,9 +1,10 @@
 // src/components/Card.jsx
-import { useNavigate } from "react-router-dom";
-import emptyHeart from "../../assets/images/emptyHeart.svg";
+import { Link, useNavigate } from "react-router-dom";
+import emptyHeartCard from "../../assets/images/emptyHeartCard.svg";
 import redHeart from "../../assets/images/redHeart.svg";
 import commit from "../../assets/images/commit.svg";
 import favorit from "../../assets/images/favorit.svg";
+import emptyFavorit from "../../assets/images/emptyFavorit.svg";
 import views from "../../assets/images/views.svg";
 import share from "../../assets/images/share.svg";
 import Cookies from "js-cookie";
@@ -13,6 +14,7 @@ import { useEffect, useState } from "react";
 import { toggleLikeThunk } from "../../store/like/thunk/toggleLikeThunk";
 import { getAllLikes } from "../../store/like/thunk/getAllLikes";
 import Spinner from "../../feedback/loading/Spinner";
+import { likeToggleWishlistThunk } from "../../store/wishlist/thunk/likeToggleWishlistThunk";
 
 const Card = ({
   _id,
@@ -33,7 +35,7 @@ const Card = ({
     totalLikes: 0,
     loading: false,
   };
-
+  const { likedFavorit } = useSelector((state) => state.wishlist);
   const { totalLikes, loading } = likeData;
 
   useEffect(() => {
@@ -55,7 +57,10 @@ const Card = ({
     setLiked(!liked);
     dispatch(toggleLikeThunk(_id));
   };
-
+  const handelFavorit = (e) => {
+    e.stopPropagation();
+    dispatch(likeToggleWishlistThunk(_id));
+  };
   return (
     <div
       onClick={handleOfferClick}
@@ -68,43 +73,45 @@ const Card = ({
             <TimeAgo postDate={createdAt} />
           </p>
           <p className="mr-1">بواسطة {Owner_id?.name}</p>
-          <img
-            src={favorit}
-            alt=""
-            className="w-6 h-5 mr-auto"
-            onClick={(e) => e.stopPropagation()}
-          />
+          <div onClick={handelFavorit}>
+            <img
+              src={likedFavorit ? favorit : emptyFavorit}
+              alt=""
+              className="w-6 h-5 mr-auto"
+            />
+          </div>
         </div>
         <div className="w-full">
           <img
             src={`https://ezsouq.store/uploads/images/${main_photos?.[0]}`}
             alt=""
-            className="h-40 w-full object-cover rounded-md opacity-0"
+            className="h-32 w-full object-cover rounded-md opacity-0"
             onLoad={(e) => e.target.classList.add("opacity-100")}
             loading="lazy"
           />
         </div>
         <div className="font-normal w-full">
-          <p className="text-[1.25rem] text-[#3F3D56] mt-[.4rem]">{name}</p>
-          <p className="text-[#A3A0DD] text-[1rem]">
+          <p className="text-[1.1rem] text-[#3F3D56] mt-[.4rem]">{name}</p>
+          <p className="text-[#A3A0DD] text-[.9rem]">
             {Governorate_name}-{city}
           </p>
-          <div className="text-[.9rem] my-1 flex-between">
+          <div className="text-[.8rem] my-1 flex-between">
             <span className="ml-5 text-[#A3A0DD] font-bold">
               {type} أوتوماتيك
             </span>
-            <span className="text-[#3F3D56] text-[1rem] font-bold">
+            <span className="text-[#3F3D56] text-[.87rem] font-bold">
               {price} ل.س
             </span>
           </div>
           <div className="flex-between mt-4">
             <div className="flex-center gap-2" onClick={handleLike}>
-              <img src={liked ? redHeart : emptyHeart} alt="heart" />
+              <img src={liked ? redHeart : emptyHeartCard} alt="heart" />
               <span className="font-normal text-[.625rem] text-[#535353]">
                 {loading ? <Spinner size={14} /> : totalLikes}
               </span>
             </div>
-            <div
+            <Link
+              to={`/commits/${_id}`}
               className="flex-center gap-2"
               onClick={(e) => e.stopPropagation()}
             >
@@ -112,7 +119,7 @@ const Card = ({
               <span className="font-normal text-[.625rem] text-[#535353]">
                 22
               </span>
-            </div>
+            </Link>
             <div className="flex-center gap-2">
               <img src={views} alt="views" />
               <span className="font-normal text-[.625rem] text-[#535353]">
