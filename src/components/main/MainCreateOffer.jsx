@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Stepper from "../stepper/Stepper";
 import StepOne from "../stepper/StepOne";
@@ -10,12 +10,15 @@ import axios from "axios";
 
 const MainCreateOffer = () => {
   const dispatch = useDispatch();
+  const offer = useRef();
   const { currentStep } = useSelector((state) => state.steps);
   const { user } = useSelector((state) => state.users);
   const userId = user?._id;
   const [stepOneData, setStepOneData] = useState(null);
   const [stepTwoData, setStepTwoData] = useState(null);
-
+  useEffect(() => {
+    offer.current.scrollIntoView();
+  }, []);
   const handleBack = () => dispatch(stepDecrease());
 
   const handleStepOneSubmit = (data) => {
@@ -28,7 +31,6 @@ const MainCreateOffer = () => {
 
     // ✅ دمج بيانات الخطوتين
     const finalData = { ...stepOneData, ...data };
-    console.log("📦 إعلان كامل:", finalData);
 
     const formData = new FormData();
 
@@ -46,9 +48,7 @@ const MainCreateOffer = () => {
     });
 
     // ✅ التحقق من البيانات المُرسلة
-    console.log("🧪 FormData المرسلة:");
     for (const [key, value] of formData.entries()) {
-      console.log(key, value);
     }
 
     try {
@@ -56,15 +56,13 @@ const MainCreateOffer = () => {
         params: { owner_id: userId }, // تم نقل owner_id إلى باراميتر URL
         // ❌ لا تضع Content-Type يدوياً
       });
-      console.log("✅ تم النشر بنجاح:", res.data);
-      
     } catch (error) {
       console.error("❌ فشل النشر:", error.response?.data || error.message);
     }
   };
 
   return (
-    <div className="bg-[#F7F7FF] flex-center flex-col pt-6 pb-28">
+    <div className="bg-[#F7F7FF] flex-center flex-col pt-6 pb-28" ref={offer}>
       <h1 className="font-normal text-[2rem] mt-10">نشر إعلان</h1>
       <Stepper />
 

@@ -29,7 +29,7 @@ const Filters = () => {
     totalPages = 1,
   } = useSelector((state) => state.products);
   const { governorates = [] } = useSelector((state) => state.governorates); // ["دمشق", "حلب"]
-  const { cities = [] } = useSelector((state) => state.cities); // ["المزة", "المالكي"]
+  const { cities = [], loadingCity } = useSelector((state) => state.cities); // ["المزة", "المالكي"]
 
   /* جلب المنتجات */
   const fetchProducts = useCallback(() => {
@@ -103,6 +103,7 @@ const Filters = () => {
       <TabFilter
         key={filters.governorate} // يساعد على إعادة ضبط تبويب المدن عند تغيير المحافظة
         items={cities}
+        loading={loadingCity}
         selectedItem={filters.city}
         onSelect={(city) => handleFilterChange("city", city)}
         className="overflow-x-auto"
@@ -133,7 +134,7 @@ const Filters = () => {
         ) : (
           <>
             {products.map((product) => (
-              <Card key={product.id} {...product} />
+              <Card key={product._id} {...product} />
             ))}
             {loading &&
               filters.page > 1 &&

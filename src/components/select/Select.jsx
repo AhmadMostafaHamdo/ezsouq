@@ -17,7 +17,6 @@ const Select = ({ options = [], type, onSelect }) => {
     setSelectedValue(value);
     onSelect?.(value); 
   };
-console.log(selectedValue)
   return (
     <select
       value={selectedValue}

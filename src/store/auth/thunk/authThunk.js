@@ -1,6 +1,7 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 import { toast } from "react-toastify";
+
 export const thunkAuth = createAsyncThunk(
   "authThunk/auth",
   async ({ info, isLogin }, { rejectWithValue }) => {
@@ -9,12 +10,29 @@ export const thunkAuth = createAsyncThunk(
       toast.success(
         `${isLogin ? "تم تسجيل الدخول بنجاح" : "تم إنشاء الحساب بنجاح"}`
       );
-
       return res.data;
     } catch (error) {
-      const errorMessage = error.response?.data?.message || "حدث خطأ غير متوقع";
+      let errorMessage = "حدث خطأ غير متوقع";
+
+      // Handle network errors (no internet connection)
+      if (error.message === "Network Error" || error.code === "ERR_NETWORK") {
+        errorMessage =
+          "لا يوجد اتصال بالإنترنت، يرجى التحقق من الاتصال والمحاولة مرة أخرى";
+      }
+      // Handle timeout errors
+      else if (
+        error.code === "ECONNABORTED" ||
+        error.message.includes("timeout")
+      ) {
+        errorMessage = "انتهت مهلة الاتصال، يرجى المحاولة مرة أخرى";
+      }
+      // Handle server response errors
+      else if (error.response?.data?.message) {
+        errorMessage = error.response.data.message;
+      }
+
       toast.error(errorMessage);
-      return rejectWithValue(error.response?.data?.message);
+      return rejectWithValue(errorMessage);
     }
   }
 );

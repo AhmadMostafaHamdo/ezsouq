@@ -4,9 +4,9 @@ import logo from "../../../assets/images/logoWithTitleWhite.svg";
 import closeIcon from "../../../assets/images/close.png";
 import search from "../../../assets/images/search.svg";
 import emptyHeart from "../../../assets/images/emptyHeart.svg";
-import heartFavorit from "../../../assets/images/heartFavorit.svg";
+import redHeart from "../../../assets/images/redHeart.svg";
 import personal from "../../../assets/images/personal.svg";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ulLinksLogin } from "../../../data/filterData";
 import Sidebar from "../../common/Sidebar";
 import { useScrolled } from "../../../hooks/useScrolled";
@@ -16,8 +16,13 @@ const HeaderLogin = () => {
   const [toggleHeart, setToggleHeart] = useState(false);
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
   const handleToggle = () => {
-    setToggleHeart((prev) => !prev);
+    setToggleHeart(true);
   };
+  useEffect(() => {
+    return () => {
+      setToggleHeart(false);
+    };
+  }, []);
   return (
     <div
       className={`bg-primary text-white  font-bold text-[.87rem] fixed w-full z-10 py-[1.5px] `}
@@ -69,7 +74,7 @@ const HeaderLogin = () => {
           <Link to="/wishlist" onClick={handleToggle}>
             {toggleHeart ? (
               <img
-                src={heartFavorit}
+                src={redHeart}
                 className="w-6 h-6"
                 style={{ stroke: "white", fill: "red" }}
               />

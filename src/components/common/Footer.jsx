@@ -5,6 +5,7 @@ import phoneIcone from "../../assets/images/ic_baseline-phone.svg";
 import Ellipse1 from "../../assets/images/Ellipse 14.svg";
 import Ellipse2 from "../../assets/images/Ellipse 15.svg";
 import instagram from "../../assets/images/ri_instagram-fill.svg";
+import googlPlay from "../../assets/images/googlPlay.svg";
 import facebook from "../../assets/images/ic_baseline-facebook.svg";
 import whatsup from "../../assets/images/ri_whatsapp-fill.svg";
 import { ulLinksFooter } from "../../data/filterData";
@@ -72,9 +73,12 @@ const Footer = () => {
           </div>
         </div>
       </div>
-      <p className="text-[12px] font-semibold text-[#D9D8FF] text-center mt-10 mb-4 w-[90vw]">
-        © 2025 ezsouq - جميع الحقوق محفوظة
-      </p>
+      <div className="flex-col-reverse md:flex-row flex-center f mt-10 mb-6 gap-4 md:gap-8 text-[#D9D8FF]">
+        <p className="text-[12px] font-semibold ">
+          © 2025 ezsouq - جميع الحقوق محفوظة
+        </p>
+        <img src={googlPlay} alt="" loading="lazy" />
+      </div>
     </div>
   );
 };

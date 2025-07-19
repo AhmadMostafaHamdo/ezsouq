@@ -1,15 +1,24 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
+import Cookies from "js-cookie";
 
 export const likeToggleThunk = createAsyncThunk("/wishlist", async (id) => {
   try {
-    const isRecordExist = await axios.get(`${id}`);
-    if (isRecordExist.data.length > 0) {
-      await axios.delete(`/wishlist?productId=${id.data[0].id}`);
-      return { type: "remove", id };
-    } else {
-      await axios.post("/wishlist", { userId: 1, productId: id });
-      return { type: "add", id };
-    }
-  } catch (error) {}
+    // إنشاء نسخة جديدة من axios بدون baseURL
+    const instance = axios.create();
+    const res = await instance.post(
+      "/user/favorite/toggle",
+      {
+        product_id: id,
+      },
+      {
+        headers: {
+          authorization: `Bearer ${Cookies.get("token")}`,
+        },
+      }
+    );
+    return res.data;
+  } catch (error) {
+    throw error.response.data;
+  }
 });

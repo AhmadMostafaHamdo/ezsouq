@@ -28,7 +28,6 @@ const StepOne = ({ onSubmit }) => {
     handleSubmit,
     formState: { errors },
   } = methods;
-  console.log(errors);
   const handleGovernorateChange = (value) => {
     setValue("Governorate_name", value);
     dispatch(thunkCities(value));

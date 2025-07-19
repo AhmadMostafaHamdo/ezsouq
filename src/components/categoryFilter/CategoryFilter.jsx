@@ -10,7 +10,6 @@ const CategoryFilter = ({ category }) => {
     loading,
     totalPages = 1,
   } = useSelector((state) => state.productsByCat);
-  console.log(products);
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(thunkGetProductByCat(category));
