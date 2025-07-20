@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { productThunkById } from "../store/product/thunk/productThunkById";
 import Card from "../components/website/Card";
 import SortDropdown from "../components/website/SortDropdown";
+import Commit from "../components/website/commits/Commit";
 const Commits = () => {
   const [activeSend, setActiveSend] = useState(false);
   const ref = useRef();
@@ -20,55 +21,55 @@ const Commits = () => {
   }, [dispatch, id]);
   return (
     <div ref={ref}>
-      <div className="container pt-20">
-        <div className="flex items-center gap-4 mb-4">
-          <Link
-            to="/"
-            className="bg-white rounded-md py-3 px-4 shadow-[0px 4px 15.8px 0px #00000014]"
-            aria-label="Navigate back"
-          >
-            <img src={arrowBtn} alt="Back arrow" />
-          </Link>
-          <h1 className="font-normal text-[#2F2E41] text-[1.5rem]">
-            تعليقات هذا الإعلان
-          </h1>
-        </div>
-        <Card {...product} />
-        <p className="font-normal text-[1.5rem]">5 تعليقات</p>
-        <div className="w-1/2">
-          <SortDropdown />
-          <div className="flex items-center gap-4">
-            <img
-              // src={`https://ezsouq.store/uploads/images/${product}`}
-              src={cat}
-              className="w-16 h-16"
-              alt=""
-            />
-            <input
-              onChange={(e) => setActiveSend(e.target.value)}
-              type="text"
-              placeholder="اكتب تعليقك..."
-              className="p-3 rounded-[5px] w-[50vw] border-1 border-solid border-[#52516C] outline-none bg-white"
-            />
-            <button disabled={activeSend == ""}>
-              <img
-                src={arrowSend}
-                alt=""
-                className={activeSend ? "opacity-100" : "opacity-50"}
-              />
-            </button>
+      <div className="container pt-20 flex gap-8">
+        <div>
+          <div className="flex items-center gap-4 mb-4">
+            <Link
+              to="/"
+              className="bg-white rounded-md py-3 px-4 shadow-[0px 4px 15.8px 0px #00000014]"
+              aria-label="Navigate back"
+            >
+              <img src={arrowBtn} alt="Back arrow" />
+            </Link>
+            <h1 className="font-normal w-full text-[#2F2E41] text-[1.5rem]">
+              تعليقات هذا الإعلان
+            </h1>
           </div>
-          <div className="flex">
-            <div>
-              <img src={cat} alt="" />
+          <Card {...product} />
+        </div>
+        <div className="mt-14">
+          <p className="font-normal text-[1.5rem]">5 تعليقات</p>
+          <div className="w-1/2">
+            <SortDropdown />
+            <div className="flex items-center gap-4 ">
+              <img
+                // src={`https://ezsouq.store/uploads/images/${product}`}
+                src={cat}
+                className="w-16 h-16"
+                alt=""
+              />
+              <input
+                onChange={(e) => setActiveSend(e.target.value)}
+                type="text"
+                placeholder="اكتب تعليقك..."
+                className="p-3 rounded-[5px] w-[50vw] border-1 border-solid border-[#52516C] outline-none bg-white"
+              />
+              <button disabled={activeSend == ""}>
+                <img
+                  src={arrowSend}
+                  alt=""
+                  className={activeSend ? "opacity-100" : "opacity-50"}
+                />
+              </button>
             </div>
-            <div>
-              <span className="text-primary font-bold text-[1.25rem]">
-                مياو المياو
-              </span>
-              <span className="font-normal text-[1rem] text-[#716D97]">
-                منذ 3 ساعات
-              </span>
+            <Commit />
+            <div className="mr-12">
+              <Commit />
+            </div>
+            <hr  className="my-10"/>
+            <Commit />
+            <div className="mr-12">
+              <Commit />
             </div>
           </div>
         </div>
