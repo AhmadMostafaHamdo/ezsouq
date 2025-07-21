@@ -10,6 +10,7 @@ googlPlay.svg;
 import { useRef } from "react";
 import { useEffect } from "react";
 import DividerWithText from "../components/dividerWithText/DividerWithText";
+import Heading from "../components/common/Heading";
 const ContactUs = () => {
   const contact = useRef();
   useEffect(() => {
@@ -17,32 +18,30 @@ const ContactUs = () => {
   }, []);
   return (
     <div className="pt-20 pb-8" ref={contact}>
-      <div className="container flex gap-40">
+      <div className="container flex ite flex-col md:flex-row gap-6 md:gap-40">
         <div>
-          <h1 className="font-normal text-[#2F2E41] text-[1.5rem] leading-9 mb-3">
-            تواصل معنا
-          </h1>
+          <Heading title="تواصل معنا" />
           <p className="text-primary text-[1.1rem]">
             نحن هنا للإجابة على استفساراتك ومساعدتك، لا تتردد في التواصل
-            <br /> معنا في أي وقت.
+            <br className="hidden md:block" /> معنا في أي وقت.
           </p>
-          <form className="w-[28rem] mt-6">
+          <form className="md:w-[20rem] lg:w-[28rem] mt-6 ">
             <div className="relative w-full">
               <input
                 type="text"
                 placeholder="الاسم"
-                className="relative w-full py-3 px-7 rounded-[5px] border border-solid-1 border-[#B9B5FF] mb-2"
+                className="relative w-full py-3 px-7 rounded-[5px] border border-solid-1 border-[#B9B5FF]"
               />
               <img
                 src={profileIcon}
                 className="absolute  z-10 top-0 right-0 py-4 px-1"
               />
             </div>
-            <div className="relative w-full">
+            <div className="relative w-full my-5">
               <input
                 type="email"
                 placeholder="البريد الالكتروني"
-                className="relative w-full py-3 px-7 rounded-[5px] border border-solid-1 border-[#B9B5FF] mb-2"
+                className="relative w-full py-3 px-7 rounded-[5px] border border-solid-1 border-[#B9B5FF]"
               />
               <img
                 src={emailIcon}
@@ -52,30 +51,33 @@ const ContactUs = () => {
             <div>
               <textarea
                 placeholder="نص الرسالة.."
-                className=" rounded-[5px] p-2 w-full border border-solid-1 border-[#B9B5FF] mb-2 outline-none max-h-20 min-h-20"
+                className=" rounded-[5px] p-2 w-full border border-solid-1 border-[#B9B5FF] outline-none max-h-24 min-h-24"
               ></textarea>
             </div>
             <button
               type="submit"
-              className="w-full bg-primary font-bold rounded-[5px] text-white py-2"
+              className="w-full bg-primary font-bold rounded-[5px] text-white py-2 mt-4"
             >
               إرسال
             </button>
           </form>
         </div>
-        <div className="w-fit">
-          <img src={message} alt="" className="mt-2" />
-          <div className="my-4">
+
+        <div className="lg:w-fit">
+          <img src={message} alt="" className="mt-2 hidden md:block" />
+          <div className="my-5">
             <DividerWithText text="أو من خلال" />
           </div>
-          <div className="flex-between px-6">
+          <div className="flex-center gap-6 mt-10 md:mt-0">
             <img src={gmail} alt="" />
             <img src={whatsup} alt="" />
             <img src={facebook} alt="" />
             <img src={Instagram} alt="" />
           </div>
-          <p className="text-[#939393] font-bold my-3">احصل على تطبيقنا!</p>
-          <img src={googlPlay} alt="" />
+          <p className="text-[#939393] font-bold my-3 text-center md:text-start">
+            احصل على تطبيقنا!
+          </p>
+          <img src={googlPlay} alt="" className="m-auto md:m-[inherit]" />
         </div>
       </div>
     </div>

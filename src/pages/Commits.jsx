@@ -1,5 +1,4 @@
 import React, { useEffect, useRef, useState } from "react";
-import arrowBtn from "../assets/images/arrow-btn.svg";
 import cat from "../assets/images/cat.svg";
 import { Link, useParams } from "react-router";
 import arrowSend from "../assets/images/arrowSend.svg";
@@ -8,6 +7,7 @@ import { productThunkById } from "../store/product/thunk/productThunkById";
 import Card from "../components/website/Card";
 import SortDropdown from "../components/website/SortDropdown";
 import Commit from "../components/website/commits/Commit";
+import Heading from "../components/common/Heading";
 const Commits = () => {
   const [activeSend, setActiveSend] = useState(false);
   const ref = useRef();
@@ -23,18 +23,7 @@ const Commits = () => {
     <div ref={ref}>
       <div className="container pt-20 flex gap-8">
         <div>
-          <div className="flex items-center gap-4 mb-4">
-            <Link
-              to="/"
-              className="bg-white rounded-md py-3 px-4 shadow-[0px 4px 15.8px 0px #00000014]"
-              aria-label="Navigate back"
-            >
-              <img src={arrowBtn} alt="Back arrow" />
-            </Link>
-            <h1 className="font-normal w-full text-[#2F2E41] text-[1.5rem]">
-              تعليقات هذا الإعلان
-            </h1>
-          </div>
+          <Heading title=" تعليقات هذا الإعلان" />
           <Card {...product} />
         </div>
         <div className="mt-14">
@@ -66,7 +55,7 @@ const Commits = () => {
             <div className="mr-12">
               <Commit />
             </div>
-            <hr  className="my-10"/>
+            <hr className="my-10" />
             <Commit />
             <div className="mr-12">
               <Commit />

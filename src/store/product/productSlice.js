@@ -13,7 +13,11 @@ const initialState = {
 const productSlice = createSlice({
   name: "products",
   initialState,
-  reducers: {},
+  reducers: {
+    setLike: (state, action) => {
+      state.product.likes = action.payload;
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(productThunk.pending, (state) => {
@@ -49,5 +53,5 @@ const productSlice = createSlice({
       });
   },
 });
-
+export const { setLike } = productSlice.reducer;
 export default productSlice.reducer;

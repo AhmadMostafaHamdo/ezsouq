@@ -8,7 +8,6 @@ import users from "./users/usersSlice";
 import wishlist from "./wishlist/wishlistSlice";
 import productsByCat from "./getProductsByCat/getProductByCatSlice";
 import search from "./search/searchSlice";
-import likes from "./like/likeSlice";
 import storage from "redux-persist/lib/storage";
 import {
   FLUSH,
@@ -52,10 +51,6 @@ const persistProductsByCat = {
   key: "productsByCat",
   storage,
 };
-const persistLikes = {
-  key: "likes",
-  storage,
-};
 const rootReducer = combineReducers({
   auth: persistReducer(persistAuth, auth),
   products: persistReducer(persistProducts, products),
@@ -65,7 +60,6 @@ const rootReducer = combineReducers({
   users: persistReducer(persistUsers, users),
   wishlist: persistReducer(persistWishlist, wishlist),
   productsByCat: persistReducer(persistProductsByCat, productsByCat),
-  likes: persistReducer(persistLikes, likes),
   search,
 });
 export const store = configureStore({

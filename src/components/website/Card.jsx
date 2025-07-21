@@ -11,10 +11,9 @@ import Cookies from "js-cookie";
 import TimeAgo from "../TimeAgo";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
-import { toggleLikeThunk } from "../../store/like/thunk/toggleLikeThunk";
-import { getAllLikes } from "../../store/like/thunk/getAllLikes";
 import Spinner from "../../feedback/loading/Spinner";
 import { likeToggleWishlistThunk } from "../../store/wishlist/thunk/likeToggleWishlistThunk";
+import { toggleLikeProduct } from "../../store/product/thunk/toggleLikeProduct";
 
 const Card = ({
   _id,
@@ -29,15 +28,11 @@ const Card = ({
 }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const [liked, setLiked] = useState(false);
-  // قراءة بيانات اللايك من الريدوكس لكل منتج
-  const likeData = useSelector((state) => state.likes.likes[_id]) || {
-    totalLikes: 0,
-    loading: false,
-  };
-  const { likedFavorit } = useSelector((state) => state.wishlist);
-  const { totalLikes, loading } = likeData;
 
+  const { likedFavorit } = useSelector((state) => state.wishlist);
+  const { products = [] } = useSelector((state) => state.products);
+  const { user } = useSelector((state) => state.users);
+  const userId = user?._id;
   useEffect(() => {
     dispatch(getAllLikes(_id));
   }, [dispatch, _id]);
@@ -54,8 +49,7 @@ const Card = ({
 
   const handleLike = (e) => {
     e.stopPropagation();
-    setLiked(!liked);
-    dispatch(toggleLikeThunk(_id));
+    dispatch(toggleLikeProduct(_id));
   };
   const handelFavorit = (e) => {
     e.stopPropagation();
@@ -105,9 +99,14 @@ const Card = ({
           </div>
           <div className="flex-between mt-4">
             <div className="flex-center gap-2" onClick={handleLike}>
-              <img src={liked ? redHeart : emptyHeartCard} alt="heart" />
+              <img
+                src={
+                  products?.likes.includes(userId) ? redHeart : emptyHeartCard
+                }
+                alt="heart"
+              />
               <span className="font-normal text-[.625rem] text-[#535353]">
-                {loading ? <Spinner size={14} /> : totalLikes}
+                {products?.likes?.totalLike}
               </span>
             </div>
             <Link
