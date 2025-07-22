@@ -32,7 +32,7 @@ const Commits = () => {
             <SortDropdown />
             <div className="flex items-center gap-4 ">
               <img
-                // src={`https://ezsouq.store/uploads/images/${product}`}
+                // src={`https://api.ezsouq.store/uploads/images/${product}`}
                 src={cat}
                 className="w-16 h-16"
                 alt=""

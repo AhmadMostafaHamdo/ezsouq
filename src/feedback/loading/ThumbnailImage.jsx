@@ -20,7 +20,7 @@ const ThumbnailImage = ({ src, isSelected, onClick }) => {
       )}
       <img
         ref={imgRef}
-        src={`https://ezsouq.store/uploads/images/${src}`}
+        src={`https://api.ezsouq.store/uploads/images/${src}`}
         alt={`Thumbnail`}
         className={`w-20 h-16 object-cover cursor-pointer rounded-[6px] border-2 ${
           isSelected

@@ -10,6 +10,7 @@ export const thunkAuth = createAsyncThunk(
       toast.success(
         `${isLogin ? "تم تسجيل الدخول بنجاح" : "تم إنشاء الحساب بنجاح"}`
       );
+      console.log(res.data)
       return res.data;
     } catch (error) {
       let errorMessage = "حدث خطأ غير متوقع";

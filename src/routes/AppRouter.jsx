@@ -23,6 +23,8 @@ const ContactUs = lazy(() => import("../pages/ContactUs"));
 const Search = lazy(() => import("../pages/Search"));
 const Report = lazy(() => import("../pages/Report"));
 const Commits = lazy(() => import("../pages/Commits"));
+const Newest = lazy(() => import("../pages/Newest"));
+const Rating = lazy(() => import("../components/website/Rating/Rating"));
 const router = createBrowserRouter([
   {
     path: "/",
@@ -62,6 +64,14 @@ const router = createBrowserRouter([
         element: (
           <SuspenseFallback>
             <Cars />
+          </SuspenseFallback>
+        ),
+      },
+      {
+        path: "newest",
+        element: (
+          <SuspenseFallback>
+            <Newest />
           </SuspenseFallback>
         ),
       },
@@ -133,6 +143,10 @@ const router = createBrowserRouter([
           {
             path: "contact-info",
             element: <ContactInfo />,
+          },
+          {
+            path: "rating",
+            element: <Rating />,
           },
         ],
       },

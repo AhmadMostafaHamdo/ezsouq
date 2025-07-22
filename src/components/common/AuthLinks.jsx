@@ -8,25 +8,20 @@ const AuthLinks = ({ isMobile = false }) => (
   >
     <Link
       to="/login"
-      className={`px-6 py-[.5rem] rounded-lg font-medium text-center ${
-        isMobile
-          ? "bg-white hover:bg-gray-100 text-primary"
-          : "bg-secondary hover:bg-secondary-dark text-primary text-nowrap"
+      className={`px-6 py-[.5rem] text-primary  rounded-lg font-medium text-center ${
+        isMobile ? "bg-white" : "bg-secondary  text-nowrap"
       }`}
     >
       تسجيل دخول
     </Link>
     <Link
       to="/register"
-      className={`px-6 py-3 rounded-lg font-medium text-nowrap text-center ${
-        isMobile
-          ? "text-white border-2 border-white"
-          : "text-white hover:text-secondary"
+      className={`px-6 text-white py-3 rounded-lg font-medium text-nowrap text-center ${
+        isMobile ? " border-2 border-white" : ""
       }`}
     >
       إنشاء حساب
     </Link>
-    
   </div>
 );
 export default AuthLinks;

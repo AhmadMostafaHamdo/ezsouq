@@ -1,11 +1,14 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { productThunk } from "./thunk/productThunk";
 import { productThunkById } from "./thunk/productThunkById";
+import { productThunkOrderd } from "./thunk/productThunkOrdered";
 
 const initialState = {
   products: [],
   product: [],
+  productOrdered: [],
   loading: false,
+  loadingOrdered: false,
   error: null,
   totalPages: 1, // التصحيح: قيمة افتراضية
 };
@@ -49,6 +52,18 @@ const productSlice = createSlice({
       })
       .addCase(productThunkById.rejected, (state, action) => {
         state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(productThunkOrderd.pending, (state) => {
+        state.loadingOrdered = true;
+        state.error = null;
+      })
+      .addCase(productThunkOrderd.fulfilled, (state, action) => {
+        state.loadingOrdered = false;
+        state.productOrdered = action.payload;
+      })
+      .addCase(productThunkOrderd.rejected, (state, action) => {
+        state.loadingOrdered = false;
         state.error = action.payload;
       });
   },

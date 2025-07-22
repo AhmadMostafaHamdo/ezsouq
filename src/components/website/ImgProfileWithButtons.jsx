@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import SortDropdown from "./SortDropdown";
 import personalImg from "../../assets/images/personal.svg";
+import start from "../../assets/images/start.svg/";
 import { Link, useLocation } from "react-router";
 import { sortOptions } from "../../data/filterData";
 
@@ -18,10 +19,19 @@ const ImgProfileWithButtons = () => {
           className="w-24 h-24 shadow-xl rounded-[50%]"
         />
         <p className="font-normal text-[1.3rem] text-[#2F2E41]">أحمد حمدو</p>
+        <div className="flex gap-2">
+          <img src={start} alt="" />
+          <div className="font-normal">
+            <span className="ml-1 text-[#1D2232]  ">4.5</span>
+            <Link to="/profile/rating" className="text-[#7770E9]">
+              تقييم
+            </Link>
+          </div>
+        </div>
       </div>
       <div className="flex-center text-[1rem] font-bold gap-3 mt-3">
         <Link
-          to=""
+          to="/profile"
           className="bg-[#7770E9]  rounded-[3rem] text-[#F7F7FF] py-1 px-8"
         >
           المنشورات

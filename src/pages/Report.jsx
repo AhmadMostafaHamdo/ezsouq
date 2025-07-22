@@ -25,14 +25,14 @@ const Report = () => {
                   id={report.id}
                   onChange={() => setSelected(true)}
                 />
-                
-                <labelيرجى
+
+                <label
                   توضيح
                   htmlFor={report.id}
                   className="text-[1rem] text-[#B9B5FF] mr-3"
                 >
                   {report.label}
-                </labelيرجى>
+                </label>
               </div>
             ))}
             <textarea

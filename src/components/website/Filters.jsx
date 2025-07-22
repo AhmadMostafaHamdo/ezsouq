@@ -21,7 +21,7 @@ const Filters = () => {
     category: "سيارات",
     sortBy: "newest",
     page: 1,
-    limit: 10,
+    limit: 6,
   });
   const {
     products = [],

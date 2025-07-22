@@ -6,7 +6,6 @@ import facebook from "../assets/images/facebook.svg";
 import Instagram from "../assets/images/instgram.svg";
 import message from "../assets/images/message.svg";
 import googlPlay from "../assets/images/googlPlay.svg";
-googlPlay.svg;
 import { useRef } from "react";
 import { useEffect } from "react";
 import DividerWithText from "../components/dividerWithText/DividerWithText";

@@ -101,7 +101,7 @@ const Main = () => {
                 {/* Main Image */}
                 <img
                   ref={imgRef}
-                  src={`https://ezsouq.store/uploads/images/${selectedImage}`}
+                  src={`https://api.ezsouq.store/uploads/images/${selectedImage}`}
                   alt="Main product"
                   className={`md:h-full h-full w-full object-contain md:rounded-2xl bg-[#F7F7FF] ${
                     isImageLoaded ? "opacity-100" : "opacity-0"
