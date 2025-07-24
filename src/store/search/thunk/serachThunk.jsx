@@ -6,7 +6,7 @@ export const searchThunk = createAsyncThunk(
   async (word, { rejectWithValue }) => {
     try {
       const res = await axios.get(`user/search_product?keyword=${word}`);
-      return res.data;
+      return res.data?.data;
     } catch (error) {
       return rejectWithValue(error.response?.data?.message);
     }

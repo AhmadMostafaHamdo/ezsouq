@@ -108,16 +108,17 @@ const Search = () => {
       )}
       <div className="container pt-20">
         <div className="flex items-center gap-4 md:gap-10 flex-col md:flex-row">
-          <div className="flex items-center w-full md:w-auto">
+          <div className="flex items-center  md:w-auto">
             <h1 className="font-normal text-[#2F2E41] text-xl md:text-[1.5rem] leading-9 mb-3 md:mb-0">
               البحث والفلترة
             </h1>
           </div>
-
+        </div>
+        <div className="flex-between gap-4 w-fit">
           <input
             type="text"
             value={searchValue}
-            className="w-full md:w-[35vw] p-2 bg-[#D7D5FF] rounded-md outline-none border-none placeholder:text-white focus:ring-2 focus:ring-[#9B99FF]"
+            className="inline w-full md:w-[35vw] p-2 bg-[#D7D5FF] rounded-md outline-none border-none placeholder:text-white focus:ring-2 focus:ring-[#9B99FF]"
             placeholder="بحث ..."
             onChange={handleInputChange}
             aria-label="Search input"
@@ -129,7 +130,6 @@ const Search = () => {
             onClick={handelClick}
           />
         </div>
-
         {loading ? (
           <div className="flex-center mt-40">
             <Spinner />
