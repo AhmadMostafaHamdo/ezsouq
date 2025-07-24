@@ -3,6 +3,7 @@ import emptyWishlist from "../assets/images/emptyWishlist.svg";
 import { useEffect, useRef } from "react";
 import { getAllWishes } from "../store/wishlist/thunk/getAllWishProduct";
 import Card from "../components/website/Card";
+import LoadingSpinner from "../feedback/loading/LoadingSpinner";
 const Wishlist = () => {
   const dispatch = useDispatch();
   const ref = useRef();
@@ -10,7 +11,7 @@ const Wishlist = () => {
   useEffect(() => {
     ref.current.scrollIntoView();
     dispatch(getAllWishes());
-  }, [dispatch, products]);
+  }, [dispatch]);
   return (
     <div className="container" ref={ref}>
       <div className=" py-20">

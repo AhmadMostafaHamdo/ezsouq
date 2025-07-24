@@ -34,12 +34,13 @@ body {
   margin: 0;
   box-sizing: border-box;
 }
-button ,a{
+button,
+a {
   cursor: pointer;
-  transition: .3s all ease-in-out;
+  transition: 0.3s all ease-in-out;
 }
-button:hover,a:hover {
-  scale: 1.03;
+button:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 input {
   outline: none;

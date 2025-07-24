@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { productThunkOrderd } from "../store/product/thunk/productThunkOrdered";
 import { useDispatch, useSelector } from "react-redux";
 import Card from "../components/website/Card";
+import { productThunk } from "../store/product/thunk/productThunk";
 const Newest = () => {
   const dispatch = useDispatch();
   const [filters, setFilters] = useState({
@@ -12,15 +12,14 @@ const Newest = () => {
     limit: 8,
   });
   useEffect(() => {
-    dispatch(productThunkOrderd(filters));
+    dispatch(productThunk(filters));
   }, [dispatch]);
-  const { productOrdered = [] } = useSelector((state) => state.products);
-  console.log(productOrdered);
-   
+  const { products = [] } = useSelector((state) => state.products);
+
   return (
     <div className="py-20">
       <div className="container flex-between flex-wrap gap-5">
-        {productOrdered?.products.map((product) => (
+        {products?.map((product) => (
           <Card {...product} />
         ))}
       </div>

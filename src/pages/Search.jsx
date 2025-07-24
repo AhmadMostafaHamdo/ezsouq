@@ -1,14 +1,18 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import filter from "../assets/images/filter.svg";
+import filterImg from "../assets/images/filter.svg";
+import closeIcon from "../assets/images/close.svg";
+import corrected from "../assets/images/corrected.svg";
 import searchFilter from "../assets/images/searchFilter.svg";
 import { searchThunk } from "../store/search/thunk/serachThunk";
 import Card from "../components/website/Card";
 import Spinner from "../feedback/loading/Spinner";
+import { Link } from "react-router";
 
 const Search = () => {
   const contactRef = useRef(null);
   const [searchValue, setSearchValue] = useState("");
+  const [filter, setFilter] = useState(false);
   const dispatch = useDispatch();
   const { searchedProducts = [], loading } = useSelector(
     (state) => state.search
@@ -40,9 +44,68 @@ const Search = () => {
   };
 
   const hasSearchResults = searchedProducts.length > 0;
-
+  const handelClick = () => {
+    setFilter(!filter);
+  };
+  const handelSearchFilter = () => {
+    setFilter(false);
+  };
   return (
     <div className="bg-[#F7F7FF]" ref={contactRef}>
+      {filter && (
+        <div className="fixed top-0 left-0 w-full h-screen bg-[#23193E]/[.57] backdrop-blur-[20] z-10">
+          <div className="p-4 w-80 h-fit bg-white left-0 top-[3.22rem] absolute rounded-tr-[25px] rounded-br-[25px]">
+            <div className="flex-between">
+              <p>فلترة حسب:</p>
+              <Link to="/search" onClick={handelClick}>
+                <img src={closeIcon} alt="" />
+              </Link>
+            </div>
+            <div>
+              <select className="outline-none mt-4 w-full p-2 bg-white rounded border border-[#B9B5FF]">
+                <option value="">النوع</option>
+                <option value="لابتوب">عقارات</option>
+                <option value="موبايلات">موبايلات</option>
+                <option value="تابلت">سيارات</option>
+              </select>
+              <select className="outline-none mt-4  w-full p-2 bg-white rounded border border-[#B9B5FF]">
+                <option value="">النوع</option>
+                <option value="لابتوب">عقارات</option>
+                <option value="موبايلات">موبايلات</option>
+                <option value="تابلت">سيارات</option>
+              </select>
+              <select className="outline-none mt-4 w-full p-2 bg-white rounded border border-[#B9B5FF]">
+                <option value="">النوع</option>
+                <option value="لابتوب">عقارات</option>
+                <option value="موبايلات">موبايلات</option>
+                <option value="تابلت">سيارات</option>
+              </select>
+              <div className="outline-none flex gap-5 my-4">
+                <label className="block cursor-pointer">
+                  <input type="radio" value="جديدة" className="ml-2" />
+                  جديدة
+                </label>
+                <label className="block cursor-pointer">
+                  <input type="radio" value="مستعملة" className="ml-2" />
+                  مستعملة
+                </label>
+              </div>
+              <div className="flex-between">
+                <button className="flex-center rounded-xl py-[.4rem] px-5 border-[1px] text-[#B1ADFF] border-[#B1ADFF]">
+                  إعادة تعيين
+                </button>
+                <button
+                  onClick={handelSearchFilter}
+                  className="flex-center gap-1 bg-primary text-white rounded-xl py-[.4rem] px-5"
+                >
+                  تطبيق
+                  <img src={corrected} alt="" />
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
       <div className="container pt-20">
         <div className="flex items-center gap-4 md:gap-10 flex-col md:flex-row">
           <div className="flex items-center w-full md:w-auto">
@@ -60,9 +123,10 @@ const Search = () => {
             aria-label="Search input"
           />
           <img
-            src={filter}
+            src={filterImg}
             alt="Filter icon"
-            className="ml-2 md:ml-4 w-6 h-6"
+            className="ml-2 md:ml-4 w-6 h-6 cursor-pointer"
+            onClick={handelClick}
           />
         </div>
 

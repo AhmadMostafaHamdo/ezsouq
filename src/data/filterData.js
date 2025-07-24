@@ -36,8 +36,8 @@ export const ulLinksFooter = [
   { name: "سياسة الخصوصية", link: "/privacy-policy" },
 ];
 export const sortOptions = [
-  { value: "newest", label: "الأحدث" },
-  { value: "oldest", label: "الأقدم" },
-  { value: "price-low", label: "الأقل سعراً" },
-  { value: "price-high", label: "الأعلى سعراً" },
+  { order: "", value: "newest", label: "الأحدث" },
+  { order: "desc", value: "oldest", label: "الأقدم" },
+  { order: "", value: "price", label: "الأقل سعراً" },
+  { order: "desc", value: "price", label: "الأعلى سعراً" },
 ];

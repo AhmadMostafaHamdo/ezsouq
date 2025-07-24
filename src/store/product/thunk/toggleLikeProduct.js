@@ -1,3 +1,4 @@
+// src/store/product/thunk/toggleLikeProduct.js
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 import Cookies from "js-cookie";
@@ -9,19 +10,24 @@ export const toggleLikeProduct = createAsyncThunk(
     try {
       const { data } = await axios.post(
         "/user/likedProduct",
-        {
-          product_id: id,
-        },
+        { product_id: id },
         {
           headers: {
             authorization: `Bearer ${Cookies.get("token")}`,
           },
         }
       );
-      dispatch(setLike(data));
-      return res.data;
+      // بيانات متوقعة من السيرفر: { message, liked, totalLikes, productId }
+      // تأكد أن السيرفر يعيد productId أو يمكنك إضافته هنا بنفسك:
+      const likedData = {
+        productId: id,
+        liked: data.liked,
+        totalLikes: data.totalLikes,
+      };
+      dispatch(setLike(likedData));
+      return likedData;
     } catch (error) {
-      return rejectWithValue(error.response?.data?.message);
+      return rejectWithValue(error.response?.data?.message || "حدث خطأ");
     }
   }
 );

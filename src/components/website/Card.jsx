@@ -1,20 +1,20 @@
 // src/components/Card.jsx
 import { Link, useNavigate } from "react-router-dom";
-import emptyHeartCard from "../../assets/images/emptyHeartCard.svg";
+import emptyHeart from "../../assets/images/emptyHeart.svg";
 import commit from "../../assets/images/commit.svg";
-import favorit from "../../assets/images/favorit.svg";
 import emptyFavorit from "../../assets/images/emptyFavorit.svg";
 import views from "../../assets/images/views.svg";
 import share from "../../assets/images/share.svg";
 import Cookies from "js-cookie";
 import TimeAgo from "../TimeAgo";
 import { useDispatch, useSelector } from "react-redux";
-import Spinner from "../../feedback/loading/Spinner";
 import { likeToggleWishlistThunk } from "../../store/wishlist/thunk/likeToggleWishlistThunk";
 import { toggleLikeProduct } from "../../store/product/thunk/toggleLikeProduct";
-import { memo, useCallback, useState } from "react";
-import imgLiked from "../../assets/lottifiles/HeartFav.json";
+import { memo, useCallback, useState, useEffect } from "react";
+import imgLiked from "../../assets/lottifiles/heartAnmation.json";
+import saved from "../../assets/lottifiles/saved.json";
 import Lottie from "lottie-react";
+import { setSavedProduct } from "../../store/product/productSlice";
 
 const Card = ({
   _id,
@@ -29,11 +29,33 @@ const Card = ({
 }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const [liked, setLiked] = useState(false);
-  const { likedFavorit } = useSelector((state) => state.wishlist);
-  const { products = [] } = useSelector((state) => state.products);
+
+  // خذ بيانات المنتجات كاملة من ال store
+  const { products = [], savedProducts = [] } = useSelector(
+    (state) => state.products
+  );
   const { user } = useSelector((state) => state.users);
   const userId = user?._id;
+
+  // ابحث عن المنتج المناسب من قائمة المنتجات
+  const productData = products.find((p) => p._id === _id) || { likes: {} };
+
+  // حالة الإعجاب المحلية للظهور السريع
+  const [liked, setLiked] = useState(productData.likes.liked || false);
+  const [totalLikes, setTotalLikes] = useState(
+    productData.likes.totalLikes || 0
+  );
+
+  // تزامن الstate المحلي مع بيانات المنتج من الstore
+  useEffect(() => {
+    setLiked(productData.likes.liked || false);
+    setTotalLikes(productData.likes.totalLikes || 0);
+  }, [productData]);
+
+  const isSaved = Array.isArray(savedProducts)
+    ? savedProducts.includes(_id)
+    : false;
+
   const handleOfferClick = useCallback(
     (e) => {
       const token = Cookies.get("token");
@@ -51,18 +73,22 @@ const Card = ({
     (e) => {
       e.stopPropagation();
       setLiked((prev) => !prev);
+      // تحديث العدد محليًا سريعا للظهور
+      setTotalLikes((prev) => (liked ? prev - 1 : prev + 1));
       dispatch(toggleLikeProduct(_id));
     },
-    [_id, dispatch]
+    [_id, dispatch, liked]
   );
 
   const handelFavorit = useCallback(
     (e) => {
       e.stopPropagation();
+      dispatch(setSavedProduct(_id));
       dispatch(likeToggleWishlistThunk(_id));
     },
     [_id, dispatch]
   );
+
   return (
     <div
       onClick={handleOfferClick}
@@ -76,13 +102,17 @@ const Card = ({
           </p>
           <p className="mr-1">بواسطة {Owner_id?.name}</p>
           <div onClick={handelFavorit}>
-            <img
-              src={likedFavorit ? favorit : emptyFavorit}
-              alt=""
-              className="w-6 h-5 mr-auto"
-              loading="lazy"
-              decoding="async"
-            />
+            {isSaved ? (
+              <Lottie animationData={saved} loop={false} />
+            ) : (
+              <img
+                src={emptyFavorit}
+                alt=""
+                className="w-6 h-5 mr-auto"
+                loading="lazy"
+                decoding="async"
+              />
+            )}
           </div>
         </div>
         <div className="w-full">
@@ -109,13 +139,19 @@ const Card = ({
           </div>
           <div className="flex-between mt-4">
             <div className="flex-center gap-2" onClick={handleLike}>
-              {liked ? (
-                <Lottie animationData={imgLiked} />
-              ) : (
-                <img src={emptyHeartCard} alt="heart" />
-              )}
+              <div className="w-8 h-6 flex-center">
+                {liked ? (
+                  <Lottie
+                    animationData={imgLiked}
+                    loop={false}
+                    className="inline"
+                  />
+                ) : (
+                  <img src={emptyHeart} alt="heart" className="inline" />
+                )}
+              </div>
               <span className="font-normal text-[.625rem] text-[#535353]">
-                {products?.likes?.totalLike}
+                {totalLikes}
               </span>
             </div>
             <Link

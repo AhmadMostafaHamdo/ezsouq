@@ -1,4 +1,4 @@
-import { Link, NavLink } from "react-router-dom";
+import { Link, NavLink, useLocation } from "react-router-dom";
 import menuIcon from "../../../assets/images/menu.svg";
 import logo from "../../../assets/images/logoWithTitleWhite.svg";
 import closeIcon from "../../../assets/images/close.png";
@@ -11,18 +11,10 @@ import { ulLinksLogin } from "../../../data/filterData";
 import Sidebar from "../../common/Sidebar";
 import { useScrolled } from "../../../hooks/useScrolled";
 const HeaderLogin = () => {
-  const isScrolled = useScrolled(10);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [toggleHeart, setToggleHeart] = useState(false);
+  const location = useLocation();
+  console.log();
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
-  const handleToggle = () => {
-    setToggleHeart(true);
-  };
-  useEffect(() => {
-    return () => {
-      setToggleHeart(false);
-    };
-  }, []);
   return (
     <div
       className={`bg-primary text-white  font-bold text-[.87rem] fixed w-full z-10 py-[1.5px] `}
@@ -71,8 +63,8 @@ const HeaderLogin = () => {
           <Link to="/search">
             <img src={search} className="w-4 h-4" />
           </Link>
-          <Link to="/wishlist" onClick={handleToggle}>
-            {toggleHeart ? (
+          <Link to="/wishlist" >
+            {location.pathname == "/wishlist" ? (
               <img
                 src={redHeart}
                 className="w-6 h-6"
