@@ -1,29 +1,36 @@
-// src/store/product/thunk/toggleLikeProduct.js
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import axios from "axios";
+import * as jwt_decode from "jwt-decode"; // ✅ هذا يحل المشكلة مع Vite
 import Cookies from "js-cookie";
+import axios from "axios";
 import { setLike } from "../productSlice";
 
 export const toggleLikeProduct = createAsyncThunk(
   "/toggleLikeProduct",
   async (id, { dispatch, rejectWithValue }) => {
     try {
+      const token = Cookies.get("token");
+
       const { data } = await axios.post(
         "/user/likedProduct",
         { product_id: id },
         {
           headers: {
-            authorization: `Bearer ${Cookies.get("token")}`,
+            authorization: `Bearer ${token}`,
           },
         }
       );
-      // بيانات متوقعة من السيرفر: { message, liked, totalLikes, productId }
-      // تأكد أن السيرفر يعيد productId أو يمكنك إضافته هنا بنفسك:
+
+      // ✅ استخراج userId من JWT
+      const decoded = jwt_decode.default(token); // مهم جداً هنا
+      const userId = decoded._id;
+
       const likedData = {
         productId: id,
         liked: data.liked,
         totalLikes: data.totalLikes,
+        userId,
       };
+
       dispatch(setLike(likedData));
       return likedData;
     } catch (error) {

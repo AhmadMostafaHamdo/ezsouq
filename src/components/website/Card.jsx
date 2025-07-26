@@ -10,11 +10,12 @@ import TimeAgo from "../TimeAgo";
 import { useDispatch, useSelector } from "react-redux";
 import { likeToggleWishlistThunk } from "../../store/wishlist/thunk/likeToggleWishlistThunk";
 import { toggleLikeProduct } from "../../store/product/thunk/toggleLikeProduct";
-import { memo, useCallback, useState, useEffect } from "react";
+import { memo, useCallback, useEffect, useState } from "react";
 import imgLiked from "../../assets/lottifiles/heartAnmation.json";
 import saved from "../../assets/lottifiles/saved.json";
 import Lottie from "lottie-react";
 import { setSavedProduct } from "../../store/product/productSlice";
+import { getAllLikesThunk } from "../../store/product/thunk/getAllLikesThunk";
 
 const Card = ({
   _id,
@@ -30,27 +31,25 @@ const Card = ({
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  // خذ بيانات المنتجات كاملة من ال store
   const { products = [], savedProducts = [] } = useSelector(
     (state) => state.products
   );
+  const { comments } = useSelector((state) => state.comments);
   const { user } = useSelector((state) => state.users);
   const userId = user?._id;
 
-  // ابحث عن المنتج المناسب من قائمة المنتجات
-  const productData = products.find((p) => p._id === _id) || { likes: {} };
+  const productData = products.find((p) => p._id === _id) || { likes: [] };
 
-  // حالة الإعجاب المحلية للظهور السريع
-  const [liked, setLiked] = useState(productData.likes.liked || false);
-  const [totalLikes, setTotalLikes] = useState(
-    productData.likes.totalLikes || 0
-  );
+  const [liked, setLiked] = useState(false);
+  const [totalLikes, setTotalLikes] = useState(0);
 
-  // تزامن الstate المحلي مع بيانات المنتج من الstore
   useEffect(() => {
-    setLiked(productData.likes.liked || false);
-    setTotalLikes(productData.likes.totalLikes || 0);
-  }, [productData]);
+    const likesArray = Array.isArray(productData.likes)
+      ? productData.likes
+      : [];
+    setLiked(likesArray.includes(userId));
+    setTotalLikes(likesArray.length);
+  }, [productData.likes, userId]);
 
   const isSaved = Array.isArray(savedProducts)
     ? savedProducts.includes(_id)
@@ -70,11 +69,11 @@ const Card = ({
   );
 
   const handleLike = useCallback(
-    (e) => {
+    async (e) => {
       e.stopPropagation();
-      setLiked((prev) => !prev);
-      // تحديث العدد محليًا سريعا للظهور
-      setTotalLikes((prev) => (liked ? prev - 1 : prev + 1));
+      const newLiked = !liked;
+      setLiked(newLiked);
+      setTotalLikes((prev) => (newLiked ? prev + 1 : prev - 1));
       dispatch(toggleLikeProduct(_id));
     },
     [_id, dispatch, liked]
@@ -161,7 +160,7 @@ const Card = ({
             >
               <img src={commit} alt="comment" />
               <span className="font-normal text-[.625rem] text-[#535353]">
-                22
+                {comments?.length}
               </span>
             </Link>
             <div className="flex-center gap-2">

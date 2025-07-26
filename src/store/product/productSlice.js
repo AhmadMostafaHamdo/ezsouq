@@ -2,10 +2,12 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { productThunk } from "./thunk/productThunk";
 import { productThunkById } from "./thunk/productThunkById";
+import { getAllLikesThunk } from "./thunk/getAllLikesThunk";
 
 const initialState = {
   products: [], // قائمة المنتجات
   product: {}, // منتج مفصل حالياً (مثلاً صفحة تفاصيل)
+  likes: [],
   loading: false,
   error: null,
   savedProducts: [],
@@ -17,17 +19,35 @@ const productSlice = createSlice({
   initialState,
   reducers: {
     setLike: (state, action) => {
-      const likedData = action.payload;
-      // يفترض أن الرد يحتوي على productId و liked و totalLikes
-      const idx = state.products.findIndex(
-        (p) => p._id === likedData.productId
-      );
+      const { productId, liked, userId } = action.payload;
+      const idx = state.products.findIndex((p) => p._id === productId);
+
       if (idx !== -1) {
-        state.products[idx].likes = likedData;
+        let currentLikes = Array.isArray(state.products[idx].likes)
+          ? [...state.products[idx].likes]
+          : [];
+
+        if (liked) {
+          if (!currentLikes.includes(userId)) currentLikes.push(userId);
+        } else {
+          currentLikes = currentLikes.filter((id) => id !== userId);
+        }
+
+        state.products[idx].likes = currentLikes;
       }
-      // إذا المنتج الحالي هو نفسه
-      if (state.product._id === likedData.productId) {
-        state.product.likes = likedData;
+
+      if (state.product._id === productId) {
+        let currentLikes = Array.isArray(state.product.likes)
+          ? [...state.product.likes]
+          : [];
+
+        if (liked) {
+          if (!currentLikes.includes(userId)) currentLikes.push(userId);
+        } else {
+          currentLikes = currentLikes.filter((id) => id !== userId);
+        }
+
+        state.product.likes = currentLikes;
       }
     },
     setSavedProduct: (state, action) => {
@@ -72,6 +92,10 @@ const productSlice = createSlice({
       .addCase(productThunkById.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
+      })
+      .addCase(getAllLikesThunk.fulfilled, (state, action) => {
+        state.loading = false;
+        state.likes = action.payload;
       });
   },
 });
