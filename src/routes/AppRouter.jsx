@@ -6,6 +6,7 @@ import VerifyCode from "../pages/VerifyCode";
 import RedirectIfAuthenticated from "./RedirectIfAuthenticated";
 import Main from "../components/main/Main";
 import Filters from "../components/website/Filters";
+
 const App = lazy(() => import("../App"));
 const OfferDetails = lazy(() => import("../pages/OfferDetails"));
 const Login = lazy(() => import("../pages/Login"));
@@ -25,6 +26,19 @@ const Report = lazy(() => import("../pages/Report"));
 const Commits = lazy(() => import("../pages/Commits"));
 const Newest = lazy(() => import("../pages/Newest"));
 const Rating = lazy(() => import("../components/website/Rating/Rating"));
+const Dashoard = lazy(() => import("../pages/dashboard/Dashboard"));
+const Home = lazy(() => import("../pages/dashboard/Home"));
+const Setting = lazy(() => import("../pages/dashboard/Setting"));
+const RatingDashboard = lazy(() => import("../pages/dashboard/Rating"));
+const Reports = lazy(() => import("../pages/dashboard/Reports"));
+
+const Notification = lazy(() => import("../pages/dashboard/Notification"));
+
+const Offers = lazy(() => import("../pages/dashboard/Offers"));
+const UsersDashboard = lazy(() =>
+  import("../components/dashoard/UsersDashboard")
+);
+const Statistic = lazy(() => import("../pages/dashboard/Statistic"));
 const router = createBrowserRouter([
   {
     path: "/",
@@ -157,6 +171,44 @@ const router = createBrowserRouter([
             <CreateOffer />
           </SuspenseFallback>
         ),
+      },
+    ],
+  },
+  {
+    path: "/dashboard",
+    element: <Dashoard />,
+    children: [
+      {
+        index: true,
+        element: <Home />,
+      },
+      {
+        path: "offers",
+        element: <Offers />,
+      },
+      {
+        path: "users",
+        element: <UsersDashboard />,
+      },
+      {
+        path: "statistic",
+        element: <Statistic />,
+      },
+      {
+        path: "setting",
+        element: <Setting />,
+      },
+      {
+        path: "rating",
+        element: <RatingDashboard />,
+      },
+      {
+        path: "reports",
+        element: <Reports />,
+      },
+      {
+        path: "notification",
+        element: <Notification />,
       },
     ],
   },

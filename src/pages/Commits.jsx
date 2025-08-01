@@ -19,12 +19,14 @@ const Commits = () => {
   const ref = useRef();
   const { id } = useParams();
   const { product } = useSelector((state) => state.products);
-  const { comments, loading: commentsLoading } = useSelector(
+  const { commentsByProductId, loading: commentsLoading } = useSelector(
     (state) => state.comments
   );
+
+  const productComments = commentsByProductId?.[product?._id] || [];
+
   const { user } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
-console.log(product._id)
   useEffect(() => {
     ref.current?.scrollIntoView({ behavior: "smooth" });
     const fetchData = async () => {
@@ -52,7 +54,7 @@ console.log(product._id)
     try {
       await dispatch(
         thunkAddCommit({
-          productId: product?._id,
+          product_id: product?._id,
           comment: comment,
         })
       );
@@ -79,7 +81,7 @@ console.log(product._id)
 
         <div className="mt-8 md:mt-14 flex-1">
           <p className="font-normal text-[1.5rem]">
-            {comments?.length || 0} تعليقات
+            {productComments.length} تعليقات
           </p>
 
           <div className="w-full">
@@ -117,8 +119,8 @@ console.log(product._id)
                 <CommentSkeleton />
                 <CommentSkeleton />
               </>
-            ) : comments?.length > 0 ? (
-              comments.map((item) => (
+            ) : productComments.length > 0 ? (
+              productComments.map((item) => (
                 <React.Fragment key={item._id}>
                   <Commit
                     comment={item.comments}

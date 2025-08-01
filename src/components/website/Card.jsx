@@ -34,7 +34,8 @@ const Card = ({
   const { products = [], savedProducts = [] } = useSelector(
     (state) => state.products
   );
-  const { comments } = useSelector((state) => state.comments);
+  const { commentsByProductId } = useSelector((state) => state.comments);
+  const commentCount = commentsByProductId?.[_id]?.length || 0;
   const { user } = useSelector((state) => state.users);
   const userId = user?._id;
 
@@ -160,7 +161,7 @@ const Card = ({
             >
               <img src={commit} alt="comment" />
               <span className="font-normal text-[.625rem] text-[#535353]">
-                {comments?.length}
+                {commentCount}
               </span>
             </Link>
             <div className="flex-center gap-2">

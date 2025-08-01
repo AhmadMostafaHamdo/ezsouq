@@ -16,7 +16,6 @@ export const getAllLikesThunk = createAsyncThunk(
           },
         }
       );
-      console.log(data);
       return data?.count;
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || "حدث خطأ");

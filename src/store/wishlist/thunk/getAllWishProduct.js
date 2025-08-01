@@ -9,7 +9,6 @@ export const getAllWishes = createAsyncThunk("/wishlist", async (id) => {
         authorization: `Bearer ${Cookies.get("token")}`,
       },
     });
-    console.log(res.data.favorites);
     return res?.data?.favorites;
   } catch (error) {
     throw error.response.data;

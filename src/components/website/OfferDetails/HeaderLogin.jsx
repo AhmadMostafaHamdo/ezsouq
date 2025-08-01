@@ -13,7 +13,6 @@ import { useScrolled } from "../../../hooks/useScrolled";
 const HeaderLogin = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const location = useLocation();
-  console.log();
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
   return (
     <div
