@@ -31,7 +31,7 @@ function TimeAgo({ postDate }) {
       const seconds = Math.floor((now - postDateObj) / 1000);
 
       if (seconds < 0) {
-        setTimeAgo("في المستقبل");
+        setTimeAgo("الآن");
         return;
       }
 
