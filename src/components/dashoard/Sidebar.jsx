@@ -1,10 +1,16 @@
 import { NavLink } from "react-router";
 import logo from "../../assets/images/logoWithTitle.svg";
-import logout from "../../assets/images/dashboard/logout.svg";
+import logoutImg from "../../assets/images/dashboard/logout.svg";
+import { logout } from "../../store/auth/thunk/logout";
 import { ulLinks } from "../../data/dashboard";
+import { useDispatch } from "react-redux";
 const Sidebar = () => {
+  const dispatch = useDispatch();
+  const handelLogout = () => {
+    dispatch(logout());
+  };
   return (
-    <div className="mt-[3vh]">
+    <div className="mt-[3vh] hidden lg:block">
       <div className="w-44 rounded-lg font-normal flex flex-col justify-between  h-[94vh] items-start bg-white p-4 pt-1  pb-6">
         <div>
           <img src={logo} alt="" width={100} />
@@ -30,8 +36,11 @@ const Sidebar = () => {
             </div>
           ))}
         </ul>
-        <button className="text-[#2F2E41] flex-center gap-2 text-[.9rem] mt-3">
-          <img src={logout} alt="" />
+        <button
+          className="text-[#2F2E41] flex-center gap-2 text-[.9rem] mt-3 rounded-md p-2"
+          onClick={handelLogout}
+        >
+          <img src={logoutImg} alt="" />
           تسجيل الخروج
         </button>
       </div>

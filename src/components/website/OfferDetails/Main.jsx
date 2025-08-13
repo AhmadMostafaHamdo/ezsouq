@@ -18,6 +18,7 @@ import TimeAgo from "../../TimeAgo";
 import Spinner from "../../../feedback/loading/Spinner";
 import ThumbnailImage from "../../../feedback/loading/ThumbnailImage";
 import { userThunkById } from "../../../store/users/thunk/userThunkById";
+import { viewsThunk } from "../../../store/views/thunk/thunkViews";
 const Main = () => {
   const { product } = useSelector((state) => state.products);
   const { user } = useSelector((state) => state.users);
@@ -29,6 +30,9 @@ const Main = () => {
   useEffect(() => {
     dispatch(productThunkById(id));
   }, [dispatch, id]);
+  useEffect(() => {
+    dispatch(viewsThunk(id));
+  }, []);
   useEffect(() => {
     dispatch(userThunkById(product?.Owner_id?._id));
   }, [dispatch, id]);
@@ -239,7 +243,7 @@ const Main = () => {
                   </span>
                 </p>
                 <Link
-                  to="/profile"
+                  to={`/profile/${product?.Owner_id?._id}`}
                   className="bg-primary p-2 w-fit md:w-[120px] lg:w-fit  text-white rounded-md font-bold text-[.75rem]"
                 >
                   عرض الملف الشخصي
@@ -249,7 +253,7 @@ const Main = () => {
           </div>
         </div>
       </div>
-      <Link to="/report">
+      <Link to={`/offer-details/${id}/report`}>
         <p className="text-center text-[12px] font-normal text-[#7E7E7E] pt-5 pb-10 underline cursor-pointer">
           ابلاغ عن هذا الإعلان
         </p>

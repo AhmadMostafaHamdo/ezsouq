@@ -7,7 +7,7 @@ import arrowLeft from "../../assets/images/Arrow-left.svg";
 import arrowRight from "../../assets/images/arrowRight.svg";
 import { stepIncrease, stepDecrease } from "../../store/steps/stepsSlice";
 import axios from "axios";
-
+  
 const MainCreateOffer = () => {
   const dispatch = useDispatch();
   const offer = useRef();

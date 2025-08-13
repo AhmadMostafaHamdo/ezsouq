@@ -5,6 +5,7 @@ export const thunkGetProductByCat = createAsyncThunk(
   async (category, { rejectWithValue }) => {
     try {
       const res = await axios.get(`user/fliteredProducts?Category=${category}`);
+      console.log(res.data);
       return res?.data?.items;
     } catch (error) {
       return rejectWithValue(error.response?.data?.message);

@@ -11,11 +11,14 @@ import menuTable2 from "../../assets/images/dashboard/menuTable2.svg";
 import viewsBlue from "../../assets/images/dashboard/viewsBlue.svg";
 import sendmsg from "../../assets/images/dashboard/sendmsg.svg";
 import block from "../../assets/images/dashboard/block.svg";
+import { getAllUsers } from "../../store/users/thunk/getAllUsers";
+import { useDispatch } from "react-redux";
 
 const UsersDashboard = () => {
   const [infoTable, setInfoTable] = useState(false);
   const [showDetails, setShowDetails] = useState(false);
   const [showSetting, setShowSetting] = useState(false);
+  const dispatch = useDispatch();
   const [visibleColumns, setVisibleColumns] = useState({
     image: true,
     name: true,
@@ -44,7 +47,9 @@ const UsersDashboard = () => {
       [column]: !prev[column],
     }));
   };
-
+  useEffect(() => {
+    dispatch(getAllUsers());
+  }, []);
   // إغلاق القوائم عند النقر خارجها
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -64,6 +69,7 @@ const UsersDashboard = () => {
   const handelSettingUser = () => {
     setShowSetting(!showSetting);
   };
+
   return (
     <div>
       <div className="container">
@@ -178,91 +184,114 @@ const UsersDashboard = () => {
             )}
           </div>
         </div>
-        <div className="p-6 bg-white rounded-tr-3xl rounded-tl-3xl">
-          <table className="font-medium w-full">
-            <thead>
-              <tr className="text-[#959595]">
-                {visibleColumns.image && <th className="pb-4">الصورة</th>}
-                {visibleColumns.name && <th className="pb-4">الاسم</th>}
-                {visibleColumns.location && (
-                  <th className="pb-4">البريد الإلكتروني</th>
-                )}
-                {visibleColumns.publisher && (
-                  <th className="pb-4">رقم الهاتق </th>
-                )}
-                {visibleColumns.price && (
-                  <th className="pb-4">عدد الإعلانات</th>
-                )}
-                {visibleColumns.date && <th className="pb-4"> الحالة</th>}
-                {visibleColumns.actions && <th className="pb-4">الإجراءات</th>}
-              </tr>
-            </thead>
-            <tbody className="text-[.8rem]">
-              <tr className="border-t border-[#eee]">
-                {visibleColumns.image && (
-                  <td className="py-4">
-                    <img src={profile} alt="" width={50} />
-                  </td>
-                )}
-                {visibleColumns.name && (
-                  <td className="py-4">سيارة تويوتا...</td>
-                )}
-                {visibleColumns.location && (
-                  <td className="py-4">دمشق، المزة</td>
-                )}
-                {visibleColumns.publisher && (
-                  <td className="py-4">مياو المياو </td>
-                )}
-                {visibleColumns.price && <td className="py-4">50 مليون </td>}
-                {visibleColumns.date && (
-                  <td className="py-4">
-                    {false ? (
-                      <span className="text-[#30C795] bg-[#EAF9F4] rounded-md px-5 py-2">
-                        نشط
-                      </span>
-                    ) : (
-                      <span className="text-[#C73030] bg-[#F9EAEA] rounded-md px-5 py-2">
-                        حظر
-                      </span>
-                    )}
-                  </td>
-                )}
-                {visibleColumns.actions && (
-                  <td>
-                    <div className="flex items-center justify-center relative">
-                      <img
-                        src={iconSettingUser}
-                        className="cursor-pointer"
-                        onClick={handelSettingUser}
-                        alt=""
-                        width={30}
-                      />
-                      {showSetting && (
-                        <div className="w-36 leading-7 absolute left-[4.2rem] top-3 rounded-lg bg-white p-3 shadow-[0px_4px_15.8px_0px_#0000001F]">
-                          <p className="text-[#6C63FF] flex gap-2">
-                            <img src={viewsBlue} alt="" />
-                            <span>عرض التفاصيل</span>
-                          </p>
-                          <p className="flex gap-2">
-                            <img src={sendmsg} alt="" />
-                            <span className="text-[#5FB2D1]">إرسال رسالة</span>
-                          </p>
-                          <p className="flex gap-2">
-                            <img src={block} alt="" />
-                            <span>حظر</span>
-                          </p>
-                          <p className="flex gap-2">
-                            <img src={deleteIcon} alt="" />
-                            <span className="text-[#BD4749]">حذف</span>
-                          </p>
-                        </div>
+        <div className="p-3 lg:p-6 bg-white rounded-tr-3xl rounded-tl-3xl">
+          <div className="overflow-auto">
+            <table className="font-medium w-[95vw] lg:w-full  overflow-auto">
+              <thead>
+                <tr className="text-[#959595]">
+                  {visibleColumns.image && (
+                    <th className="pb-4 text-[.8rem] lg:text-[1rem] ">الصورة</th>
+                  )}
+                  {visibleColumns.name && (
+                    <th className="pb-4 text-[.8rem] lg:text-[1rem] ">الاسم</th>
+                  )}
+                  {visibleColumns.location && (
+                    <th className="pb-4 text-[.8rem] lg:text-[1rem] ">
+                      البريد الإلكتروني
+                    </th>
+                  )}
+                  {visibleColumns.publisher && (
+                    <th className="pb-4 text-[.8rem] lg:text-[1rem] ">
+                      رقم الهاتق{" "}
+                    </th>
+                  )}
+                  {visibleColumns.price && (
+                    <th className="pb-4 text-[.8rem] lg:text-[1rem] ">
+                      عدد الإعلانات
+                    </th>
+                  )}
+                  {visibleColumns.date && (
+                    <th className="pb-4 text-[.8rem] lg:text-[1rem] ">
+                      {" "}
+                      الحالة
+                    </th>
+                  )}
+                  {visibleColumns.actions && (
+                    <th className="pb-4 text-[.8rem] lg:text-[1rem] ">
+                      الإجراءات
+                    </th>
+                  )}
+                </tr>
+              </thead>
+              <tbody className="text-[.8rem]">
+                <tr className="border-t border-[#eee]">
+                  {visibleColumns.image && (
+                    <td className="py-4">
+                      <img src={profile} alt="" width={50} />
+                    </td>
+                  )}
+                  {visibleColumns.name && (
+                    <td className="py-4">سيارة تويوتا...</td>
+                  )}
+                  {visibleColumns.location && (
+                    <td className="py-4">دمشق، المزة</td>
+                  )}
+                  {visibleColumns.publisher && (
+                    <td className="py-4">مياو المياو </td>
+                  )}
+                  {visibleColumns.price && <td className="py-4">50 مليون </td>}
+                  {visibleColumns.date && (
+                    <td className="py-4">
+                      {false ? (
+                        <span className="text-[#30C795] bg-[#EAF9F4] rounded-md px-5 py-2">
+                          نشط
+                        </span>
+                      ) : (
+                        <span className="text-[#C73030] bg-[#F9EAEA] rounded-md px-5 py-2">
+                          حظر
+                        </span>
                       )}
-                    </div>
-                  </td>
-                )}
-              </tr>
-            </tbody>
-          </table>
+                    </td>
+                  )}
+                  {visibleColumns.actions && (
+                    <td>
+                      <div className="flex items-center justify-center relative">
+                        <img
+                          src={iconSettingUser}
+                          className="cursor-pointer"
+                          onClick={handelSettingUser}
+                          alt=""
+                          width={30}
+                        />
+                        {showSetting && (
+                          <div className="w-36 leading-7 absolute left-[4.2rem] top-3 rounded-lg bg-white p-3 shadow-[0px_4px_15.8px_0px_#0000001F]">
+                            <p className="text-[#6C63FF] flex gap-2">
+                              <img src={viewsBlue} alt="" />
+                              <span>عرض التفاصيل</span>
+                            </p>
+                            <p className="flex gap-2">
+                              <img src={sendmsg} alt="" />
+                              <span className="text-[#5FB2D1]">
+                                إرسال رسالة
+                              </span>
+                            </p>
+                            <p className="flex gap-2">
+                              <img src={block} alt="" />
+                              <span>حظر</span>
+                            </p>
+                            <p className="flex gap-2">
+                              <img src={deleteIcon} alt="" />
+                              <span className="text-[#BD4749]">حذف</span>
+                            </p>
+                          </div>
+                        )}
+                      </div>
+                    </td>
+                  )}
+                </tr>
+              </tbody>
+            </table>
+          </div>
           <div className="flex-between text-[#959595] mt-3">
             <p>عرض 6 من 500</p>
             <div className="flex-center gap-2">

@@ -31,12 +31,9 @@ const Commits = () => {
     ref.current?.scrollIntoView({ behavior: "smooth" });
     const fetchData = async () => {
       try {
-        setIsLoading(true);
-        await dispatch(productThunkById(id));
+        await dispatch(productThunkById(id)); 
       } catch (err) {
         setError("Failed to fetch product data");
-      } finally {
-        setIsLoading(false);
       }
     };
     fetchData();

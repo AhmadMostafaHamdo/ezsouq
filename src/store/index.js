@@ -10,6 +10,8 @@ import productsByCat from "./getProductsByCat/getProductByCatSlice";
 import search from "./search/searchSlice";
 import ratingThunk from "./rating/ratingSlice";
 import comments from "./commits/commitSlice";
+import report from "./report/reportSlice";
+import views from "./views/viewsSlice";
 import storage from "redux-persist/lib/storage";
 import {
   FLUSH,
@@ -61,6 +63,14 @@ const persistCommits = {
   key: "commits",
   storage,
 };
+const persistReport = {
+  key: "report",
+  storage,
+};
+const persistViews = {
+  key: "views",
+  storage,
+};
 const rootReducer = combineReducers({
   auth: persistReducer(persistAuth, auth),
   products: persistReducer(persistProducts, products),
@@ -72,6 +82,8 @@ const rootReducer = combineReducers({
   productsByCat: persistReducer(persistProductsByCat, productsByCat),
   ratingThunk: persistReducer(persistRating, ratingThunk),
   comments: persistReducer(persistCommits, comments),
+  report: persistReducer(persistReport, report),
+  views: persistReducer(persistViews, views),
   search,
 });
 export const store = configureStore({

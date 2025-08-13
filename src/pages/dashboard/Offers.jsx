@@ -9,6 +9,8 @@ import arrowLeft from "../../assets/images/dashboard/arrowLeftTable.svg";
 import arrowRight from "../../assets/images/dashboard/arrowRightTable.svg";
 import menuTable from "../../assets/images/dashboard/menuTable.svg";
 import menuTable2 from "../../assets/images/dashboard/menuTable2.svg";
+import deleteOffer from "../../assets/images/dashboard/deleteOffer.svg";
+import close from "../../assets/images/close.svg";
 
 const Offers = () => {
   const [infoTable, setInfoTable] = useState(false);
@@ -22,6 +24,7 @@ const Offers = () => {
     date: true,
     actions: true,
   });
+  const [deleteOfferToggle, setDeleteOfferToggle] = useState(false);
 
   const menuRef = useRef(null);
   const detailsRef = useRef(null);
@@ -58,9 +61,22 @@ const Offers = () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
-
+  const handelDeleteOffer = () => {
+    setDeleteOfferToggle(true);
+  };
   return (
-    <div>
+    <div className="overflow-hidden">
+      {deleteOfferToggle ? (
+        <div className="absolute w-[100vw] h-screen bg-[#67676780] z-20 translate-x-60">
+          <div className="w-96 h-96 p-5 rounded-lg bg-white absolute z-50 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+            <img src={close} alt="" className="mr-auto" />
+            <img src={deleteOffer} alt="" className="m-auto" />
+            <p className="text-center my-5">حذف إعلان</p>
+          </div>
+        </div>
+      ) : (
+        ""
+      )}
       <div className="container">
         <div className="flex-between my-5 w-[60vw]">
           <h1>الإعلانات</h1>
@@ -209,7 +225,13 @@ const Offers = () => {
                         className="ml-2"
                         width={30}
                       />
-                      <img src={deleteUser} alt="" width={30} />
+                      <img
+                        src={deleteUser}
+                        alt=""
+                        width={30}
+                        className="cursor-pointer"
+                        onClick={handelDeleteOffer}
+                      />
                     </div>
                   </td>
                 )}

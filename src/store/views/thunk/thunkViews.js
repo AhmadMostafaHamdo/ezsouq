@@ -1,15 +1,16 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
-export const usersThunk = createAsyncThunk(
-  "/users",
-  async (id, { rejectWithValue }) => {
+export const viewsThunk = createAsyncThunk(
+  "/views",
+  async (productId, { rejectWithValue }) => {
     try {
-      if (!id) {
+      if (!productId) {
         return rejectWithValue("User ID is missing");
       }
 
-      const res = await axios.get(`/get_user/${id}`);
+      const res = await axios.put(`/user/set_count_views/${productId}`);
+      console.log(res.data);
       return res.data;
     } catch (error) {
       return rejectWithValue(

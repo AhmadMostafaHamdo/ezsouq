@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router";
 import logo from "../../assets/images/logoWithTitleWhite.svg";
 import menuIcon from "../../assets/images/menu.svg";
 import searchIcon from "../../assets/images/search.svg";
@@ -7,7 +8,7 @@ import AuthLinks from "./AuthLinks";
 import { useScrolled } from "../../hooks/useScrolled";
 import Sidebar from "./Sidebar";
 import closeIcon from "../../assets/images/close.png";
-
+  
 const Header = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isSearchVisible, setIsSearchVisible] = useState(false);
@@ -61,11 +62,13 @@ const Header = () => {
         {/* Logo */}
         {!isSearchVisible && (
           <div className="flex-1 flex justify-end ml-[-2.1rem] md:flex-none">
-            <img
-              src={logo}
-              alt="Logo"
-              className="object-contain w-40 h-12 md:scale-[1.7]"
-            />
+            <Link to="/">
+              <img
+                src={logo}
+                alt="Logo"
+                className="object-contain w-40 h-12 md:scale-[1.7]"
+              />
+            </Link>
           </div>
         )}
 

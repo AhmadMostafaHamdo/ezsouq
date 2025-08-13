@@ -1,15 +1,23 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import SortDropdown from "./SortDropdown";
 import personalImg from "../../assets/images/personal.svg";
 import start from "../../assets/images/start.svg/";
-import { Link, useLocation } from "react-router";
+import { Link, useLocation, useParams } from "react-router";
 import { sortOptions } from "../../data/filterData";
+import { useDispatch, useSelector } from "react-redux";
+import { userThunkById } from "../../store/users/thunk/userThunkById";
 
 const ImgProfileWithButtons = () => {
   const [selectedCategory, setSelectedCategory] = useState("سيارات");
   const [sortBy, setSortBy] = useState("newest");
   const location = useLocation();
-
+  const dispatch = useDispatch();
+  const { user } = useSelector((state) => state.users);
+  const { id } = useParams();
+  console.log(id);
+  useEffect(() => {
+    dispatch(userThunkById(id));
+  }, [dispatch, id]);
   return (
     <div className="my-4">
       <div className="flex flex-col items-center">
@@ -18,7 +26,7 @@ const ImgProfileWithButtons = () => {
           alt=""
           className="w-24 h-24 shadow-xl rounded-[50%]"
         />
-        <p className="font-normal text-[1.3rem] text-[#2F2E41]">أحمد حمدو</p>
+        <p className="font-normal text-[1.3rem] text-[#2F2E41]">{user.name}</p>
         <div className="flex gap-2">
           <img src={start} alt="" />
           <div className="font-normal">
@@ -31,7 +39,7 @@ const ImgProfileWithButtons = () => {
       </div>
       <div className="flex-center text-[1rem] font-bold gap-3 mt-3">
         <Link
-          to="/profile"
+          to={`/profile/:id`}
           className="bg-[#7770E9]  rounded-[3rem] text-[#F7F7FF] py-1 px-8"
         >
           المنشورات

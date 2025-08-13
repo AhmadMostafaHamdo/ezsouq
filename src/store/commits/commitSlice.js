@@ -5,7 +5,7 @@ import { getAllCommentsByIdThunk } from "./thunk/getAllCommentsById";
 const initialState = {
   loading: false,
   error: null,
-  commentsByProductId: {}, // بدل من comments: []
+  commentsByProductId: {},
 };
 
 const commitsSlice = createSlice({

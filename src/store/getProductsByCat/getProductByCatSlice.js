@@ -5,7 +5,7 @@ const initialState = {
   products: [],
   loading: false,
   error: null,
-  totalPages: 1, // التصحيح: قيمة افتراضية
+  totalPages: 1,
 };
 
 const productByCatSlice = createSlice({

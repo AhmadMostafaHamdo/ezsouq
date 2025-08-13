@@ -1,59 +1,93 @@
 import { useEffect, useRef, useState } from "react";
 import { reportData } from "../data/report";
+import close from "../assets/images/close.svg";
+import { useNavigate, useParams } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { thunkReport } from "../store/report/thunk/thunkReport";
 
 const Report = () => {
   const [selected, setSelected] = useState(false);
   const [message, setMessage] = useState("");
-  const report = useRef();
+  const [reason, setReason] = useState(null);
+  const { id } = useParams();
+  const dispatch = useDispatch();
+  const reportRef = useRef();
+  const navigate = useNavigate();
+  console.log(id);
   useEffect(() => {
-    report.current.scrollIntoView();
+    reportRef.current?.scrollIntoView({ behavior: "smooth" });
   }, []);
+console.log({id,message,reason})
+  const handleClose = () => {
+    navigate(-1);
+  };
+  const handleSelectReason = (selected) => {
+    setReason(selected);
+  };
+  const handelSubmit = (e) => {
+    e.preventDefault();
+    dispatch(thunkReport({ reason, message, productId: id }));
+    console.log(reason, message);
+  };
   return (
     <div
-      ref={report}
-      className="fixed top-0 left-0 w-full h-screen bg-[#23193E]/[.57] backdrop-blur-[20] z-10"
+      ref={reportRef}
+      className="fixed top-0 left-0 w-full h-screen bg-[#23193E]/60 backdrop-blur-md z-10"
     >
-      <div>
-        <div className="absolute rounded-xl font-normal p-5 z-20 bg-white top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
-          <h1 className="text-center">إبلاغ عن إعلان</h1>
-          <div>
-            {reportData.map((report, index) => (
-              <div key={index}>
-                <input
-                  type="radio"
-                  name="report"
-                  id={report.id}
-                  onChange={() => setSelected(true)}
-                />
-
-                <label
-                  توضيح
-                  htmlFor={report.id}
-                  className="text-[1rem] text-[#B9B5FF] mr-3"
-                >
-                  {report.label}
-                </label>
-              </div>
-            ))}
-            <textarea
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
-              placeholder="يرجى توضيح الإبلاغ.."
-              className="min-h-20 max-h-20 outline-none rounded-[5px] p-2 border border-solid-1 border-[#B9B5FF] my-4"
-            ></textarea>
-            <button
-              disabled={!selected || message.length === 0}
-              className={`block m-auto ${
-                selected && message.length > 0 ? "bg-primary" : "bg-[#C5C5C5]"
-              } text-white rounded-lg w-full p-1`}
-            >
-              إرسال الإبلاغ
-            </button>
-            <p className="font-normal text-[.8rem] text-center mt-2">
-              الإبلاغ الكاذب قد يؤدي إلى تقييد حسابك
-            </p>
-          </div>
+      <div className="absolute rounded-xl font-normal p-5 z-20 bg-white top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] max-w-md shadow-lg">
+        <div className="flex justify-end mb-2">
+          <button onClick={handleClose}>
+            <img src={close} alt="إغلاق" className="w-6 h-6 cursor-pointer" />
+          </button>
         </div>
+
+        <h1 className="text-center text-lg font-bold mb-4">إبلاغ عن إعلان</h1>
+
+        <form onSubmit={handelSubmit}>
+          {reportData.map((item, index) => (
+            <div
+              key={index}
+              className="mb-2"
+              onClick={() => handleSelectReason(item.label)}
+            >
+              <input
+                type="radio"
+                name="report"
+                id={item.id}
+                onChange={() => setSelected(true)}
+                className="accent-primary"
+              />
+              <label
+                htmlFor={item.id}
+                className="text-[1rem] text-[#B9B5FF] mr-3 cursor-pointer"
+              >
+                {item.label}
+              </label>
+            </div>
+          ))}
+
+          <textarea
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+            placeholder="يرجى توضيح الإبلاغ.."
+            className="w-full min-h-20 max-h-20 outline-none rounded-[5px] p-2 border border-[#B9B5FF] my-4"
+          ></textarea>
+
+          <button
+            disabled={!selected || message.length === 0}
+            className={`block m-auto w-full p-2 rounded-lg text-white transition ${
+              selected && message.length > 0
+                ? "bg-primary hover:bg-primary/90"
+                : "bg-[#C5C5C5] cursor-not-allowed"
+            }`}
+          >
+            إرسال الإبلاغ
+          </button>
+
+          <p className="font-normal text-[.8rem] text-center mt-2 text-[#2F2E41]">
+            الإبلاغ الكاذب قد يؤدي إلى تقييد حسابك
+          </p>
+        </form>
       </div>
     </div>
   );

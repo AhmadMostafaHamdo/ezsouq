@@ -31,11 +31,12 @@ const AuthForm = ({ fields, schema, btnAuth }) => {
       const { name, email, password } = data;
       const info = isLogin ? { email, password } : { name, email, password };
       await dispatch(thunkAuth({ info, isLogin })).unwrap();
+      console.log({ isLogin, token });
       isLogin && token ? navigate("/") : navigate("/login");
       reset();
     } catch (err) {}
   };
-
+  const handelAuthGoogle = () => {};
   return (
     <div className=" flex-center h-screen  overflow-hidden">
       <FormProvider {...form}>
@@ -132,6 +133,7 @@ const AuthForm = ({ fields, schema, btnAuth }) => {
                 </p>
                 <DividerWithText text="أو" />
                 <button
+                  onClick={handelAuthGoogle}
                   className={`flex-center ${
                     isLogin ? "my-10" : "my-10 md:my-3 "
                   } p-3  font-medium text-[.9rem] gap-2 shadow-[0px_2px_13.7px_0px_#0000001A] rounded-xl w-full`}

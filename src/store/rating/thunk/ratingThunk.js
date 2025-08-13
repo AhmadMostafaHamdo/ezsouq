@@ -1,15 +1,17 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 import Cookies from "js-cookie";
-export const thunkAddCommit = createAsyncThunk(
-  "/commits/addCommit",
-  async ({ product_id, comment }, { rejectWithValue }) => {
-    try { 
+import { toast } from "react-toastify";
+
+export const ratingThunk = createAsyncThunk(
+  "/rating_publisher",
+  async ({ userId, rating }, { rejectWithValue }) => {
+    try {
       const res = await axios.post(
-        "/user/comment",
+        "/user/rating_publisher",
         {
-          product_id,
-          comment,
+          user_id: userId,
+          rating,
         },
         {
           headers: {
@@ -17,8 +19,10 @@ export const thunkAddCommit = createAsyncThunk(
           },
         }
       );
+      console.log(res.data);
       return res.data;
     } catch (error) {
+      toast(error?.response?.data?.message);
       return rejectWithValue(error.response?.data?.message);
     }
   }

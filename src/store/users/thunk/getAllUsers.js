@@ -1,15 +1,14 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
-export const usersThunk = createAsyncThunk(
-  "/users",
+export const getAllUsers = createAsyncThunk(
+  "/getAllUsers",
   async (id, { rejectWithValue }) => {
     try {
-      if (!id) {
-        return rejectWithValue("User ID is missing");
-      }
-
-      const res = await axios.get(`/get_user/${id}`);
+      const res = await axios.get("/admin/get_users",{headers:{
+        
+      }});
+      console.log(res.data)
       return res.data;
     } catch (error) {
       return rejectWithValue(

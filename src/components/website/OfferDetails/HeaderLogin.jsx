@@ -6,10 +6,9 @@ import search from "../../../assets/images/search.svg";
 import emptyHeart from "../../../assets/images/emptyHeart.svg";
 import redHeart from "../../../assets/images/redHeart.svg";
 import personal from "../../../assets/images/personal.svg";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { ulLinksLogin } from "../../../data/filterData";
 import Sidebar from "../../common/Sidebar";
-import { useScrolled } from "../../../hooks/useScrolled";
 const HeaderLogin = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const location = useLocation();
@@ -30,7 +29,9 @@ const HeaderLogin = () => {
             className="w-6 h-6"
           />
         </button>
-        <img src={logo} className="w-20 h-12 ml-16" />
+        <Link to="/">
+          <img src={logo} className="w-20 h-12 ml-16" />
+        </Link>
         <div className="flex-1">
           <div className=" hidden md:flex justify-end lg:hidden">
             <Link
@@ -62,7 +63,7 @@ const HeaderLogin = () => {
           <Link to="/search">
             <img src={search} className="w-4 h-4" />
           </Link>
-          <Link to="/wishlist" >
+          <Link to="/wishlist">
             {location.pathname == "/wishlist" ? (
               <img
                 src={redHeart}
