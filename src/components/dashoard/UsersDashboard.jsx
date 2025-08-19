@@ -12,13 +12,16 @@ import viewsBlue from "../../assets/images/dashboard/viewsBlue.svg";
 import sendmsg from "../../assets/images/dashboard/sendmsg.svg";
 import block from "../../assets/images/dashboard/block.svg";
 import { getAllUsers } from "../../store/users/thunk/getAllUsers";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { deleteUser } from "../../store/users/thunk/deleteUser";
 
 const UsersDashboard = () => {
   const [infoTable, setInfoTable] = useState(false);
   const [showDetails, setShowDetails] = useState(false);
-  const [showSetting, setShowSetting] = useState(false);
+  const [openMenuId, setOpenMenuId] = useState(null); // Track which row's menu is open
+  const [showDeleteUser, setShowDeleteUser] = useState(false);
   const dispatch = useDispatch();
+  const { users = [] } = useSelector((state) => state.users);
   const [visibleColumns, setVisibleColumns] = useState({
     image: true,
     name: true,
@@ -47,9 +50,11 @@ const UsersDashboard = () => {
       [column]: !prev[column],
     }));
   };
+
   useEffect(() => {
     dispatch(getAllUsers());
   }, []);
+
   // إغلاق القوائم عند النقر خارجها
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -59,6 +64,8 @@ const UsersDashboard = () => {
       if (detailsRef.current && !detailsRef.current.contains(event.target)) {
         setShowDetails(false);
       }
+      // Close row menu when clicking outside
+      setOpenMenuId(null);
     };
 
     document.addEventListener("mousedown", handleClickOutside);
@@ -66,12 +73,43 @@ const UsersDashboard = () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
-  const handelSettingUser = () => {
-    setShowSetting(!showSetting);
+
+  const handelSettingUser = (userId, e) => {
+    e.stopPropagation();
+    setOpenMenuId(openMenuId === userId ? null : userId);
+  };
+
+  const handelDeleteUser = (id) => {
+    dispatch(deleteUser(id));
   };
 
   return (
     <div>
+      {showDeleteUser ? (
+        <div className="absolute w-[100vw] h-screen bg-[#67676780] z-20 translate-x-60">
+          <div className="w-96 h-[74vh] p-5 rounded-lg bg-white absolute z-50 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+            <Link to={"/dashboard/offers"}>
+              <img src={close} alt="" className="mr-auto" />
+            </Link>
+            <img src={deleteOffer} alt="" className="m-auto" />
+            <p className="text-center my-5">حذف إعلان</p>
+            <p className="text-[#444444] text-center leading-6">
+              هل أنت متأكد من أنك تريد حذف هذا المستخدم؟ لا يمكن التراجع عن هذا
+              الإجراء.
+            </p>
+            <div className="flex-between mt-5 font-normal">
+              <button className="px-7 py-1 rounded-md text-[#818181] border-solid border-[1px] border-[#818181]">
+                إلغاء
+              </button>
+              <button className="px-7 py-1 rounded-md bg-[#BD4749] text-white ">
+                حذف
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : (
+        ""
+      )}
       <div className="container">
         <div className="flex-between my-5 w-[60vw]">
           <h1>الإعلانات</h1>
@@ -190,7 +228,9 @@ const UsersDashboard = () => {
               <thead>
                 <tr className="text-[#959595]">
                   {visibleColumns.image && (
-                    <th className="pb-4 text-[.8rem] lg:text-[1rem] ">الصورة</th>
+                    <th className="pb-4 text-[.8rem] lg:text-[1rem] ">
+                      الصورة
+                    </th>
                   )}
                   {visibleColumns.name && (
                     <th className="pb-4 text-[.8rem] lg:text-[1rem] ">الاسم</th>
@@ -224,76 +264,85 @@ const UsersDashboard = () => {
                 </tr>
               </thead>
               <tbody className="text-[.8rem]">
-                <tr className="border-t border-[#eee]">
-                  {visibleColumns.image && (
-                    <td className="py-4">
-                      <img src={profile} alt="" width={50} />
-                    </td>
-                  )}
-                  {visibleColumns.name && (
-                    <td className="py-4">سيارة تويوتا...</td>
-                  )}
-                  {visibleColumns.location && (
-                    <td className="py-4">دمشق، المزة</td>
-                  )}
-                  {visibleColumns.publisher && (
-                    <td className="py-4">مياو المياو </td>
-                  )}
-                  {visibleColumns.price && <td className="py-4">50 مليون </td>}
-                  {visibleColumns.date && (
-                    <td className="py-4">
-                      {false ? (
-                        <span className="text-[#30C795] bg-[#EAF9F4] rounded-md px-5 py-2">
-                          نشط
-                        </span>
-                      ) : (
-                        <span className="text-[#C73030] bg-[#F9EAEA] rounded-md px-5 py-2">
-                          حظر
-                        </span>
-                      )}
-                    </td>
-                  )}
-                  {visibleColumns.actions && (
-                    <td>
-                      <div className="flex items-center justify-center relative">
-                        <img
-                          src={iconSettingUser}
-                          className="cursor-pointer"
-                          onClick={handelSettingUser}
-                          alt=""
-                          width={30}
-                        />
-                        {showSetting && (
-                          <div className="w-36 leading-7 absolute left-[4.2rem] top-3 rounded-lg bg-white p-3 shadow-[0px_4px_15.8px_0px_#0000001F]">
-                            <p className="text-[#6C63FF] flex gap-2">
-                              <img src={viewsBlue} alt="" />
-                              <span>عرض التفاصيل</span>
-                            </p>
-                            <p className="flex gap-2">
-                              <img src={sendmsg} alt="" />
-                              <span className="text-[#5FB2D1]">
-                                إرسال رسالة
-                              </span>
-                            </p>
-                            <p className="flex gap-2">
-                              <img src={block} alt="" />
-                              <span>حظر</span>
-                            </p>
-                            <p className="flex gap-2">
-                              <img src={deleteIcon} alt="" />
-                              <span className="text-[#BD4749]">حذف</span>
-                            </p>
-                          </div>
+                {users.map((user, index) => (
+                  <tr key={index} className="border-t border-[#eee]">
+                    {visibleColumns.image && (
+                      <td className="py-3">
+                        <img src={profile} alt="" width={50} />
+                      </td>
+                    )}
+                    {visibleColumns.name && (
+                      <td className="py-3">{user.name}</td>
+                    )}
+                    {visibleColumns.location && (
+                      <td className="py-3">{user.email}</td>
+                    )}
+                    {visibleColumns.publisher && (
+                      <td className="py-3">مياو المياو </td>
+                    )}
+                    {visibleColumns.price && (
+                      <td className="py-3">50 مليون </td>
+                    )}
+                    {visibleColumns.date && (
+                      <td className="py-3">
+                        {false ? (
+                          <span className="text-[#30C795] bg-[#EAF9F4] rounded-md px-5 py-2">
+                            نشط
+                          </span>
+                        ) : (
+                          <span className="text-[#C73030] bg-[#F9EAEA] rounded-md px-5 py-2">
+                            حظر
+                          </span>
                         )}
-                      </div>
-                    </td>
-                  )}
-                </tr>
+                      </td>
+                    )}
+                    {visibleColumns.actions && (
+                      <td>
+                        <div className="flex items-center justify-center relative">
+                          <img
+                            src={iconSettingUser}
+                            className="cursor-pointer"
+                            onClick={(e) => handelSettingUser(index, e)}
+                            alt=""
+                            width={30}
+                          />
+                          {openMenuId === index && (
+                            <div className="w-36 leading-7 absolute left-[4.2rem] top-3 rounded-lg bg-white p-3 shadow-[0px_4px_15.8px_0px_#0000001F]">
+                              <p className="text-[#6C63FF] flex gap-2">
+                                <img src={viewsBlue} alt="" />
+                                <span>عرض التفاصيل</span>
+                              </p>
+                              <p className="flex gap-2">
+                                <img src={sendmsg} alt="" />
+                                <span className="text-[#5FB2D1]">
+                                  إرسال رسالة
+                                </span>
+                              </p>
+                              <p className="flex gap-2">
+                                <img src={block} alt="" />
+                                <span>حظر</span>
+                              </p>
+                              <p className="flex gap-2">
+                                <img src={deleteIcon} alt="" />
+                                <span
+                                  className="text-[#BD4749]"
+                                  onClick={() => setShowDeleteUser(true)}
+                                >
+                                  حذف
+                                </span>
+                              </p>
+                            </div>
+                          )}
+                        </div>
+                      </td>
+                    )}
+                  </tr>
+                ))}
               </tbody>
             </table>
           </div>
           <div className="flex-between text-[#959595] mt-3">
-            <p>عرض 6 من 500</p>
+            <p>عرض 6 من {users?.length}</p>
             <div className="flex-center gap-2">
               <img src={arrowRight} alt="" className="cursor-pointer" />
               <span className="cursor-pointer">1</span>

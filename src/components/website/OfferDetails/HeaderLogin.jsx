@@ -79,7 +79,7 @@ const HeaderLogin = () => {
             )}
           </Link>
           <div>
-            <Link to="/profile">
+            <Link to="/profile/me">
               <img src={personal} className="w-10 h-10" />
             </Link>
           </div>

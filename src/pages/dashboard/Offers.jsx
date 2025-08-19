@@ -11,10 +11,16 @@ import menuTable from "../../assets/images/dashboard/menuTable.svg";
 import menuTable2 from "../../assets/images/dashboard/menuTable2.svg";
 import deleteOffer from "../../assets/images/dashboard/deleteOffer.svg";
 import close from "../../assets/images/close.svg";
+import { Link, useNavigate } from "react-router";
+import { useDispatch, useSelector } from "react-redux";
+import TimeAgo from "../../components/TimeAgo";
 
 const Offers = () => {
   const [infoTable, setInfoTable] = useState(false);
   const [showDetails, setShowDetails] = useState(false);
+  const dispatch = useDispatch();
+  const { products = [] } = useSelector((state) => state.products);
+  console.log(products)
   const [visibleColumns, setVisibleColumns] = useState({
     image: true,
     title: true,
@@ -65,13 +71,27 @@ const Offers = () => {
     setDeleteOfferToggle(true);
   };
   return (
-    <div className="overflow-hidden">
+    <div className="overflow-hidden font-sans">
       {deleteOfferToggle ? (
         <div className="absolute w-[100vw] h-screen bg-[#67676780] z-20 translate-x-60">
-          <div className="w-96 h-96 p-5 rounded-lg bg-white absolute z-50 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
-            <img src={close} alt="" className="mr-auto" />
+          <div className="w-96 h-[74vh] p-5 rounded-lg bg-white absolute z-50 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+            <Link to={"/dashboard/offers"}>
+              <img src={close} alt="" className="mr-auto" />
+            </Link>
             <img src={deleteOffer} alt="" className="m-auto" />
             <p className="text-center my-5">حذف إعلان</p>
+            <p className="text-[#444444] text-center leading-6">
+              هل أنت متأكد من أنك تريد حذف هذا المستخدم؟ لا يمكن التراجع عن هذا
+              الإجراء.
+            </p>
+            <div className="flex-between mt-5 font-normal">
+              <button className="px-7 py-1 rounded-md text-[#818181] border-solid border-[1px] border-[#818181]">
+                إلغاء
+              </button>
+              <button className="px-7 py-1 rounded-md bg-[#BD4749] text-white ">
+                حذف
+              </button>
+            </div>
           </div>
         </div>
       ) : (
@@ -205,68 +225,47 @@ const Offers = () => {
               </tr>
             </thead>
             <tbody className="text-[.8rem]">
-              <tr className="border-t border-[#eee]">
-                {visibleColumns.image && (
-                  <td className="py-4">
-                    <img src={profile} alt="" width={50} />
-                  </td>
-                )}
-                {visibleColumns.title && <td>سيارة تويوتا...</td>}
-                {visibleColumns.location && <td>دمشق، المزة</td>}
-                {visibleColumns.publisher && <td>مياو المياو </td>}
-                {visibleColumns.price && <td>50 مليون </td>}
-                {visibleColumns.date && <td>27-7-2025</td>}
-                {visibleColumns.actions && (
-                  <td>
-                    <div className="flex items-center justify-center">
-                      <img
-                        src={detailsUser}
-                        alt=""
-                        className="ml-2"
-                        width={30}
-                      />
-                      <img
-                        src={deleteUser}
-                        alt=""
-                        width={30}
-                        className="cursor-pointer"
-                        onClick={handelDeleteOffer}
-                      />
-                    </div>
-                  </td>
-                )}
-              </tr>
-              <tr className="border-t border-[#eee]">
-                {visibleColumns.image && (
-                  <td className="py-4">
-                    <img src={profile} alt="" width={50} />
-                  </td>
-                )}
-                {visibleColumns.title && (
-                  <td className="py-4">سيارة تويوتا...</td>
-                )}
-                {visibleColumns.location && (
-                  <td className="py-4">دمشق، المزة</td>
-                )}
-                {visibleColumns.publisher && (
-                  <td className="py-4">مياو المياو </td>
-                )}
-                {visibleColumns.price && <td className="py-4">50 مليون </td>}
-                {visibleColumns.date && <td className="py-4">27-7-2025</td>}
-                {visibleColumns.actions && (
-                  <td>
-                    <div className="flex items-center justify-center">
-                      <img
-                        src={detailsUser}
-                        alt=""
-                        className="ml-2"
-                        width={30}
-                      />
-                      <img src={deleteUser} alt="" width={30} />
-                    </div>
-                  </td>
-                )}
-              </tr>
+              {products?.map((product, index) => (
+                <tr className="border-t border-[#eee]" key={index}>
+                  {visibleColumns.image && (
+                    <td className="py-4">
+                      <img src={profile} alt="" width={50} />
+                    </td>
+                  )}
+                  {visibleColumns.title && <td>{product.name}</td>}
+                  {visibleColumns.location && (
+                    <td>
+                      {product.Governorate_name}-{product.city}
+                    </td>
+                  )}
+                  {visibleColumns.publisher && <td>مياو المياو </td>}
+                  {visibleColumns.price && <td>{product.price}</td>}
+                  {visibleColumns.date && (
+                    <td>
+                      <TimeAgo postDate={product.createdAt} />
+                    </td>
+                  )}
+                  {visibleColumns.actions && (
+                    <td>
+                      <div className="flex items-center justify-center">
+                        <img
+                          src={detailsUser}
+                          alt=""
+                          className="ml-2"
+                          width={30}
+                        />
+                        <img
+                          src={deleteUser}
+                          alt=""
+                          width={30}
+                          className="cursor-pointer"
+                          onClick={handelDeleteOffer}
+                        />
+                      </div>
+                    </td>
+                  )}
+                </tr>
+              ))}
             </tbody>
           </table>
           <div className="flex-between text-[#959595] mt-3">

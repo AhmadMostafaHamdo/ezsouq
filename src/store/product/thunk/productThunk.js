@@ -9,7 +9,7 @@ export const productThunk = createAsyncThunk(
       const queryParams = new URLSearchParams();
 
       // إضافة المعلمات فقط إذا كانت لها قيمة
-      if (filters.governorate)
+      if (filters.governorate)  
         queryParams.append("governorates", filters.governorate);
       if (filters.city) queryParams.append("city", filters.city);
       if (filters.category) queryParams.append("Category", filters.category);

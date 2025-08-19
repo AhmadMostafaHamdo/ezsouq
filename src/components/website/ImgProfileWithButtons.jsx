@@ -14,7 +14,6 @@ const ImgProfileWithButtons = () => {
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.users);
   const { id } = useParams();
-  console.log(id);
   useEffect(() => {
     dispatch(userThunkById(id));
   }, [dispatch, id]);
@@ -45,7 +44,7 @@ const ImgProfileWithButtons = () => {
           المنشورات
         </Link>
         <Link
-          to="/profile/contact-info"
+          to="/profile/:id/contact-info"
           className="py-1 px-8 border  border-[#C2BFFF] text-[#C2BFFF] rounded-[3rem]"
         >
           معلومات التواصل

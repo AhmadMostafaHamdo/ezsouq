@@ -1,16 +1,23 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 import Cookies from "js-cookie";
-export const getAllUsers = createAsyncThunk(
-  "/getAllUsers",
-  async (_, { rejectWithValue }) => {
+
+export const deleteUser = createAsyncThunk(
+  "/users",
+  async (id, { rejectWithValue }) => {
     try {
-      const res = await axios.get("/admin/get_all_users?page=1&limit=4", {
+      if (!id) {
+        return rejectWithValue("User ID is missing");
+      }
+
+      const res = await axios.delete(`/admin/Delet_User}`, {
+        user_id: id,
         headers: {
           authorization: `Bearer ${Cookies.get("token")}`,
         },
       });
-      return res.data?.data;
+      console.log(res.data);
+      return res.data;
     } catch (error) {
       return rejectWithValue(
         error.response?.data?.message || "Failed to fetch user"

@@ -165,6 +165,25 @@ const router = createBrowserRouter([
         ],
       },
       {
+        path: "/profile/me",
+        element: (
+          <SuspenseFallback>
+            <Profile />
+          </SuspenseFallback>
+        ),
+        children: [
+          { index: true, element: <MainProfile /> },
+          {
+            path: "contact-info",
+            element: <ContactInfo />,
+          },
+          {
+            path: "rating",
+            element: <Rating />,
+          },
+        ],
+      },
+      {
         path: "/create-offer",
         element: (
           <SuspenseFallback>
@@ -257,9 +276,9 @@ const router = createBrowserRouter([
     ),
   },
   {
-    path:"*",
-    element:<h1>this Page Not Found</h1>
-  }
+    path: "*",
+    element: <h1>this Page Not Found</h1>,
+  },
 ]);
 const AppRouter = () => {
   return <RouterProvider router={router} />;

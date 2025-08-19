@@ -77,7 +77,9 @@ const PrivacyPolicy = () => {
               </p>
               <div className="pr-2">
                 {section?.points?.map((point, index) => (
-                  <li key={index}>{point}</li>
+                  <li key={index} className="font-medium">
+                    {point}
+                  </li>
                 ))}
               </div>
             </div>
