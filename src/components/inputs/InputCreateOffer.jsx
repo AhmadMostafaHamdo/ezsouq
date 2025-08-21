@@ -1,5 +1,6 @@
 import React from "react";
 
+// Input مع forwardRef لربطه مع react-hook-form
 const InputCreateOffer = React.forwardRef(
   ({ placeholder, type = "text", ...rest }, ref) => (
     <input
@@ -7,9 +8,8 @@ const InputCreateOffer = React.forwardRef(
       type={type}
       placeholder={placeholder}
       className="w-full border p-2 rounded border-[#B9B5FF]"
-      {...rest} /* يسمح بتمرير register */
+      {...rest}
     />
   )
 );
-
 export default InputCreateOffer;

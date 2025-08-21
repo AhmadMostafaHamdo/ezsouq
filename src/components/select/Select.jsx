@@ -24,8 +24,8 @@ const Select = ({ options = [], type, onSelect }) => {
       className="w-full p-2 bg-white rounded-[5px] outline-none cursor-pointer border-[1px] border-solid border-[#B9B5FF]"
     >
       {options.map((option, index) => (
-        <option
-          key={index}
+      <option
+        key={index}
           value={type === "governorate" ? option?.name : option}
         >
           {type === "governorate" ? option?.name : option}

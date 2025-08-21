@@ -1,9 +1,33 @@
 import * as z from "zod";
 export const stepOneSchema = z.object({
-  Governorate_name: z.string().min(1, "يجب اختيار المحافظة"),
-  city: z.string().min(1, "يجب اختيار المدينة"),
+  category: z
+    .string()
+    .min(1, "يجب اختيار التصنيف  سيارات او عقارات او تقنيات")
+    .refine((val) => val != "التصنيف", {
+      message: "يجب اختيار التصنيف",
+    }),
+  Governorate_name: z
+    .string()
+    .min(1, "يجب اختيار المحافظة")
+    .refine((val) => val != "المحافظة", {
+      message: "يجب اختيار المحافظة",
+    }),
+  city: z
+    .string()
+    .min(1, "يجب اختيار المنطقة")
+    .refine((val) => val != "المنطقة", {
+      message: "يجب اختيار المنطقة",
+    }),
   description: z.string().min(1, "يجب كتابة وصف"),
-  price: z.string().min(1, "يجب إدخال السعر"),
+  price: z.preprocess(
+    (val) => (val === "" ? undefined : Number(val)),
+    z
+      .number({
+        required_error: "يجب أن تدخل السعر",
+        invalid_type_error: "السعر يجب أن يكون رقمًا",
+      })
+      .positive("السعر يجب أن يكون أكبر من الصفر")
+  ),
   main_photos: z
     .array(z.instanceof(File))
     .min(1, "يجب رفع صورة واحدة على الأقل"),

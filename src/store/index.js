@@ -13,6 +13,7 @@ import comments from "./commits/commitSlice";
 import report from "./report/reportSlice";
 import views from "./views/viewsSlice";
 import storage from "redux-persist/lib/storage";
+import category from "./category/sliceCategory";
 import {
   FLUSH,
   PAUSE,
@@ -71,6 +72,10 @@ const persistViews = {
   key: "views",
   storage,
 };
+const persistCategory = {
+  key: "category",
+  storage,
+};
 const rootReducer = combineReducers({
   auth: persistReducer(persistAuth, auth),
   products: persistReducer(persistProducts, products),
@@ -84,6 +89,7 @@ const rootReducer = combineReducers({
   comments: persistReducer(persistCommits, comments),
   report: persistReducer(persistReport, report),
   views: persistReducer(persistViews, views),
+  category: persistReducer(persistCategory, category),
   search,
 });
 export const store = configureStore({

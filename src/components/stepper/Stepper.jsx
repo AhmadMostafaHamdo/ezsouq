@@ -1,8 +1,7 @@
-import { useState } from "react";
 import { useSelector } from "react-redux";
 
 const Stepper = () => {
-  const steps = [1, 2];
+  const { steps } = useSelector((state) => state.steps);
   const { currentStep } = useSelector((state) => state.steps);
   return (
     <div className="flex-center w-fit p-4 over gap-5 relative ">

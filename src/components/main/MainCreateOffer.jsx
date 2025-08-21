@@ -3,16 +3,24 @@ import { useDispatch, useSelector } from "react-redux";
 import Stepper from "../stepper/Stepper";
 import StepOne from "../stepper/StepOne";
 import StepTwoTec from "../stepper/StepTwoTec";
+import StepTwoRealState from "../stepper/StepTwoRealState";
 import arrowLeft from "../../assets/images/Arrow-left.svg";
 import arrowRight from "../../assets/images/arrowRight.svg";
-import { stepIncrease, stepDecrease } from "../../store/steps/stepsSlice";
+import {
+  stepIncrease,
+  stepDecrease,
+  clearStep,
+} from "../../store/steps/stepsSlice";
 import axios from "axios";
-  
+import StepTwoCars from "../stepper/StepTwoCar";
+
 const MainCreateOffer = () => {
   const dispatch = useDispatch();
   const offer = useRef();
   const { currentStep } = useSelector((state) => state.steps);
   const { user } = useSelector((state) => state.users);
+  const { category, selectedCategory } = useSelector((state) => state.category);
+  console.log(category);
   const userId = user?._id;
   const [stepOneData, setStepOneData] = useState(null);
   const [stepTwoData, setStepTwoData] = useState(null);
@@ -60,6 +68,11 @@ const MainCreateOffer = () => {
       console.error("❌ فشل النشر:", error.response?.data || error.message);
     }
   };
+  const handelCreateOffer = () => {
+    document.getElementById("submit-step2")?.click();
+    console.log("first");
+    dispatch(clearStep());
+  };
 
   return (
     <div className="bg-[#F7F7FF] flex-center flex-col pt-6 pb-28" ref={offer}>
@@ -67,9 +80,17 @@ const MainCreateOffer = () => {
       <Stepper />
 
       {currentStep === 1 && <StepOne onSubmit={handleStepOneSubmit} />}
-      {currentStep === 2 && <StepTwoTec onSubmit={handleStepTwoSubmit} />}
+      {currentStep === 2 && selectedCategory == "تقنيات" ? (
+        <StepTwoTec onSubmit={handleStepTwoSubmit} />
+      ) : currentStep === 2 && selectedCategory == "سيارات" ? (
+        <StepTwoCars />
+      ) : currentStep === 2 && selectedCategory == "عقارات" ? (
+        <StepTwoRealState />
+      ) : (
+        ""
+      )}
 
-      <div className="flex-between w-[80vw] md:w-[60vw] lg:w-[40vw] mt-6">
+      <div className="flex-between w-[80vw] md:w-[60vw] lg:w-[40vw] mt-4">
         <button
           disabled={currentStep === 1}
           onClick={handleBack}
@@ -84,7 +105,7 @@ const MainCreateOffer = () => {
 
         {currentStep === 2 ? (
           <button
-            onClick={() => document.getElementById("submit-step2")?.click()}
+            onClick={handelCreateOffer}
             className="bg-primary text-white rounded-xl py-[.4rem] px-5"
           >
             نشر الإعلان

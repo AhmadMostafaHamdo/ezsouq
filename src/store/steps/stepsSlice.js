@@ -1,5 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
+  steps: [1, 2],
   currentStep: 1,
 };
 const stepsSlice = createSlice({
@@ -12,7 +13,10 @@ const stepsSlice = createSlice({
     stepDecrease: (state) => {
       state.currentStep -= 1;
     },
+    clearStep: (state) => {
+      state.currentStep = 1;
+    },
   },
 });
-export const { stepIncrease, stepDecrease } = stepsSlice.actions;
+export const { stepIncrease, stepDecrease, clearStep } = stepsSlice.actions;
 export default stepsSlice.reducer;
