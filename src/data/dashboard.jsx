@@ -8,10 +8,11 @@ import statistic from "../assets/images/dashboard/statistic-up.svg";
 import users from "../assets/images/dashboard/users.svg";
 export const ulLinks = [
   {
-    name: "الرئيسية",
+    name: "الاحصائيات",
     link: "/dashboard",
-    img: home,
+    img: statistic,
   },
+  
   {
     name: "الإعلانات",
     link: "/dashboard/offers",
@@ -22,11 +23,7 @@ export const ulLinks = [
     link: "/dashboard/users",
     img: users,
   },
-  {
-    name: "الاحصائيات",
-    link: "/dashboard/statistic",
-    img: statistic,
-  },
+
   {
     name: "الإعدادات",
     link: "/dashboard/setting",

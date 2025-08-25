@@ -10,15 +10,15 @@ import { userThunkById } from "../../store/users/thunk/userThunkById";
 const ImgProfileWithButtons = () => {
   const [selectedCategory, setSelectedCategory] = useState("سيارات");
   const [sortBy, setSortBy] = useState("newest");
-  const location = useLocation();
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.users);
   const { id } = useParams();
+  const params = useParams();
   useEffect(() => {
     dispatch(userThunkById(id));
   }, [dispatch, id]);
   return (
-    <div className="my-4">
+    <div>
       <div className="flex flex-col items-center">
         <img
           src={personalImg}
@@ -38,13 +38,13 @@ const ImgProfileWithButtons = () => {
       </div>
       <div className="flex-center text-[1rem] font-bold gap-3 mt-3">
         <Link
-          to={`/profile/:id`}
+          to={`/profile/${params.id}`}
           className="bg-[#7770E9]  rounded-[3rem] text-[#F7F7FF] py-1 px-8"
         >
           المنشورات
         </Link>
         <Link
-          to="/profile/:id/contact-info"
+          to={`/profile/${params.id}/contact-info`}
           className="py-1 px-8 border  border-[#C2BFFF] text-[#C2BFFF] rounded-[3rem]"
         >
           معلومات التواصل

@@ -1,14 +1,14 @@
-// src/store/product/productSlice.js
 import { createSlice } from "@reduxjs/toolkit";
 import { productThunk } from "./thunk/productThunk";
 import { productThunkById } from "./thunk/productThunkById";
-import { getAllLikesThunk } from "./thunk/getAllLikesThunk";
+import { deleteProduct } from "./thunk/deleteProduct";
+import { toggleLikeProduct } from "./thunk/toggleLikeProduct";
 
 const initialState = {
-  products: [], // قائمة المنتجات
-  product: {}, // منتج مفصل حالياً (مثلاً صفحة تفاصيل)
-  likes: [],
+  products: [],
+  product: {},
   loading: false,
+  loadingLike: false,
   error: null,
   savedProducts: [],
   totalPages: 1,
@@ -18,87 +18,51 @@ const productSlice = createSlice({
   name: "products",
   initialState,
   reducers: {
-    setLike: (state, action) => {
-      const { productId, liked, userId } = action.payload;
-      const idx = state.products.findIndex((p) => p._id === productId);
+    setSavedProduct: (state, action) => {
+      const productId = action.payload;
+      if (!Array.isArray(state.savedProducts)) state.savedProducts = [];
+      const idx = state.savedProducts.indexOf(productId);
+      if (idx === -1) state.savedProducts.push(productId);
+      else state.savedProducts.splice(idx, 1);
+    },
+    setLikeLocal: (state, action) => {
+      const { productId, userId, liked } = action.payload;
 
-      if (idx !== -1) {
-        let currentLikes = Array.isArray(state.products[idx].likes)
-          ? [...state.products[idx].likes]
-          : [];
-
+      const updateLikes = (likesArray) => {
+        let likes = Array.isArray(likesArray) ? [...likesArray] : [];
         if (liked) {
-          if (!currentLikes.includes(userId)) currentLikes.push(userId);
+          if (!likes.includes(userId)) likes.push(userId);
         } else {
-          currentLikes = currentLikes.filter((id) => id !== userId);
+          likes = likes.filter((id) => id !== userId);
         }
+        return likes;
+      };
 
-        state.products[idx].likes = currentLikes;
+      const productIndex = state.products.findIndex((p) => p._id === productId);
+      if (productIndex !== -1) {
+        state.products[productIndex].likes = updateLikes(
+          state.products[productIndex].likes
+        );
       }
 
       if (state.product._id === productId) {
-        let currentLikes = Array.isArray(state.product.likes)
-          ? [...state.product.likes]
-          : [];
-
-        if (liked) {
-          if (!currentLikes.includes(userId)) currentLikes.push(userId);
-        } else {
-          currentLikes = currentLikes.filter((id) => id !== userId);
-        }
-
-        state.product.likes = currentLikes;
-      }
-    },
-    setSavedProduct: (state, action) => {
-      const productId = action.payload;
-      if (!Array.isArray(state.savedProducts)) {
-        state.savedProducts = [];
-      }
-      const index = state.savedProducts.indexOf(productId);
-      if (index === -1) {
-        state.savedProducts.push(productId);
-      } else {
-        state.savedProducts.splice(index, 1);
+        state.product.likes = updateLikes(state.product.likes);
       }
     },
   },
   extraReducers: (builder) => {
     builder
-      .addCase(productThunk.pending, (state) => {
-        state.loading = true;
-        state.error = null;
+      .addCase(toggleLikeProduct.pending, (state) => {
+        state.loadingLike = true;
       })
-      .addCase(productThunk.fulfilled, (state, action) => {
-        state.loading = false;
-        state.products =
-          action.payload.currentPage === 1
-            ? action.payload.products
-            : [...state.products, ...action.payload.products];
-        state.totalPages = action.payload.totalPages;
+      .addCase(toggleLikeProduct.fulfilled, (state) => {
+        state.loadingLike = false;
       })
-      .addCase(productThunk.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload;
-      })
-      .addCase(productThunkById.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
-      .addCase(productThunkById.fulfilled, (state, action) => {
-        state.loading = false;
-        state.product = action.payload;
-      })
-      .addCase(productThunkById.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload;
-      })
-      .addCase(getAllLikesThunk.fulfilled, (state, action) => {
-        state.loading = false;
-        state.likes = action.payload;
+      .addCase(toggleLikeProduct.rejected, (state) => {
+        state.loadingLike = false;
       });
   },
 });
 
-export const { setLike, setSavedProduct } = productSlice.actions;
+export const { setSavedProduct, setLikeLocal } = productSlice.actions;
 export default productSlice.reducer;

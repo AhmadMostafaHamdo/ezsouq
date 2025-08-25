@@ -1,28 +1,22 @@
 import { useRef } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { stepTwoHomeSchema } from "../../validation/createOffer";
+import { z } from "zod";
 import InputCreateOffer from "../inputs/InputCreateOffer";
-import uploadVideo from "../../assets/images/uploadVideo.svg";
 import Select from "../select/Select";
+import { stepTwoRealStateSchema } from "../../validation/createOffer";
+
 
 const StepTwoRealState = ({ onSubmit }) => {
   const videoRef = useRef(null);
-
   const {
     register,
     handleSubmit,
     setValue,
     formState: { errors },
   } = useForm({
-    resolver: zodResolver(stepTwoHomeSchema),
-    defaultValues: {
-      carName: "",
-      color: "",
-      dealType: "",
-      isnew: "",
-      video: undefined,
-    },
+    resolver: zodResolver(stepTwoRealStateSchema),
+    defaultValues: { type: "", dealType: "", condition: "", video: undefined },
   });
 
   return (
@@ -30,10 +24,10 @@ const StepTwoRealState = ({ onSubmit }) => {
       onSubmit={handleSubmit(onSubmit)}
       className="flex flex-col gap-3 w-[80vw] md:w-[60vw] lg:w-[45vw] pb-6 text-[#B9B5FF]"
     >
-      <Select options={[{name:"النوع"}]} type="governorate" />
-      {/* نوع العملية + الحالة */}
+      <Select options={[{ name: "النوع" }]} type="governorate" />
+      {errors.type && <p className="text-red-500">{errors.type.message}</p>}
+
       <div className="flex gap-6 my-3">
-        {/* العملية */}
         <div>
           <label className="block cursor-pointer">
             <input
@@ -41,7 +35,7 @@ const StepTwoRealState = ({ onSubmit }) => {
               value="rent"
               {...register("dealType")}
               className="ml-2"
-            />
+            />{" "}
             أجار
           </label>
           <label className="block cursor-pointer">
@@ -50,68 +44,46 @@ const StepTwoRealState = ({ onSubmit }) => {
               value="sale"
               {...register("dealType")}
               className="ml-2"
-            />
-            غير مفروشة
+            />{" "}
+            بيع
           </label>
-          <label className="block cursor-pointer">
-            <input
-              type="radio"
-              value="sale"
-              {...register("dealType")}
-              className="ml-2"
-            />
-            غير مفروشة
-          </label>
+          {errors.dealType && (
+            <p className="text-red-500">{errors.dealType.message}</p>
+          )}
         </div>
 
-        {/* الحالة */}
         <div>
           <label className="block cursor-pointer">
             <input
               type="radio"
-              value="جديدة"
-              {...register("isnew")}
-              className="ml-2"
-            />
-            جديدة
-          </label>
-          <label className="block cursor-pointer">
-            <input
-              type="radio"
-              value="مستعملة"
-              {...register("isnew")}
-              className="ml-2"
-            />
-            مستعملة
-          </label>
-          <label className="block cursor-pointer">
-            <input
-              type="radio"
               value="مفروشة"
-              {...register("isnew")}
+              {...register("condition")}
               className="ml-2"
-            />
+            />{" "}
             مفروشة
           </label>
+          <label className="block cursor-pointer">
+            <input
+              type="radio"
+              value="غير مفروشة"
+              {...register("condition")}
+              className="ml-2"
+            />{" "}
+            غير مفروشة
+          </label>
+          {errors.condition && (
+            <p className="text-red-500">{errors.condition.message}</p>
+          )}
         </div>
       </div>
-      {errors.dealType && (
-        <p className="text-red-500">{errors.dealType.message}</p>
-      )}
-      {errors.isnew && (
-        <p className="text-red-500">{errors.condition.message}</p>
-      )}
 
       <input
         type="file"
         ref={videoRef}
         accept="video/*"
         className="hidden"
-        onChange={(e) => {
-          setValue("video", e.target.files?.[0]);
-        }}
+        onChange={(e) => setValue("video", e.target.files?.[0])}
       />
-
       {errors.video && <p className="text-red-500">{errors.video.message}</p>}
 
       <button

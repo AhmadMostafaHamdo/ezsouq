@@ -3,6 +3,7 @@ import notification from "../../assets/images/dashboard/notification.svg";
 import personalImg from "../../assets/images/personal.svg";
 
 const TopBar = () => {
+  
   return (
     <div className="mt-4">
       <div className="flex-between">

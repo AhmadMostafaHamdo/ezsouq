@@ -11,9 +11,10 @@ import { setCategory } from "../../store/category/sliceCategory";
 
 const StepOne = ({ onSubmit }) => {
   const dispatch = useDispatch();
-  let { governorates } = useSelector((state) => state.governorates);
-  let { cities } = useSelector((state) => state.cities);
-  let { category } = useSelector((state) => state.category);
+  const { governorates } = useSelector((state) => state.governorates);
+  const { cities } = useSelector((state) => state.cities);
+  const { category } = useSelector((state) => state.category);
+
   const methods = useForm({
     resolver: zodResolver(stepOneSchema),
     defaultValues: {
@@ -27,23 +28,23 @@ const StepOne = ({ onSubmit }) => {
   });
 
   const {
+    control,
     register,
     handleSubmit,
-    control,
     formState: { errors },
   } = methods;
 
-  const handleGovernorateChange = (value) => {
-    dispatch(thunkCities(value));
-  };
-  governorates = [{ name: "المحافظة" }, ...governorates];
-  cities = ["المنطقة", ...cities];
+  const handleGovernorateChange = (value) => dispatch(thunkCities(value));
+
+  const governorateOptions = [{ name: "المحافظة" }, ...governorates];
+  const cityOptions = ["المنطقة", ...cities];
+
   return (
     <div className="w-[80vw] md:w-[60vw] lg:w-[45vw]">
       <FormProvider {...methods}>
         <form
-          className="w-full flex-center flex-col gap-3 text-[#B9B5FF]"
           onSubmit={handleSubmit(onSubmit)}
+          className="w-full flex-center flex-col gap-3 text-[#B9B5FF]"
         >
           {/* التصنيف */}
           <Controller
@@ -51,16 +52,16 @@ const StepOne = ({ onSubmit }) => {
             control={control}
             render={({ field }) => (
               <Select
-                options={category}
+                options={category} // ["التصنيف", "سيارات", "عقارات", "تقنيات"]
                 type=""
                 onSelect={(val) => {
-                  dispatch(setCategory(val));
-                  field.onChange(val);
+                  field.onChange(val); // تمرير القيمة مباشرة للـ react-hook-form
+                  dispatch(setCategory(val)); // تحديث الـ Redux state
                 }}
               />
             )}
           />
-          <Error error={errors?.category?.message} />
+          <Error error={errors.category?.message} />
 
           {/* المحافظة */}
           <Controller
@@ -68,7 +69,7 @@ const StepOne = ({ onSubmit }) => {
             control={control}
             render={({ field }) => (
               <Select
-                options={governorates}
+                options={governorateOptions}
                 type="governorate"
                 onSelect={(val) => {
                   field.onChange(val);
@@ -77,7 +78,7 @@ const StepOne = ({ onSubmit }) => {
               />
             )}
           />
-          <Error error={errors?.Governorate_name?.message} />
+          <Error error={errors.Governorate_name?.message} />
 
           {/* المنطقة */}
           <Controller
@@ -85,29 +86,25 @@ const StepOne = ({ onSubmit }) => {
             control={control}
             render={({ field }) => (
               <Select
-                options={cities}
+                options={cityOptions}
                 type="city"
                 onSelect={(val) => field.onChange(val)}
               />
             )}
           />
-          <Error error={errors?.city?.message} />
+          <Error error={errors.city?.message} />
 
           {/* الوصف */}
           <textarea
             {...register("description")}
             className="w-full h-24 outline-none border-solid border-[1px] p-2 rounded-[5px] border-[#B9B5FF]"
             placeholder="وصف..."
-          ></textarea>
-          <Error error={errors?.description?.message} />
+          />
+          <Error error={errors.description?.message} />
 
           {/* السعر */}
-          <InputCreateOffer
-            placeholder="السعر"
-            name="السعر"
-            {...register("price")}
-          />
-          <Error error={errors?.price?.message} />
+          <InputCreateOffer placeholder="السعر" {...register("price")} />
+          <Error error={errors.price?.message} />
 
           {/* الصور */}
           <Controller
@@ -122,9 +119,9 @@ const StepOne = ({ onSubmit }) => {
               />
             )}
           />
-          <Error error={errors?.main_photos?.message} />
+          <Error error={errors.main_photos?.message} />
 
-          <button type="submit" id="submit-step1" className="hidden"></button>
+          <button type="submit" className="hidden" id="submit-step1"></button>
         </form>
       </FormProvider>
     </div>

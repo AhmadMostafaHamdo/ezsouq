@@ -17,6 +17,7 @@ const StepTwoTec = ({ onSubmit }) => {
       video: undefined,
     },
   });
+
   return (
     <FormProvider {...methods}>
       <form
@@ -26,22 +27,7 @@ const StepTwoTec = ({ onSubmit }) => {
         <InputCreateOffer placeholder="الجهاز" {...methods.register("name")} />
         {methods.formState.errors.name && (
           <p className="text-red-500">
-            {/* {methods.formState.errors.device.message} */}
-          </p>
-        )}
-
-        <select
-          {...methods.register("Category_name")}
-          className="w-full p-2 bg-white rounded border border-[#B9B5FF]"
-        >
-          <option value="">النوع</option>
-          <option value="لابتوب">عقارات</option>
-          <option value="موبايلات">موبايلات</option>
-          <option value="تابلت">سيارات</option>
-        </select>
-        {methods.formState.errors.Category_name && (
-          <p className="text-red-500">
-            {methods.formState.errors.Category_name.message}
+            {methods.formState.errors.name.message}
           </p>
         )}
 
@@ -53,19 +39,19 @@ const StepTwoTec = ({ onSubmit }) => {
         )}
 
         <div className="flex self-start gap-6">
-          <label className="cursor-pointer">
+          <label>
             <input
               type="radio"
-              value="new"
+              value="true" 
               {...methods.register("isnew")}
               className="ml-2"
             />{" "}
             جديدة
           </label>
-          <label className="cursor-pointer">
+          <label>
             <input
               type="radio"
-              value="used"
+              value="false" 
               {...methods.register("isnew")}
               className="ml-2"
             />{" "}
@@ -107,7 +93,6 @@ const StepTwoTec = ({ onSubmit }) => {
 
         <button
           type="submit"
-          id="submit-step2"
           className="self-end bg-primary text-white rounded-xl py-1 px-5"
         >
           حفظ ومتابعة

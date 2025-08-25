@@ -23,7 +23,7 @@ const Sidebar = () => {
               <li>
                 <NavLink
                   to={link.link}
-                  end={link.name === "الرئيسية"}
+                  end={link.name === "الاحصائيات"}
                   className={({ isActive }) =>
                     isActive
                       ? "px-7 py-2 rounded-[10px] bg-[#E0E0FF] text-[#2F2E41] text-[.8rem] "

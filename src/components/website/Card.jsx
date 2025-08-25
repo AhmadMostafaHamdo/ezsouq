@@ -1,21 +1,24 @@
-// src/components/Card.jsx
 import { Link, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { memo, useCallback, useMemo, useState } from "react";
+import Cookies from "js-cookie";
+import {jwtDecode} from "jwt-decode";
+import Lottie from "lottie-react";
+
 import emptyHeart from "../../assets/images/emptyHeart.svg";
 import commit from "../../assets/images/commit.svg";
 import emptyFavorit from "../../assets/images/emptyFavorit.svg";
-import views from "../../assets/images/views.svg";
+import viewsImg from "../../assets/images/views.svg";
 import share from "../../assets/images/share.svg";
-import Cookies from "js-cookie";
 import TimeAgo from "../TimeAgo";
-import { useDispatch, useSelector } from "react-redux";
 import { likeToggleWishlistThunk } from "../../store/wishlist/thunk/likeToggleWishlistThunk";
 import { toggleLikeProduct } from "../../store/product/thunk/toggleLikeProduct";
-import { memo, useCallback, useEffect, useState } from "react";
+import {
+  setSavedProduct,
+  setLikeLocal,
+} from "../../store/product/productSlice";
 import imgLiked from "../../assets/lottifiles/heartAnmation.json";
 import saved from "../../assets/lottifiles/saved.json";
-import Lottie from "lottie-react";
-import { setSavedProduct } from "../../store/product/productSlice";
-import { getAllLikesThunk } from "../../store/product/thunk/getAllLikesThunk";
 
 const Card = ({
   _id,
@@ -27,66 +30,110 @@ const Card = ({
   type,
   city,
   price,
+  views,
+  likes,
 }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const token = Cookies.get("token");
 
-  const { products = [], savedProducts = [] } = useSelector(
+  const userId = useMemo(() => {
+    if (!token) return null;
+    try {
+      return jwtDecode(token).id;
+    } catch {
+      return null;
+    }
+  }, [token]);
+
+  const [optimisticLiked, setOptimisticLiked] = useState(null);
+  const [optimisticLikesCount, setOptimisticLikesCount] = useState(null);
+
+  const { savedProducts = [], products } = useSelector(
     (state) => state.products
   );
   const { commentsByProductId } = useSelector((state) => state.comments);
-  const commentCount = commentsByProductId?.[_id]?.length || 0;
-  const { user } = useSelector((state) => state.users);
-  const userId = user?._id;
 
-  const productData = products.find((p) => p._id === _id) || { likes: [] };
+  const productFromStore = products.find((p) => p._id === _id);
+  const likesFromStore = productFromStore?.likes || likes;
 
-  const [liked, setLiked] = useState(false);
-  const [totalLikes, setTotalLikes] = useState(0);
+  const isLikedFromStore = useMemo(
+    () =>
+      userId && Array.isArray(likesFromStore)
+        ? likesFromStore.includes(userId)
+        : false,
+    [likesFromStore, userId]
+  );
+  const isLiked = optimisticLiked !== null ? optimisticLiked : isLikedFromStore;
+  const currentLikesCount =
+    optimisticLikesCount !== null
+      ? optimisticLikesCount
+      : likesFromStore?.length || 0;
 
-  useEffect(() => {
-    const likesArray = Array.isArray(productData.likes)
-      ? productData.likes
-      : [];
-    setLiked(likesArray.includes(userId));
-    setTotalLikes(likesArray.length);
-  }, [productData.likes, userId]);
-
-  const isSaved = Array.isArray(savedProducts)
-    ? savedProducts.includes(_id)
-    : false;
-
-  const handleOfferClick = useCallback(
-    (e) => {
-      const token = Cookies.get("token");
-      if (!token) {
-        e.preventDefault();
-        navigate("/login");
-      } else {
-        navigate(`/offer-details/${_id}`);
-      }
-    },
-    [_id, navigate]
+  const commentCount = useMemo(
+    () => commentsByProductId?.[_id]?.length || 0,
+    [commentsByProductId, _id]
+  );
+  const isSaved = useMemo(
+    () => Array.isArray(savedProducts) && savedProducts.includes(_id),
+    [savedProducts, _id]
   );
 
-  const handleLike = useCallback(
-    async (e) => {
-      e.stopPropagation();
-      const newLiked = !liked;
-      setLiked(newLiked);
-      setTotalLikes((prev) => (newLiked ? prev + 1 : prev - 1));
-      dispatch(toggleLikeProduct(_id));
-    },
-    [_id, dispatch, liked]
+  const imageUrl = useMemo(
+    () =>
+      main_photos?.[0]
+        ? `https://api.ezsouq.store/uploads/images/${main_photos[0]}`
+        : null,
+    [main_photos]
   );
+
+  const handleOfferClick = useCallback(() => {
+    if (!token) navigate("/login");
+    else navigate(`/offer-details/${_id}`);
+  }, [_id, navigate, token]);
 
   const handelFavorit = useCallback(
     (e) => {
       e.stopPropagation();
+      if (!token) {
+        navigate("/login");
+        return;
+      }
       dispatch(setSavedProduct(_id));
       dispatch(likeToggleWishlistThunk(_id));
     },
-    [_id, dispatch]
+    [_id, dispatch, navigate, token]
+  );
+
+  const handelLiked = useCallback(
+    (e) => {
+      e.stopPropagation();
+      if (!token) {
+        navigate("/login");
+        return;
+      }
+
+      const newLikedState = !isLiked;
+      setOptimisticLiked(newLikedState);
+      setOptimisticLikesCount(
+        newLikedState ? currentLikesCount + 1 : currentLikesCount - 1
+      );
+
+      dispatch(toggleLikeProduct({ productId: _id }))
+        .unwrap()
+        .then(() => {
+          dispatch(
+            setLikeLocal({ productId: _id, userId, liked: newLikedState })
+          );
+          setOptimisticLiked(null);
+          setOptimisticLikesCount(null);
+        })
+        .catch(() => {
+          setOptimisticLiked(!newLikedState);
+          setOptimisticLikesCount(currentLikesCount);
+        });
+    },
+    [_id, dispatch, isLiked, currentLikesCount, userId]
   );
 
   return (
@@ -95,7 +142,7 @@ const Card = ({
       title={name}
       className="p-[.5rem] w-[86vw] md:w-52 lg:w-60 m-auto shadow-card bg-white rounded-[8px] cursor-pointer"
     >
-      <div className="flex flex-col items-start md:w-full ">
+      <div className="flex flex-col items-start md:w-full">
         <div className="flex-between mb-[.6rem] w-full font-normal text-[.75rem] text-[#A3A0DD] h-30">
           <p>
             <TimeAgo postDate={createdAt} />
@@ -105,27 +152,22 @@ const Card = ({
             {isSaved ? (
               <Lottie animationData={saved} loop={false} />
             ) : (
-              <img
-                src={emptyFavorit}
-                alt=""
-                className="w-6 h-5 mr-auto"
-                loading="lazy"
-                decoding="async"
-              />
+              <img src={emptyFavorit} alt="" className="w-6 h-5 mr-auto" />
             )}
           </div>
         </div>
-        <div className="w-full">
+        {imageUrl && (
           <img
-            src={`https://api.ezsouq.store/uploads/images/${main_photos?.[0]}`}
-            alt=""
-            className="h-32 w-full object-cover rounded-md opacity-0"
+            src={imageUrl}
+            alt={name}
+            className="h-32 w-full object-cover rounded-md transition-opacity duration-300 opacity-0"
             onLoad={(e) => e.target.classList.add("opacity-100")}
-            loading="lazy"
           />
-        </div>
+        )}
         <div className="font-normal w-full">
-          <p className="text-[1.1rem] text-[#3F3D56] mt-[.4rem]">{name}</p>
+          <p className="text-[1.1rem] text-[#3F3D56] mt-[.4rem] truncate">
+            {name}
+          </p>
           <p className="text-[#A3A0DD] text-[.9rem]">
             {Governorate_name}-{city}
           </p>
@@ -138,9 +180,13 @@ const Card = ({
             </span>
           </div>
           <div className="flex-between mt-4">
-            <div className="flex-center gap-2" onClick={handleLike}>
-              <div className="w-8 h-6 flex-center">
-                {liked ? (
+            <div className="flex-center gap-2">
+              <div
+                className="w-8 h-6 flex-center"
+                onClick={handelLiked}
+                aria-label={isLiked ? "Unlike" : "Like"}
+              >
+                {isLiked ? (
                   <Lottie
                     animationData={imgLiked}
                     loop={false}
@@ -151,7 +197,7 @@ const Card = ({
                 )}
               </div>
               <span className="font-normal text-[.625rem] text-[#535353]">
-                {totalLikes}
+                {currentLikesCount}
               </span>
             </div>
             <Link
@@ -165,9 +211,9 @@ const Card = ({
               </span>
             </Link>
             <div className="flex-center gap-2">
-              <img src={views} alt="views" />
+              <img src={viewsImg} alt="views" />
               <span className="font-normal text-[.625rem] text-[#535353]">
-                33
+                {views || 0}
               </span>
             </div>
             <div

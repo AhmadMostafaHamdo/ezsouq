@@ -11,16 +11,24 @@ import menuTable from "../../assets/images/dashboard/menuTable.svg";
 import menuTable2 from "../../assets/images/dashboard/menuTable2.svg";
 import deleteOffer from "../../assets/images/dashboard/deleteOffer.svg";
 import close from "../../assets/images/close.svg";
-import { Link, useNavigate } from "react-router";
 import { useDispatch, useSelector } from "react-redux";
 import TimeAgo from "../../components/TimeAgo";
+import { productThunk } from "../../store/product/thunk/productThunk";
+import { deleteProduct } from "../../store/product/thunk/deleteProduct";
 
 const Offers = () => {
   const [infoTable, setInfoTable] = useState(false);
   const [showDetails, setShowDetails] = useState(false);
+  const [deleteOfferToggle, setDeleteOfferToggle] = useState(false);
+  const [selectedProductId, setSelectedProductId] = useState(null);
+
   const dispatch = useDispatch();
-  const { products = [] } = useSelector((state) => state.products);
-  console.log(products)
+  const {
+    products = [],
+    totalPages = 1,
+    currentPage = 1,
+  } = useSelector((state) => state.products);
+
   const [visibleColumns, setVisibleColumns] = useState({
     image: true,
     title: true,
@@ -30,14 +38,11 @@ const Offers = () => {
     date: true,
     actions: true,
   });
-  const [deleteOfferToggle, setDeleteOfferToggle] = useState(false);
 
   const menuRef = useRef(null);
   const detailsRef = useRef(null);
 
-  const handelViews = () => {
-    setInfoTable(!infoTable);
-  };
+  const handelViews = () => setInfoTable(!infoTable);
 
   const handelShowDetails = (e) => {
     e.stopPropagation();
@@ -51,6 +56,11 @@ const Offers = () => {
     }));
   };
 
+  const handelDeleteOffer = (id) => {
+    setSelectedProductId(id);
+    setDeleteOfferToggle(true);
+  };
+
   // إغلاق القوائم عند النقر خارجها
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -61,55 +71,65 @@ const Offers = () => {
         setShowDetails(false);
       }
     };
-
     document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
-  const handelDeleteOffer = () => {
-    setDeleteOfferToggle(true);
-  };
+
+  // جلب أول بيانات عند التحميل
+  useEffect(() => {
+    dispatch(productThunk({ page: 1, limit: 6 }));
+  }, [dispatch]);
+
   return (
     <div className="overflow-hidden font-sans">
-      {deleteOfferToggle ? (
-        <div className="absolute w-[100vw] h-screen bg-[#67676780] z-20 translate-x-60">
-          <div className="w-96 h-[74vh] p-5 rounded-lg bg-white absolute z-50 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
-            <Link to={"/dashboard/offers"}>
-              <img src={close} alt="" className="mr-auto" />
-            </Link>
-            <img src={deleteOffer} alt="" className="m-auto" />
-            <p className="text-center my-5">حذف إعلان</p>
+      {/* مودال الحذف */}
+      {deleteOfferToggle && (
+        <div className="fixed inset-0 bg-[#67676780] z-20 flex-center">
+          <div className="w-96 h-[74vh] p-5 rounded-lg bg-white relative">
+            <button onClick={() => setDeleteOfferToggle(false)}>
+              <img src={close} alt="close" className="mr-auto" />
+            </button>
+            <img src={deleteOffer} alt="delete" className="m-auto" />
+            <p className="text-center my-5 text-lg font-bold">حذف إعلان</p>
             <p className="text-[#444444] text-center leading-6">
-              هل أنت متأكد من أنك تريد حذف هذا المستخدم؟ لا يمكن التراجع عن هذا
+              هل أنت متأكد من أنك تريد حذف هذا الإعلان؟ لا يمكن التراجع عن هذا
               الإجراء.
             </p>
-            <div className="flex-between mt-5 font-normal">
-              <button className="px-7 py-1 rounded-md text-[#818181] border-solid border-[1px] border-[#818181]">
+            <div className="flex-between mt-5">
+              <button
+                className="px-7 py-1 rounded-md text-[#818181] border border-[#818181]"
+                onClick={() => setDeleteOfferToggle(false)}
+              >
                 إلغاء
               </button>
-              <button className="px-7 py-1 rounded-md bg-[#BD4749] text-white ">
+              <button
+                className="px-7 py-1 rounded-md bg-[#BD4749] text-white"
+                onClick={() => {
+                  dispatch(deleteProduct(selectedProductId));
+                  setDeleteOfferToggle(false);
+                }}
+              >
                 حذف
               </button>
             </div>
           </div>
         </div>
-      ) : (
-        ""
       )}
+
       <div className="container">
+        {/* العنوان + البحث + القائمة */}
         <div className="flex-between my-5 w-[60vw]">
-          <h1>الإعلانات</h1>
+          <h1 className="text-xl font-bold">الإعلانات</h1>
           <div className="relative">
             <input
-              type="text "
-              className="relative p-1 pr-7 border-none rounded-md w-[40vw]"
+              type="text"
+              className="p-1 pr-7 rounded-md w-[40vw] border border-gray-300"
               placeholder="بحث..."
             />
             <img
               src={search}
-              className="filter invert-0 brightness-0 contrast-100 absolute top-1/2 -translate-y-1/2 right-2"
-              alt=""
+              className="absolute top-1/2 -translate-y-1/2 right-2"
+              alt="search"
             />
           </div>
           <div className="flex-center gap-2 relative" ref={menuRef}>
@@ -122,93 +142,58 @@ const Offers = () => {
               onClick={handelViews}
             />
             {infoTable && (
-              <div className="absolute p-2 rounded-md z-20 bg-white top-12 right-12 w-28 shadow-[0px_4px_15.8px_0px_#0000001F]">
+              <div className="absolute p-2 rounded-md z-20 bg-white top-12 right-12 w-28 shadow">
                 <div
                   className="flex items-center text-[.7rem] gap-2 cursor-pointer"
                   onClick={handelShowDetails}
                 >
-                  <img src={views} alt="" />
+                  <img src={views} alt="views" />
                   عرض/إخفاء
                   <img src={arrowLeft} alt="" width={6} />
                 </div>
                 <div className="flex items-center gap-2 cursor-pointer">
-                  <img src={deleteIcon} alt="" />
+                  <img src={deleteIcon} alt="delete" />
                   حذف
                 </div>
               </div>
             )}
             {showDetails && (
               <div
-                className="absolute rounded-md w-[160px] top-[7.3rem] right-16 bg-white p-2 shadow-[0px_4px_15.8px_0px_#0000001F] z-30"
+                className="absolute rounded-md w-[160px] top-[7.3rem] right-16 bg-white p-2 shadow z-30"
                 ref={detailsRef}
               >
-                <div className="text-[.8rem] mb-3 flex items-center">
-                  <input
-                    type="checkbox"
-                    checked={visibleColumns.image}
-                    onChange={() => handleColumnToggle("image")}
-                    className="ml-2"
-                  />
-                  الصورة
-                </div>
-                <div className="text-[.8rem] mb-3 flex items-center">
-                  <input
-                    type="checkbox"
-                    checked={visibleColumns.title}
-                    onChange={() => handleColumnToggle("title")}
-                    className="ml-2"
-                  />
-                  العنوان
-                </div>
-                <div className="text-[.8rem] mb-3 flex items-center">
-                  <input
-                    type="checkbox"
-                    checked={visibleColumns.location}
-                    onChange={() => handleColumnToggle("location")}
-                    className="ml-2"
-                  />
-                  المكان
-                </div>
-                <div className="text-[.8rem] mb-3 flex items-center">
-                  <input
-                    type="checkbox"
-                    checked={visibleColumns.publisher}
-                    onChange={() => handleColumnToggle("publisher")}
-                    className="ml-2"
-                  />
-                  اسم الناشر
-                </div>
-                <div className="text-[.8rem] mb-3 flex items-center">
-                  <input
-                    type="checkbox"
-                    checked={visibleColumns.price}
-                    onChange={() => handleColumnToggle("price")}
-                    className="ml-2"
-                  />
-                  السعر
-                </div>
-                <div className="text-[.8rem] mb-3 flex items-center">
-                  <input
-                    type="checkbox"
-                    checked={visibleColumns.date}
-                    onChange={() => handleColumnToggle("date")}
-                    className="ml-2"
-                  />
-                  تاريخ النشر
-                </div>
-                <div className="text-[.8rem] mb-3 flex items-center">
-                  <input
-                    type="checkbox"
-                    checked={visibleColumns.actions}
-                    onChange={() => handleColumnToggle("actions")}
-                    className="ml-2"
-                  />
-                  الإجراءات
-                </div>
+                {Object.keys(visibleColumns).map((col) => (
+                  <div
+                    key={col}
+                    className="text-[.8rem] mb-3 flex items-center"
+                  >
+                    <input
+                      type="checkbox"
+                      checked={visibleColumns[col]}
+                      onChange={() => handleColumnToggle(col)}
+                      className="ml-2"
+                    />
+                    {col === "image"
+                      ? "الصورة"
+                      : col === "title"
+                      ? "العنوان"
+                      : col === "location"
+                      ? "المكان"
+                      : col === "publisher"
+                      ? "اسم الناشر"
+                      : col === "price"
+                      ? "السعر"
+                      : col === "date"
+                      ? "تاريخ النشر"
+                      : "الإجراءات"}
+                  </div>
+                ))}
               </div>
             )}
           </div>
         </div>
+
+        {/* جدول المنتجات */}
         <div className="p-6 bg-white rounded-tr-3xl rounded-tl-3xl">
           <table className="font-medium w-full">
             <thead>
@@ -229,7 +214,15 @@ const Offers = () => {
                 <tr className="border-t border-[#eee]" key={index}>
                   {visibleColumns.image && (
                     <td className="py-4">
-                      <img src={profile} alt="" width={50} />
+                      <img
+                        src={
+                          product?.main_photos?.[0]
+                            ? `https://api.ezsouq.store/uploads/images/${product.main_photos[0]}`
+                            : profile
+                        }
+                        alt="product"
+                        width={40}
+                      />
                     </td>
                   )}
                   {visibleColumns.title && <td>{product.name}</td>}
@@ -238,7 +231,7 @@ const Offers = () => {
                       {product.Governorate_name}-{product.city}
                     </td>
                   )}
-                  {visibleColumns.publisher && <td>مياو المياو </td>}
+                  {visibleColumns.publisher && <td>مياو المياو</td>}
                   {visibleColumns.price && <td>{product.price}</td>}
                   {visibleColumns.date && (
                     <td>
@@ -250,16 +243,16 @@ const Offers = () => {
                       <div className="flex items-center justify-center">
                         <img
                           src={detailsUser}
-                          alt=""
+                          alt="details"
                           className="ml-2"
                           width={30}
                         />
                         <img
                           src={deleteUser}
-                          alt=""
+                          alt="delete"
                           width={30}
                           className="cursor-pointer"
-                          onClick={handelDeleteOffer}
+                          onClick={() => handelDeleteOffer(product._id)}
                         />
                       </div>
                     </td>
@@ -268,15 +261,46 @@ const Offers = () => {
               ))}
             </tbody>
           </table>
+
+          {/* Pagination */}
           <div className="flex-between text-[#959595] mt-3">
-            <p>عرض 6 من 500</p>
+            <p>
+              عرض {products?.length} من {totalPages * (products?.length || 6)}
+            </p>
             <div className="flex-center gap-2">
-              <img src={arrowRight} alt="" className="cursor-pointer" />
-              <span className="cursor-pointer">1</span>
-              <span className="cursor-pointer">2</span>
-              <span className="cursor-pointer">3</span>
-              <span className="cursor-pointer">4</span>
-              <img src={arrowLeft} alt="" className="cursor-pointer" />
+              {currentPage > 1 && (
+                <img
+                  src={arrowRight}
+                  alt="prev"
+                  className="cursor-pointer"
+                  onClick={() =>
+                    dispatch(productThunk({ page: currentPage - 1, limit: 6 }))
+                  }
+                />
+              )}
+              {Array.from({ length: totalPages }, (_, i) => (
+                <span
+                  key={i}
+                  className={`cursor-pointer ${
+                    currentPage === i + 1 ? "font-bold" : ""
+                  }`}
+                  onClick={() =>
+                    dispatch(productThunk({ page: i + 1, limit: 6 }))
+                  }
+                >
+                  {i + 1}
+                </span>
+              ))}
+              {currentPage < totalPages && (
+                <img
+                  src={arrowLeft}
+                  alt="next"
+                  className="cursor-pointer"
+                  onClick={() =>
+                    dispatch(productThunk({ page: currentPage + 1, limit: 6 }))
+                  }
+                />
+              )}
             </div>
           </div>
         </div>

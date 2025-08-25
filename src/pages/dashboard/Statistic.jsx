@@ -8,6 +8,7 @@ import reports from "../../assets/images/dashboard/statistic/reports.svg";
 import personalImg from "../../assets/images/personal.svg";
 import iconSettingUser from "../../assets/images/dashboard/iconSettingUser.svg";
 import CarStatsDashboard from "./CarStatsDashboard";
+import { useSelector } from "react-redux";
 
 const Statistic = () => {
   const stats = [
@@ -35,7 +36,6 @@ const Statistic = () => {
       count: 600,
     },
   ];
-
   return (
     <div dir="rtl" className="p-4">
       <h1 className="text-[#23193E] font-bold text-xl mb-6">الإحصائيات</h1>
@@ -58,7 +58,7 @@ const Statistic = () => {
         </div>
 
         {/* قسم الجدول */}
-        <div className="bg-white rounded-xl shadow-md overflow-hidden">
+        <div className="bg-white rounded-xl shadow-md overflow-hidden h-fit">
           <table className="w-full">
             <thead className="bg-gray-50">
               <tr>
@@ -111,18 +111,18 @@ const Statistic = () => {
                   </div>
                 </td>
                 <td className="py-4 px-4 text-right text-sm font-medium text-[#23193E]">
-                  أحمد محمد
+                  مياو المياو
                 </td>
                 <td className="py-4 px-4 text-right text-sm text-[#706F84]">
-                  ahmed@example.com
+                  meaw@gmail.com
                 </td>
                 <td className="py-4 px-4 text-right text-sm text-[#706F84]">
-                  0988 888 888
+                  0999 999 999
                 </td>
                 <td className="py-4 px-4 text-right text-sm text-[#706F84]">
                   <img src={iconSettingUser} alt="" />
                 </td>
-              </tr>
+              </tr> 
             </tbody>
           </table>
         </div>

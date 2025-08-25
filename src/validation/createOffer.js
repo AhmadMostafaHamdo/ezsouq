@@ -2,9 +2,9 @@ import * as z from "zod";
 export const stepOneSchema = z.object({
   category: z
     .string()
-    .min(1, "يجب اختيار التصنيف  سيارات او عقارات او تقنيات")
-    .refine((val) => val != "التصنيف", {
-      message: "يجب اختيار التصنيف",
+    .min(1, "يجب اختيار النوع  سيارات او عقارات او تقنيات")
+    .refine((val) => val != "النوع", {
+      message: "يجب اختيار النوع",
     }),
   Governorate_name: z
     .string()
@@ -56,4 +56,27 @@ export const stepTwoTecSchema = z.object({
   processor: z.string().nonempty("يجب إدخال نوع المعالج"),
   memory: z.string().nonempty("يجب إدخال الذاكرة"),
   video: z.instanceof(File).optional(),
+});
+// Zod schema
+export const stepTwoCarsSchema = z.object({
+  carName: z.string().nonempty("يجب إدخال اسم السيارة"),
+  color: z.string().nonempty("يجب إدخال اللون"),
+  dealType: z.enum(["rent", "sale"], {
+    errorMap: () => ({ message: "اختر نوع العملية" }),
+  }),
+  isnew: z.enum(["جديدة", "مستعملة"], {
+    errorMap: () => ({ message: "اختر الحالة" }),
+  }),
+  video: z.any().optional(),
+});
+ // Zod schema للعقارات
+export const stepTwoRealStateSchema = z.object({
+  type: z.string().nonempty("اختر نوع العقار"),
+  dealType: z.enum(["rent", "sale"], {
+    errorMap: () => ({ message: "اختر نوع العملية" }),
+  }),
+  condition: z.enum(["مفروشة", "غير مفروشة"], {
+    errorMap: () => ({ message: "اختر حالة العقار" }),
+  }),
+  video: z.any().optional(),
 });

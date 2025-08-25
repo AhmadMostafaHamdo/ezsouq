@@ -36,7 +36,10 @@ const AuthForm = ({ fields, schema, btnAuth }) => {
       reset();
     } catch (err) {}
   };
-  const handelAuthGoogle = () => {};
+  const handelAuthGoogle = (e) => {
+    e.preventDefault();
+    window.location.href = "https://api.ezsouq.store/auth/google";
+  };
   return (
     <div className=" flex-center h-screen  overflow-hidden">
       <FormProvider {...form}>
@@ -133,8 +136,9 @@ const AuthForm = ({ fields, schema, btnAuth }) => {
                 </p>
                 <DividerWithText text="أو" />
                 <button
+                type="button"
                   onClick={handelAuthGoogle}
-                  className={`flex-center ${
+                  className={`flex-center hover:scale-105 ${
                     isLogin ? "my-10" : "my-10 md:my-3 "
                   } p-3  font-medium text-[.9rem] gap-2 shadow-[0px_2px_13.7px_0px_#0000001A] rounded-xl w-full`}
                 >

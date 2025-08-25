@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-const Select = ({ options = [], type, onSelect }) => {
+const   Select = ({ options = [], type, onSelect }) => {
   const [selectedValue, setSelectedValue] = useState("");
 
   useEffect(() => {

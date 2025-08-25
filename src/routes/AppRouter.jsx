@@ -27,7 +27,6 @@ const Commits = lazy(() => import("../pages/Commits"));
 const Newest = lazy(() => import("../pages/Newest"));
 const Rating = lazy(() => import("../components/website/Rating/Rating"));
 const Dashoard = lazy(() => import("../pages/dashboard/Dashboard"));
-const Home = lazy(() => import("../pages/dashboard/Home"));
 const Setting = lazy(() => import("../pages/dashboard/Setting"));
 const RatingDashboard = lazy(() => import("../pages/dashboard/Rating"));
 const Reports = lazy(() => import("../pages/dashboard/Reports"));
@@ -165,25 +164,6 @@ const router = createBrowserRouter([
         ],
       },
       {
-        path: "/profile/me",
-        element: (
-          <SuspenseFallback>
-            <Profile />
-          </SuspenseFallback>
-        ),
-        children: [
-          { index: true, element: <MainProfile /> },
-          {
-            path: "contact-info",
-            element: <ContactInfo />,
-          },
-          {
-            path: "rating",
-            element: <Rating />,
-          },
-        ],
-      },
-      {
         path: "/create-offer",
         element: (
           <SuspenseFallback>
@@ -199,7 +179,7 @@ const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: <Home />,
+        element: <Statistic />,
       },
       {
         path: "offers",
@@ -208,10 +188,6 @@ const router = createBrowserRouter([
       {
         path: "users",
         element: <UsersDashboard />,
-      },
-      {
-        path: "statistic",
-        element: <Statistic />,
       },
       {
         path: "setting",

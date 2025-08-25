@@ -19,6 +19,7 @@ import Spinner from "../../../feedback/loading/Spinner";
 import ThumbnailImage from "../../../feedback/loading/ThumbnailImage";
 import { userThunkById } from "../../../store/users/thunk/userThunkById";
 import { viewsThunk } from "../../../store/views/thunk/thunkViews";
+
 const Main = () => {
   const { product } = useSelector((state) => state.products);
   const { user } = useSelector((state) => state.users);
@@ -27,26 +28,34 @@ const Main = () => {
   const { id } = useParams();
   const dispatch = useDispatch();
   const imgRef = useRef(null);
+
+  // ✅ تحميل المنتج
   useEffect(() => {
-    dispatch(productThunkById(id));
+    if (id) dispatch(productThunkById(id));
   }, [dispatch, id]);
+
+  // ✅ تسجيل المشاهدات
   useEffect(() => {
-    dispatch(viewsThunk(id));
-  }, []);
-  useEffect(() => {
-    dispatch(userThunkById(product?.Owner_id?._id));
+    if (id) dispatch(viewsThunk(id));
   }, [dispatch, id]);
+
+  // ✅ تحميل بيانات الناشر
   useEffect(() => {
-    if (product?.main_photos?.length) {
+    if (product?.Owner_id?._id) {
+      dispatch(userThunkById(product.Owner_id._id));
+    }
+  }, [dispatch, product]);
+
+  // ✅ تعيين الصورة الأساسية
+  useEffect(() => {
+    if (product?.main_photos?.length && !selectedImage) {
       setSelectedImage(product.main_photos[0]);
     }
-  }, [product]);
+  }, [product, selectedImage]);
 
-  // Reset image loaded state when image changes
+  // ✅ إعادة تعيين حالة التحميل عند تغيير الصورة
   useEffect(() => {
     setIsImageLoaded(false);
-
-    // Check if image is already cached
     if (imgRef.current?.complete) {
       setIsImageLoaded(true);
     }
@@ -62,7 +71,6 @@ const Main = () => {
 
   const previousImg = () => {
     if (!product?.main_photos?.length) return;
-
     const currentIndex = product.main_photos.indexOf(selectedImage);
     if (currentIndex === -1) return;
     const previousIndex =
@@ -73,10 +81,8 @@ const Main = () => {
 
   const nextImg = () => {
     if (!product?.main_photos?.length) return;
-
     const currentIndex = product.main_photos.indexOf(selectedImage);
     if (currentIndex === -1) return;
-
     const nextIndex = (currentIndex + 1) % product.main_photos.length;
     setSelectedImage(product.main_photos[nextIndex]);
   };
@@ -89,6 +95,7 @@ const Main = () => {
     );
 
   const mainPhotos = product?.main_photos || [];
+
   return (
     <div className=" bg-[#F7F7FF] md:pt-2 overflow-x-hidden h-fit">
       <div className="container items-center md:items-start flex flex-col md:flex-row md:gap-8 lg:gap-11 pt-[5rem]">
@@ -97,7 +104,7 @@ const Main = () => {
             {selectedImage && (
               <>
                 {!isImageLoaded && (
-                  <div className="absolute inset-0 flex items-center justify-center">
+                  <div className="absolute inset-0 flex items-center justify-center bg-white/50 backdrop-blur-sm">
                     <Spinner className="w-12 h-12" />
                   </div>
                 )}

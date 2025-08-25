@@ -12,7 +12,7 @@ const Profile = () => {
     <div className="  bg-[#F7F7FF] overflow-x-hidden" ref={profileRef}>
       <HeaderLogin />
       <div className="pt-[5rem]">
-        <Outlet />
+        <Outlet />  
       </div>
     </div>
   );
