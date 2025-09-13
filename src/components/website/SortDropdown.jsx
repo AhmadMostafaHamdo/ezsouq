@@ -8,8 +8,8 @@ const SortDropdown = ({ options = [], selectedOption, onSelect }) => {
         onChange={(e) => onSelect(e.target.value)}
         aria-label="Sort products by"
       >
-        {options.map((option) => (
-          <option key={option.value} value={option.value}>
+        {options.map((option, index) => (
+          <option key={index} value={option.value}>
             {option.label}
           </option>
         ))}

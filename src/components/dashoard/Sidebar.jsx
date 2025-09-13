@@ -19,15 +19,15 @@ const Sidebar = () => {
         <ul>
           {ulLinks?.map((link, index) => (
             <div className="flex items-center gap-2 mb-4" key={index}>
-              <img src={link.img} alt="" />
+              <img src={link.img} alt={link.name} width={25} />
               <li>
                 <NavLink
                   to={link.link}
                   end={link.name === "الاحصائيات"}
                   className={({ isActive }) =>
                     isActive
-                      ? "px-7 py-2 rounded-[10px] bg-[#E0E0FF] text-[#2F2E41] text-[.8rem] "
-                      : "px-4 py-2 rounded-[10px] text-[#2F2E41] text-[.8rem]"
+                      ? "px-7 py-2 rounded-[10px] bg-[#E0E0FF] text-[#2F2E41] text-[.79rem] "
+                      : "px-4 py-2 rounded-[10px] text-[#2F2E41] text-[.79rem]"
                   }
                 >
                   {link.name}

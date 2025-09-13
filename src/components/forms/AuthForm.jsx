@@ -10,36 +10,49 @@ import googleIcon from "../../assets/images/googleLogo.svg";
 import { useDispatch, useSelector } from "react-redux";
 import { thunkAuth } from "../../store/auth/thunk/authThunk";
 import { ToastContainer } from "react-toastify";
+import Spinner from "../../feedback/loading/Spinner";
+import { useState } from "react";
+import { Eye, EyeOff } from "lucide-react";
+
 const AuthForm = ({ fields, schema, btnAuth }) => {
   const isLogin = btnAuth !== "إنشاء حساب";
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { user, error, loading, token } = useSelector((state) => state.auth);
+  const { error, token } = useSelector((state) => state.auth);
+
+  const [loadingGoogle, setLoadingGoogle] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
   const form = useForm({
     mode: "onChange",
     resolver: zodResolver(schema),
     shouldUnregister: false,
   });
+
   const {
     handleSubmit,
     reset,
     register,
     formState: { errors, isSubmitting },
   } = form;
+
   const onSubmit = async (data) => {
     try {
       const { name, email, password } = data;
       const info = isLogin ? { email, password } : { name, email, password };
       await dispatch(thunkAuth({ info, isLogin })).unwrap();
-      console.log({ isLogin, token });
       isLogin && token ? navigate("/") : navigate("/login");
       reset();
     } catch (err) {}
   };
+
   const handelAuthGoogle = (e) => {
     e.preventDefault();
+    setLoadingGoogle(true);
     window.location.href = "https://api.ezsouq.store/auth/google";
   };
+
   return (
     <div className=" flex-center h-screen  overflow-hidden">
       <FormProvider {...form}>
@@ -68,6 +81,7 @@ const AuthForm = ({ fields, schema, btnAuth }) => {
               </div>
             )}
           </div>
+
           {/* left */}
           <div className="w-full md:w-[60vw]  h-[100vh] bg-white ">
             {btnAuth == "تسجيل الدخول" && (
@@ -75,7 +89,7 @@ const AuthForm = ({ fields, schema, btnAuth }) => {
                 <img src={logo} alt="logo" loading="lazy" />
               </div>
             )}
-            <div className="w-full   sm:w-[400px]  lg:w-[487px] m-auto p-2 ">
+            <div className="w-full sm:w-[400px] lg:w-[487px] m-auto p-2 ">
               <h1
                 className={`${
                   isLogin ? "mb-3" : "mb-2"
@@ -85,18 +99,54 @@ const AuthForm = ({ fields, schema, btnAuth }) => {
               </h1>
               <div className="m-auto w-full">
                 {fields.map((input, index) => (
-                  <div key={index}>
+                  <div key={index} className="relative">
                     <Input
-                      type={input.type}
+                      type={
+                        input.name === "password"
+                          ? showPassword
+                            ? "text"
+                            : "password"
+                          : input.name === "confirm_password"
+                          ? showConfirmPassword
+                            ? "text"
+                            : "password"
+                          : input.type
+                      }
                       name={input.name}
                       placeholder={input.placeholder}
                     />
-                    <p className="text-red my-1  h-[18px] text-[12px]">
+
+                    {/* زر كلمة المرور */}
+                    {input.name === "password" && (
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute top-6 left-2 -translate-y-1/2 text-xs text-primary"
+                      >
+                        {showPassword ? <EyeOff /> : <Eye />}
+                      </button>
+                    )}
+
+                    {/* زر تأكيد كلمة المرور */}
+                    {input.name === "confirm_password" && (
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setShowConfirmPassword(!showConfirmPassword)
+                        }
+                        className="absolute top-6 left-2 -translate-y-1/2 text-xs text-primary"
+                      >
+                        {showConfirmPassword ? <EyeOff /> : <Eye />}
+                      </button>
+                    )}
+
+                    <p className="text-red my-1 h-[18px] text-[12px]">
                       {errors[input.name]?.message ||
                         (input.name === "email" && error && !isLogin)}
                     </p>
                   </div>
                 ))}
+
                 {btnAuth === "إنشاء حساب" && (
                   <>
                     <div className="flex items-center">
@@ -110,10 +160,19 @@ const AuthForm = ({ fields, schema, btnAuth }) => {
                         أوافق على سياسة الخصوصية
                       </label>
                     </div>
-                    <p className="text-red mb-1  h-[18px] text-[13px]">
+                    <p className="text-red mb-1 h-[18px] text-[13px]">
                       {errors["checkbox"]?.message}
                     </p>
                   </>
+                )}
+
+                {isLogin && (
+                  <Link
+                    to="/forgot-password"
+                    className="mb-3 block text-[.9rem] "
+                  >
+                    هل نسيت كلمة المرور؟
+                  </Link>
                 )}
                 <button
                   disabled={isSubmitting}
@@ -121,6 +180,7 @@ const AuthForm = ({ fields, schema, btnAuth }) => {
                 >
                   {isSubmitting ? "جارٍ الإرسال" : btnAuth}
                 </button>
+
                 <p
                   className={`${
                     isLogin ? "my-5" : "my-6 md:my-3"
@@ -134,16 +194,29 @@ const AuthForm = ({ fields, schema, btnAuth }) => {
                     {isLogin ? "إنشاء حساب" : "تسجيل الدخول"}
                   </Link>
                 </p>
+
                 <DividerWithText text="أو" />
                 <button
-                type="button"
+                  type="button"
                   onClick={handelAuthGoogle}
+                  disabled={loadingGoogle}
                   className={`flex-center hover:scale-105 ${
-                    isLogin ? "my-10" : "my-10 md:my-3 "
+                    loadingGoogle ? "bg-black bg-opacity-10" : ""
+                  } ${
+                    isLogin ? "my-6" : "my-10 md:my-3 "
                   } p-3  font-medium text-[.9rem] gap-2 shadow-[0px_2px_13.7px_0px_#0000001A] rounded-xl w-full`}
                 >
-                  <img src={googleIcon} alt="googleLogo" loading="lazy" /> تسجيل
-                  دخول بواسطة Google
+                  {!loadingGoogle && (
+                    <img src={googleIcon} alt="googleLogo" loading="lazy" />
+                  )}
+                  {loadingGoogle ? (
+                    <>
+                      <span className="text-primary">جارٍ الإرسال</span>{" "}
+                      <Spinner />
+                    </>
+                  ) : (
+                    "تسجيل دخول بواسطة Google"
+                  )}
                 </button>
               </div>
             </div>

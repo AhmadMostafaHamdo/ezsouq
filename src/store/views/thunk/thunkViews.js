@@ -19,7 +19,6 @@ export const viewsThunk = createAsyncThunk(
           },
         }
       );
-      console.log(res.data);
       return res.data;
     } catch (error) {
       return rejectWithValue(

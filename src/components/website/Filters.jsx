@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { allCategory, sortOptions } from "../../data/filterData";
 import scrollPostsIcon from "../../assets/images/Group 6.svg";
@@ -11,20 +11,12 @@ import { productThunk } from "../../store/product/thunk/productThunk";
 import { thunkGovernorates } from "../../store/governorates/thunk/thunkGovernorates";
 import { thunkCities } from "../../store/cities/thunk/citiesThunk";
 import debounce from "lodash/debounce";
+import { setFilter } from "../../store/filter/filterSlice";
 
 const Filters = () => {
   const dispatch = useDispatch();
 
-  const [filters, setFilters] = useState({
-    governorate: "",
-    city: "",
-    category: "سيارات",
-    sortBy: "",
-    order: "",
-    page: 1,
-    limit: 6,
-  });
-
+  const filters = useSelector((state) => state.filters);
   const {
     products = [],
     loading,
@@ -45,51 +37,35 @@ const Filters = () => {
 
   /* Load governorates on mount */
   useEffect(() => {
-    const loadGovernorates = async () => {
-      try {
-        await dispatch(thunkGovernorates());
-      } catch (error) {
-        console.error("Failed to load governorates:", error);
-        // TODO: Add error handling UI
-      }
-    };
-    loadGovernorates();
+    dispatch(thunkGovernorates());
   }, [dispatch]);
 
   /* Load cities when governorate changes */
   useEffect(() => {
-    const loadCities = async () => {
-      if (filters.governorate) {
-        try {
-          setFilters((prev) => ({ ...prev, city: "" }));
-          await dispatch(thunkCities(filters.governorate));
-        } catch (error) {
-          console.error("Failed to load cities:", error);
-          // TODO: Add error handling UI
-        }
-      } else {
-        setFilters((prev) => ({ ...prev, city: "" }));
-      }
-    };
-    loadCities();
+    if (filters.governorate) {
+      dispatch(thunkCities(filters.governorate));
+    } else {
+      dispatch(setFilter({ city: "" }));
+    }
   }, [dispatch, filters.governorate]);
 
   /* Select first city when cities load */
   useEffect(() => {
-    if (filters.governorate && cities.length > 0 && !filters.city) {
-      setFilters((prev) => ({
-        ...prev,
-        city: cities[0],
-      }));
+    if (filters.governorate && cities.length > 0) {
+      // إذا المدينة الحالية مش موجودة ضمن المدن (أو فاضية) → اختار الأولى
+      if (!filters.city || !cities.includes(filters.city)) {
+        dispatch(setFilter({ city: cities[0] }));
+      }
     }
-  }, [cities, filters.governorate, filters.city]);
+  }, [dispatch, cities, filters.governorate, filters.city]);
 
   const handleFilterChange = (name, value) => {
-    setFilters((prev) => ({
-      ...prev,
-      [name]: value,
-      page: name === "page" ? value : 1,
-    }));
+    dispatch(
+      setFilter({
+        [name]: value,
+        page: name === "page" ? value : 1,
+      })
+    );
   };
 
   const loadMore = () => {
@@ -153,9 +129,11 @@ const Filters = () => {
           ))
         ) : (
           <>
-            {products.map((product) => (
-              <Card key={product._id} {...product} />
-            ))}
+            {products.length > 0 &&
+              Array.isArray(products) &&
+              products.map((product) => (
+                <Card key={product._id} {...product} />
+              ))}
             {loading &&
               filters.page > 1 &&
               Array.from({ length: 4 }).map((_, i) => (

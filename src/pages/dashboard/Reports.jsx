@@ -22,7 +22,6 @@ const Reports = () => {
   const [showDeleteUser, setShowDeleteUser] = useState(false);
   const dispatch = useDispatch();
   const { users = [] } = useSelector((state) => state.users);
-  console.log(users);
   const [visibleColumns, setVisibleColumns] = useState({
     image: true,
     name: true,

@@ -15,10 +15,10 @@ import CommentSkeleton from "../assets/sketlon/CommentSketlon";
 const Commits = () => {
   const [comment, setComment] = useState("");
   const [error, setError] = useState(null);
-
   const ref = useRef();
   const { id } = useParams();
   const { product } = useSelector((state) => state.products);
+  console.log(product)
   const { commentsByProductId, loading: commentsLoading } = useSelector(
     (state) => state.comments
   );
@@ -31,7 +31,7 @@ const Commits = () => {
     ref.current?.scrollIntoView({ behavior: "smooth" });
     const fetchData = async () => {
       try {
-        await dispatch(productThunkById(id)); 
+        await dispatch(productThunkById(id));
       } catch (err) {
         setError("Failed to fetch product data");
       }
@@ -93,6 +93,7 @@ const Commits = () => {
                 />
                 <input
                   value={comment}
+                  onKeyDown={handleKeyPress}
                   onChange={(e) => setComment(e.target.value)}
                   type="text"
                   placeholder="اكتب تعليقك..."
@@ -100,7 +101,6 @@ const Commits = () => {
                 />
                 <button
                   onClick={handleSend}
-                  onKeyDown={handleKeyPress}
                   disabled={!comment.trim()}
                   className={`p-2 ${
                     comment.trim() ? "opacity-100" : "opacity-50"

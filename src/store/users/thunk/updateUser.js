@@ -1,0 +1,34 @@
+import { createAsyncThunk } from "@reduxjs/toolkit";
+import axios from "axios";
+import Cookies from "js-cookie";
+import { toast } from "react-toastify";
+export const updateUser = createAsyncThunk(
+  "/updateUser",
+  async (user, { rejectWithValue }) => {
+    try {
+      const res = await axios.put(
+        "/user/update_information",
+        {
+          name: user?.name,
+          avatar: user?.avatar,
+          phone: user?.phone,
+          Location: user?.Location,
+          workplace: user?.workplace,
+          work_type: user?.work_type,
+          whats_app: user?.whats_app,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            authorization: `Bearer ${Cookies.get("token")}`,
+          },
+        }
+      );
+      toast.success(res.data.message);
+      return res.data.response;
+    } catch (error) {
+      console.log(error.response.data);
+      return rejectWithValue(error.response?.data || "Error updating user");
+    }
+  }
+);

@@ -9,9 +9,30 @@ const initialState = {
 };
 
 const productByCatSlice = createSlice({
-  name: "products",
+  name: "productsByCat",
   initialState,
-  reducers: {},
+  reducers: {
+    setLikeLocalByCat: (state, action) => {
+      const { productId, userId, liked } = action.payload;
+
+      const updateLikes = (likesArray) => {
+        let likes = Array.isArray(likesArray) ? [...likesArray] : [];
+        if (liked) {
+          if (!likes.includes(userId)) likes.push(userId);
+        } else {
+          likes = likes.filter((id) => id !== userId);
+        }
+        return likes;
+      };
+
+      const productIndex = state.products.findIndex((p) => p._id === productId);
+      if (productIndex !== -1) {
+        state.products[productIndex].likes = updateLikes(
+          state.products[productIndex].likes
+        );
+      }
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(thunkGetProductByCat.pending, (state) => {
@@ -29,4 +50,5 @@ const productByCatSlice = createSlice({
   },
 });
 
+export const { setLikeLocalByCat } = productByCatSlice.actions;
 export default productByCatSlice.reducer;

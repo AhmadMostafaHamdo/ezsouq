@@ -1,11 +1,11 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 import Cookies from "js-cookie";
+import { toast } from "react-toastify";
 export const thunkReport = createAsyncThunk(
   "/report",
   async ({ productId, message, reason }, { rejectWithValue }) => {
     try {
-      console.log({ productId, message, reason });
       const res = await axios.post(
         "user/report",
         { productId, message, reason },
@@ -15,9 +15,13 @@ export const thunkReport = createAsyncThunk(
           },
         }
       );
-      console.log(res.data);
+      toast.success(res.data?.message);
+      setTimeout(() => {
+        window.location.href = `/offer-details/${productId}`;
+      }, 700);
       return res.data;
     } catch (error) {
+      console.log(error);
       return rejectWithValue(error.response?.data?.message);
     }
   }

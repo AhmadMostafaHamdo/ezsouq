@@ -1,119 +1,79 @@
-import React, { useEffect, useRef } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
 import InputCreateOffer from "../inputs/InputCreateOffer";
-import Error from "../../feedback/error/Error";
-import uploadVideo from "../../assets/images/uploadVideo.svg";
-import { stepTwoCarsSchema } from "../../validation/createOffer";
+import VideoUploader from "../common/VideoUploader";
+import { stepTwoTecSchema } from "../../validation/createOffer";
 
-const StepTwoCars = ({ onSubmit }) => {
-  const videoRef = useRef(null);
-  const {
-    register,
-    handleSubmit,
-    setValue,
-    formState: { errors },
-  } = useForm({
-    resolver: zodResolver(stepTwoCarsSchema),
+const StepTwoTec = ({ onSubmit, defaultCategory }) => {
+  const methods = useForm({
+    resolver: zodResolver(stepTwoTecSchema),
     defaultValues: {
-      carName: "",
+      name: "",
       color: "",
-      dealType: "",
       isnew: "",
+      processor: "",
+      memory: "",
       video: undefined,
     },
   });
-  useEffect(() => {
-    if (window.screenY > 0) {
-    }
-  }, []);
+
   return (
-    <form
-      onSubmit={handleSubmit(onSubmit)}
-      className="flex flex-col gap-3 w-[80vw] md:w-[60vw] lg:w-[45vw] pb-6 text-[#B9B5FF]"
-    >
-      <InputCreateOffer placeholder="اسم السيارة" {...register("carName")} />
-      <Error error={errors.carName?.message} />
+    <FormProvider {...methods}>
+      <form
+        id="form-step2"
+        onSubmit={methods.handleSubmit(onSubmit)}
+        className="w-[80vw] md:w-[60vw] lg:w-[45vw] flex flex-col gap-3 text-[#B9B5FF] pb-6"
+      >
+        <InputCreateOffer placeholder="الجهاز" {...methods.register("name")} />
+        {methods.formState.errors.name && (
+          <p className="text-red-500">
+            {methods.formState.errors.name.message}
+          </p>
+        )}
 
-      <InputCreateOffer placeholder="اللون" {...register("color")} />
-      <Error error={errors.color?.message} />
+        <InputCreateOffer placeholder="اللون" {...methods.register("color")} />
+        {methods.formState.errors.color && (
+          <p className="text-red-500">
+            {methods.formState.errors.color.message}
+          </p>
+        )}
 
-      <div className="flex gap-6 my-3">
-        <div>
-          <label className="block cursor-pointer">
-            <input
-              type="radio"
-              value="rent"
-              {...register("dealType")}
-              className="ml-2"
-            />{" "}
-            أجار
-          </label>
-          <label className="block cursor-pointer">
-            <input
-              type="radio"
-              value="sale"
-              {...register("dealType")}
-              className="ml-2"
-            />{" "}
-            بيع
-          </label>
-          <Error error={errors.dealType?.message} />
-        </div>
-
-        <div>
+        <div className="flex self-start gap-6">
           <label>
-            <input
-              type="radio"
-              value="true" 
-              {...register("isnew")}
-              className="ml-2"
-            />{" "}
+            <input type="radio" value="true" {...methods.register("isnew")} />{" "}
             جديدة
           </label>
           <label>
-            <input
-              type="radio"
-              value="false" 
-              {...register("isnew")}
-              className="ml-2"
-            />{" "}
+            <input type="radio" value="false" {...methods.register("isnew")} />{" "}
             مستعملة
           </label>
-
-          <Error error={errors.isnew?.message} />
         </div>
-      </div>
+        {methods.formState.errors.isnew && (
+          <p className="text-red-500">
+            {methods.formState.errors.isnew.message}
+          </p>
+        )}
 
-      <div
-        onClick={() => videoRef.current?.click()}
-        className="flex-between w-full border p-2 rounded border-[#B9B5FF] cursor-pointer"
-      >
-        <p>إضافة فيديو</p>
-        <img src={uploadVideo} alt="رفع فيديو" />
-      </div>
-      <input
-        type="file"
-        ref={videoRef}
-        accept="video/*"
-        className="hidden"
-        onChange={(e) =>
-          setValue("video", e.target.files?.[0], { shouldValidate: true })
-        }
-      />
-      {errors.video && (
-        <p className="text-red-500 text-sm">{errors.video?.message}</p>
-      )}
+        <InputCreateOffer
+          placeholder="المعالج"
+          {...methods.register("processor")}
+        />
+        <InputCreateOffer
+          placeholder="الذاكرة"
+          {...methods.register("memory")}
+        />
 
-      <button
-        type="submit"
-        className="self-end bg-primary text-white rounded-xl py-1 px-5 mt-3"
-      >
-        حفظ ومتابعة
-      </button>
-    </form>
+        <VideoUploader name="video" label="إضافة فيديو" />
+
+        <button
+          type="submit"
+          className="self-end bg-primary text-white rounded-xl py-1 px-5"
+        >
+          حفظ ومتابعة
+        </button>
+      </form>
+    </FormProvider>
   );
 };
 
-export default StepTwoCars;
+export default StepTwoTec;

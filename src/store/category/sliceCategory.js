@@ -1,11 +1,12 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  category: ["التصنيف", "سيارات", "عقارات", "تقنيات"],
+  category: ["سيارات", "عقارات", "تقنيات"], // لا تضع خيار "التصنيف" كقيمة
   selectedCategory: "",
 };
+
 const sliceCategory = createSlice({
-  name: "auth",
+  name: "category",
   initialState,
   reducers: {
     setCategory: (state, action) => {
@@ -13,5 +14,6 @@ const sliceCategory = createSlice({
     },
   },
 });
+
 export const { setCategory } = sliceCategory.actions;
 export default sliceCategory.reducer;

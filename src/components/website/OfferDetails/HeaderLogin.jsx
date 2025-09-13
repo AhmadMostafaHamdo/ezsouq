@@ -9,14 +9,13 @@ import personal from "../../../assets/images/personal.svg";
 import { useState } from "react";
 import { ulLinksLogin } from "../../../data/filterData";
 import Sidebar from "../../common/Sidebar";
-import { jwtDecode } from "jwt-decode";
-import Cookies from "js-cookie";
+import useUserId from "../../../hooks/useUserId";
 const HeaderLogin = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const location = useLocation();
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
-  const token = Cookies.get("token");
-  const { id } = jwtDecode(token);
+  const userId = useUserId();
+
   return (
     <div
       className={`bg-primary text-white  font-bold text-[.87rem] fixed w-full z-10 py-[1.5px] `}
@@ -83,7 +82,7 @@ const HeaderLogin = () => {
             )}
           </Link>
           <div>
-            <Link to={`/profile/${id}`}>
+            <Link to={`/profile/${userId}`}>
               <img src={personal} className="w-10 h-10" />
             </Link>
           </div>

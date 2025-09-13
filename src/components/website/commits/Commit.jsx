@@ -4,16 +4,15 @@ import arrowTopCommit from "../../../assets/images/arrowTopCommit.svg";
 import arrowBottomCommit from "../../../assets/images/arrowBottomCommit.svg";
 import replayCommit from "../../../assets/images/replayCommit.svg";
 import TimeAgo from "../../TimeAgo";
-const Commit = ({ comment, createdAt,user }) => {
+const Commit = ({ comment, createdAt, user }) => {
   const [arrowCommit, setArroCommit] = useState(false);
-  
   return (
     <div className="flex gap-2 mt-4 pb-10">
       <img src={cat} alt="" className="w-16 h-16 object-cover" />
       <div className="flex flex-col">
         <div className="flex">
           <span className="text-primary font-bold text-[1.25rem] ml-3">
-           {user?.name}
+            {user?.name}
           </span>
           <span className="font-normal text-[1rem] text-[#716D97]">
             <TimeAgo postDate={createdAt} />

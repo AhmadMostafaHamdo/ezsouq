@@ -7,13 +7,11 @@ export const thunkAuth = createAsyncThunk(
   async ({ info, isLogin }, { rejectWithValue }) => {
     try {
       const res = await axios.post(`/${isLogin ? "login" : "register"}`, info);
-      console.log(res.data);
       toast.success(
         `${isLogin ? "تم تسجيل الدخول بنجاح" : "تم إنشاء الحساب بنجاح"}`
       );
       return res.data;
     } catch (error) {
-      console.log(error);
       let errorMessage = "حدث خطأ غير متوقع";
 
       // Handle network errors (no internet connection)

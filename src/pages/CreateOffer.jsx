@@ -3,7 +3,7 @@ import MainCreateOffer from "../components/main/MainCreateOffer";
 
 const CreateOffer = () => {
   return (
-    <div className="">
+    <div >
       <MainCreateOffer />
     </div>
   );

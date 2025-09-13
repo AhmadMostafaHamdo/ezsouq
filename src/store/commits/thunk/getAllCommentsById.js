@@ -7,7 +7,6 @@ export const getAllCommentsByIdThunk = createAsyncThunk(
   async (product_id, { rejectWithValue }) => {
     try {
       if (!product_id) {
-        console.warn("⚠️ getAllCommentsByIdThunk: product_id is missing");
         return rejectWithValue("Product ID is missing");
       }
 
@@ -16,7 +15,6 @@ export const getAllCommentsByIdThunk = createAsyncThunk(
           authorization: `Bearer ${Cookies.get("token")}`,
         },
       });
-
       return {
         productId: product_id,
         feedbacks: res?.data?.feedbacks || [],

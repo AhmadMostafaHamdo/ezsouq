@@ -15,6 +15,7 @@ import { useDispatch, useSelector } from "react-redux";
 import TimeAgo from "../../components/TimeAgo";
 import { productThunk } from "../../store/product/thunk/productThunk";
 import { deleteProduct } from "../../store/product/thunk/deleteProduct";
+import { ToastContainer } from "react-toastify";
 
 const Offers = () => {
   const [infoTable, setInfoTable] = useState(false);
@@ -57,6 +58,7 @@ const Offers = () => {
   };
 
   const handelDeleteOffer = (id) => {
+    console.log(id);
     setSelectedProductId(id);
     setDeleteOfferToggle(true);
   };
@@ -82,6 +84,7 @@ const Offers = () => {
 
   return (
     <div className="overflow-hidden font-sans">
+      <ToastContainer />
       {/* مودال الحذف */}
       {deleteOfferToggle && (
         <div className="fixed inset-0 bg-[#67676780] z-20 flex-center">
@@ -213,16 +216,18 @@ const Offers = () => {
               {products?.map((product, index) => (
                 <tr className="border-t border-[#eee]" key={index}>
                   {visibleColumns.image && (
-                    <td className="py-4">
-                      <img
-                        src={
-                          product?.main_photos?.[0]
-                            ? `https://api.ezsouq.store/uploads/images/${product.main_photos[0]}`
-                            : profile
-                        }
-                        alt="product"
-                        width={40}
-                      />
+                    <td className="py-4 h-10">
+                      <div className="w-10 h-10 flex items-center justify-center">
+                        <img
+                          src={
+                            product?.main_photos?.[0]
+                              ? `https://api.ezsouq.store/uploads/images/${product.main_photos[0]}`
+                              : profile
+                          }
+                          alt="product"
+                          className="w-10 h-10 object-cover rounded"
+                        />
+                      </div>
                     </td>
                   )}
                   {visibleColumns.title && <td>{product.name}</td>}

@@ -9,7 +9,6 @@ const StepTwoTec = ({ onSubmit }) => {
     resolver: zodResolver(stepTwoTecSchema),
     defaultValues: {
       name: "",
-      Category_name: "",
       color: "",
       isnew: "",
       processor: "",
@@ -21,6 +20,7 @@ const StepTwoTec = ({ onSubmit }) => {
   return (
     <FormProvider {...methods}>
       <form
+        id="form-step2"
         onSubmit={methods.handleSubmit(onSubmit)}
         className="w-[80vw] md:w-[60vw] lg:w-[45vw] flex flex-col gap-3 text-[#B9B5FF] pb-6"
       >
@@ -42,7 +42,7 @@ const StepTwoTec = ({ onSubmit }) => {
           <label>
             <input
               type="radio"
-              value="true" 
+              value="true"
               {...methods.register("isnew")}
               className="ml-2"
             />{" "}
@@ -51,7 +51,7 @@ const StepTwoTec = ({ onSubmit }) => {
           <label>
             <input
               type="radio"
-              value="false" 
+              value="false"
               {...methods.register("isnew")}
               className="ml-2"
             />{" "}

@@ -1,11 +1,13 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { userThunkById } from "./thunk/userThunkById";
 import { getAllUsers } from "./thunk/getAllUsers";
+import { updateUser } from "./thunk/updateUser";
 
-const initialState = {
+const initialState = {  
   users: [],
   user: [],
   loading: false,
+  loadingUpdateUser: false,
   error: null,
 };
 const usersSlice = createSlice({
@@ -37,6 +39,19 @@ const usersSlice = createSlice({
       state.loading = false;
       state.error = action.payload;
     });
+    builder.addCase(updateUser.pending, (state) => {
+      state.loadingUpdateUser = true;
+      state.error = null;
+    });
+    builder.addCase(updateUser.fulfilled, (state, action) => {
+      state.loadingUpdateUser = false;
+      state.users = action.payload;
+    });
+    builder.addCase(updateUser.rejected, (state, action) => {
+      state.loadingUpdateUser = false;
+      state.error = action.payload;
+    });
   },
 });
+
 export default usersSlice.reducer;

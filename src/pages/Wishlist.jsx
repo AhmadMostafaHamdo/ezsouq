@@ -4,18 +4,26 @@ import { useEffect, useRef } from "react";
 import { getAllWishes } from "../store/wishlist/thunk/getAllWishProduct";
 import Card from "../components/website/Card";
 import LoadingSpinner from "../feedback/loading/LoadingSpinner";
+import Spinner from "../feedback/loading/Spinner";
+import Heading from "../components/common/Heading";
 const Wishlist = () => {
   const dispatch = useDispatch();
   const ref = useRef();
-  const { products = [] } = useSelector((state) => state.wishlist);
+  const { products = [], loading } = useSelector((state) => state.wishlist);
+  console.log(products);
   useEffect(() => {
     ref.current.scrollIntoView();
     dispatch(getAllWishes());
-  }, [dispatch]);
+  }, [dispatch]);ءء
   return (
-    <div className="container" ref={ref}>
-      <div className=" py-20">
-        {Array.isArray(products) && products.length > 0 ? (
+    <div className="container pt-14" ref={ref}>
+      <Heading title={"الرجوع للرئيسية"} />
+      <div className=" pb-20 pt-2">
+        {loading ? (
+          <div className="mt-32">
+            <Spinner size={100} />
+          </div>
+        ) : Array.isArray(products) && products.length > 0 ? (
           <div className="flex-between flex-wrap gap-5">
             {products.map((product) => (
               <Card key={product._id} {...product} />

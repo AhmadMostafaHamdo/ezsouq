@@ -8,12 +8,14 @@ import users from "./users/usersSlice";
 import wishlist from "./wishlist/wishlistSlice";
 import productsByCat from "./getProductsByCat/getProductByCatSlice";
 import search from "./search/searchSlice";
-import ratingThunk from "./rating/ratingSlice";
+import ratingReducer from "./rating/ratingSlice";
 import comments from "./commits/commitSlice";
 import report from "./report/reportSlice";
 import views from "./views/viewsSlice";
 import storage from "redux-persist/lib/storage";
 import category from "./category/sliceCategory";
+import statistic from "./statistic/statisticSlice";
+import filter from "./filter/filterSlice";
 import {
   FLUSH,
   PAUSE,
@@ -76,6 +78,14 @@ const persistCategory = {
   key: "category",
   storage,
 };
+const persistStatistic = {
+  key: "statistic",
+  storage,
+};
+const persistFilter = {
+  key: "filter",
+  storage,
+};
 const rootReducer = combineReducers({
   auth: persistReducer(persistAuth, auth),
   products: persistReducer(persistProducts, products),
@@ -85,11 +95,13 @@ const rootReducer = combineReducers({
   users: persistReducer(persistUsers, users),
   wishlist: persistReducer(persistWishlist, wishlist),
   productsByCat: persistReducer(persistProductsByCat, productsByCat),
-  ratingThunk: persistReducer(persistRating, ratingThunk),
+  rating:ratingReducer,
   comments: persistReducer(persistCommits, comments),
   report: persistReducer(persistReport, report),
   views: persistReducer(persistViews, views),
   category: persistReducer(persistCategory, category),
+  statistic: persistReducer(persistStatistic, statistic),
+  filters: persistReducer(persistFilter, filter),
   search,
 });
 export const store = configureStore({

@@ -1,38 +1,79 @@
-import { useState, useRef } from "react";
-import { useDispatch } from "react-redux";
-import Cookies from "js-cookie";
-import { jwtDecode } from "jwt-decode";
+import { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import ImgProfileWithButtons from "./ImgProfileWithButtons";
-import { contactInfo } from "../../data/contactInfo";
-
 import homeInfo from "../../assets/images/homeInfo.svg";
 import infoWork from "../../assets/images/infoWork.svg";
 import infoSite from "../../assets/images/infoSite.svg";
-import infoEmail from "../../assets/images/infoEmail.svg";
 import infoWhats from "../../assets/images/infoWhats.svg";
 import infoMobile from "../../assets/images/infoMobile.svg";
 import updatedIcon from "../../assets/images/updatedIcon.svg";
+import { updateUser } from "../../store/users/thunk/updateUser";
+import useUserId from "../../hooks/useUserId";
+import { userThunkById } from "../../store/users/thunk/userThunkById";
+import { ToastContainer } from "react-toastify";
+import Spinner from "../../feedback/loading/Spinner";
+import { useParams } from "react-router";
+import infoEmail from "../../assets/images/infoEmail.svg";
 
 const ContactInfo = () => {
   const dispatch = useDispatch();
-  const token = Cookies.get("token");
-  const { id } = jwtDecode(token);
+  const id = useUserId();
+  const params = useParams();
+  const { user, loadingUpdateUser } = useSelector((state) => state.users);
 
-  // كل input له state خاص به (ممكن تخليهم object)
+  const contactInfo = [
+    {
+      img: homeInfo,
+      title: "مكان العمل",
+      desc: `${user?.Location}، المزة، مكتب المنار لبيع وتأجير السيارات`,
+    },
+    { img: infoWork, title: "نوع العمل", desc: `${user?.work_type}` },
+    { img: infoSite, title: "مكان التواجد", desc: "دمشق ، المزة" },
+    { img: infoEmail, title: "البريد الالكتروني", desc: `${user?.email}` },
+    { img: infoWhats, title: "رقم الواتساب", desc: `${user?.whats_app}` },
+    { img: infoMobile, title: "رقم الهاتف", desc: `${user?.phone}` },
+  ];
+
   const [formData, setFormData] = useState({
-    name: "أحمد حمدو",
-    site: "الموقع",
-    workType: "نوع العمل",
-    workPlace: "مكان العمل",
-    mobile: "0999 999 999",
-    whatsapp: "رقم الواتساب",
-    email: "البريد الالكتروني",
+    name: "",
+    workplace: "",
+    work_type: "",
+    Location: "",
+    phone: "",
+    whats_app: "",
   });
 
-  const [editableField, setEditableField] = useState(null); // مين الحقل المفتوح للتعديل
+  const [editableField, setEditableField] = useState(null);
+  const [isChanged, setIsChanged] = useState(false);
+
+  useEffect(() => {
+    dispatch(userThunkById(id));
+  }, [dispatch, id]);
+
+  // تحديث الفورم بعد جلب بيانات المستخدم
+  useEffect(() => {
+    if (user) {
+      setFormData({
+        name: user?.name || "الاسم",
+        workplace: user?.workplace || "مكان العمل",
+        work_type: user?.work_type || "نوع العمل",
+        Location: user?.Location || "الموقع",
+        phone: user?.phone || "رقم الهاتف",
+        whats_app: user?.whats_app || "رقم الواتس",
+      });
+      setIsChanged(false); // reset بعد تحميل البيانات
+    }
+  }, [user]);
 
   const handleChange = (field, value) => {
-    setFormData({ ...formData, [field]: value });
+    const updatedData = { ...formData, [field]: value };
+    setFormData(updatedData);
+
+    // التحقق إن كان هناك تعديل فعلي عن بيانات السيرفر
+    const changed = Object.keys(updatedData).some(
+      (key) => updatedData[key] !== (user?.[key] || "")
+    );
+    setIsChanged(changed);
   };
 
   const handleEditClick = (field) => {
@@ -41,54 +82,74 @@ const ContactInfo = () => {
 
   const handleBlur = () => {
     setEditableField(null);
-    // هنا ممكن تعمل dispatch للتحديث على السيرفر
+  };
+
+  const handelSubmit = (e) => {
+    e.preventDefault();
+    if (isChanged) {
+      dispatch(updateUser(formData));
+      setIsChanged(false);
+    }
   };
 
   return (
     <div className="container mb-10">
+      <ToastContainer />
       <ImgProfileWithButtons />
-      {id ? (
+      {id == params.id ? (
         <>
           {/* profile me */}
-          <div className="flex flex-col gap-3 items-center font-normal">
-            {[
-              { field: "name", icon: null },
-              { field: "site", icon: infoSite },
-              { field: "workType", icon: infoWork },
-              { field: "workPlace", icon: homeInfo },
-              { field: "mobile", icon: infoMobile },
-              { field: "whatsapp", icon: infoWhats },
-              { field: "email", icon: infoEmail },``
-            ].map((item, index) => (
-              <div key={index} className="relative">
-                <input
-                  type="text"
-                  disabled={editableField !== item.field}
-                  className={`bg-white w-96 border border-[#B9B5FF] px-2 pr-7 py-2 rounded-sm text-[#6C63FF] ${
-                    editableField === item.field
-                      ? "outline outline-1 outline-[#6C63FF]"
-                      : ""
-                  }`}
-                  value={formData[item.field]}
-                  onChange={(e) => handleChange(item.field, e.target.value)}
-                  onBlur={handleBlur}
-                />
-                {item.icon && (
-                  <img
-                    src={item.icon}
-                    alt=""
-                    width={16}
-                    className="absolute top-1/2 -translate-y-1/2 right-2"
+          <div className="flex flex-col mt-3 gap-3 items-center font-normal">
+            <form onSubmit={handelSubmit}>
+              {[
+                { field: "name", icon: null },
+                { field: "workplace", icon: infoSite },
+                { field: "work_type", icon: infoWork },
+                { field: "Location", icon: homeInfo },
+                { field: "phone", icon: infoMobile },
+                { field: "whats_app", icon: infoWhats },
+              ].map((item, index) => (
+                <div key={index} className="relative">
+                  <input
+                    type="text"
+                    disabled={editableField !== item.field}
+                    className={`bg-white w-96 border mb-[.4rem] border-[#B9B5FF] px-2 pr-7 py-2 rounded-sm text-[#6C63FF] ${
+                      editableField === item.field
+                        ? "outline outline-1 outline-[#6C63FF]"
+                        : ""
+                    }`}
+                    value={formData[item.field]}
+                    onChange={(e) => handleChange(item.field, e.target.value)}
+                    onBlur={handleBlur}
                   />
-                )}
-                <img
-                  onClick={() => handleEditClick(item.field)}
-                  src={updatedIcon}
-                  alt="edit"
-                  className="absolute top-1/2 -translate-y-1/2 left-2 cursor-pointer"
-                />
-              </div>
-            ))}
+                  {item.icon && (
+                    <img
+                      src={item.icon}
+                      alt=""
+                      width={16}
+                      className="absolute top-1/2 -translate-y-1/2 right-2"
+                    />
+                  )}
+                  <img
+                    onClick={() => handleEditClick(item.field)}
+                    src={updatedIcon}
+                    alt="edit"
+                    className="absolute top-1/2 -translate-y-1/2 left-2 cursor-pointer"
+                  />
+                </div>
+              ))}
+
+              <button
+                disabled={!isChanged || loadingUpdateUser}
+                className={`w-full p-3 rounded-md mt-4 font-medium transition ${
+                  !isChanged
+                    ? "bg-gray-300 cursor-not-allowed text-white"
+                    : "bg-primary text-white hover:opacity-90"
+                }`}
+              >
+                {loadingUpdateUser ? <Spinner /> : "حفظ التغيرات"}
+              </button>
+            </form>
           </div>
         </>
       ) : (

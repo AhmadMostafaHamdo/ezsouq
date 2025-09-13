@@ -23,6 +23,7 @@ import { viewsThunk } from "../../../store/views/thunk/thunkViews";
 const Main = () => {
   const { product } = useSelector((state) => state.products);
   const { user } = useSelector((state) => state.users);
+  console.log("product => ", product?.Owner);
   const [selectedImage, setSelectedImage] = useState("");
   const [isImageLoaded, setIsImageLoaded] = useState(false);
   const { id } = useParams();
@@ -41,8 +42,8 @@ const Main = () => {
 
   // ✅ تحميل بيانات الناشر
   useEffect(() => {
-    if (product?.Owner_id?._id) {
-      dispatch(userThunkById(product.Owner_id._id));
+    if (product?.Owner?._id) {
+      dispatch(userThunkById(product.Owner._id));
     }
   }, [dispatch, product]);
 
@@ -95,7 +96,11 @@ const Main = () => {
     );
 
   const mainPhotos = product?.main_photos || [];
-
+  useEffect(() => {
+    return () => {
+      setSelectedImage("");
+    };
+  }, []);
   return (
     <div className=" bg-[#F7F7FF] md:pt-2 overflow-x-hidden h-fit">
       <div className="container items-center md:items-start flex flex-col md:flex-row md:gap-8 lg:gap-11 pt-[5rem]">
@@ -246,11 +251,13 @@ const Main = () => {
                 <p className="flex items-center justify-end mb-6">
                   <img src={start} alt="Rating" className="w-4 h-4" />
                   <span className="mr-1 font-normal text-[.9rem] text-[#1D2232]">
-                    4.8
+                    {user?.averageRating
+                      ? user.averageRating.toFixed(1)
+                      : "0.0"}
                   </span>
                 </p>
                 <Link
-                  to={`/profile/${product?.Owner_id?._id}`}
+                  to={`/profile/${product?.Owner?._id}`}
                   className="bg-primary p-2 w-fit md:w-[120px] lg:w-fit  text-white rounded-md font-bold text-[.75rem]"
                 >
                   عرض الملف الشخصي

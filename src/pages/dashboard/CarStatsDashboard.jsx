@@ -1,20 +1,32 @@
 // src/components/CarStatsDashboard.jsx
-import React from "react";
+import React, { useEffect } from "react";
 import { ResponsivePie } from "@nivo/pie";
-
-const pieData = [
-  { id: "عقارات", label: "إعلانات العقارات", value: 220, color: "#4c6ef5" },
-  { id: "سيارات", label: "إعلانات السيارات", value: 320, color: "#5f3dc4" },
-  { id: "منوعات", label: "إعلانات المنوعات", value: 87, color: "#748ffc" },
-  {
-    id: "إلكترونيات",
-    label: "إعلانات الالكترونيات",
-    value: 150,
-    color: "#9775fa",
-  },
-];
+import { useSelector } from "react-redux";
 
 const CarStatsDashboard = () => {
+  const { statisticCategories } = useSelector((state) => state.statistic);
+  const pieData = [
+    {
+      id: "عقارات",
+      label: "إعلانات العقارات",
+      value: statisticCategories[1]?.count,
+      color: "#4c6ef5",
+    },
+    {
+      id: "سيارات",
+      label: "إعلانات السيارات",
+      value: statisticCategories[2]?.count,
+      color: "#5f3dc4",
+    },
+    { id: "منوعات", label: "إعلانات المنوعات", value: 87, color: "#748ffc" },
+    {
+      id: "إلكترونيات",
+      label: "إعلانات الالكترونيات",
+      value: statisticCategories[1]?.count,
+      color: "#9775fa",
+    },
+  ];
+
   const total = pieData.reduce((sum, item) => sum + item.value, 0);
 
   const CenteredMetric = ({ centerX, centerY }) => (
@@ -25,7 +37,7 @@ const CarStatsDashboard = () => {
         textAnchor="middle"
         dominantBaseline="central"
         style={{
-          fontSize: "20px",
+          fontSize: "16px",
           fontWeight: "bold",
           fill: "#111",
         }}
@@ -34,12 +46,13 @@ const CarStatsDashboard = () => {
       </text>
       <text
         x={centerX}
-        y={centerY + 20}
+        y={centerY + 10}
         textAnchor="middle"
         dominantBaseline="central"
         style={{
-          fontSize: "14px",
+          fontSize: "10px",
           fill: "#555",
+          fontWeight: "bold",
         }}
       >
         إعلان منشور
@@ -50,19 +63,20 @@ const CarStatsDashboard = () => {
   return (
     <div
       style={{
-        background: "#f8f9fa",
+        background: "#ffffff",
         borderRadius: "16px",
-        padding: "20px",
         boxShadow: "0 2px 6px rgba(0,0,0,0.1)",
         textAlign: "center",
-        maxWidth: "200px",
-        margin: "auto",
+        maxWidth: "350px",
+        margin: "10px auto 0",
+        paddingLeft: "10px",
       }}
+      className="flex-between"
     >
-      <div style={{ height: "200px" }}>
+      <div style={{ height: "170px", width: "240px" }}>
         <ResponsivePie
           data={pieData}
-          margin={{ top: 20, right: 20, bottom: 20, left: 20 }}
+          margin={{ top: 10, right: 10, bottom: 10, left: 10 }}
           innerRadius={0.75}
           padAngle={0.7}
           cornerRadius={3}

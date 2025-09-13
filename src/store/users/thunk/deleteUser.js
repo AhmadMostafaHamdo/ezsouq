@@ -16,7 +16,6 @@ export const deleteUser = createAsyncThunk(
           authorization: `Bearer ${Cookies.get("token")}`,
         },
       });
-      console.log(res.data);
       return res.data;
     } catch (error) {
       return rejectWithValue(

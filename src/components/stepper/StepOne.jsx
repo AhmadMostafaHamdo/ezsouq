@@ -1,24 +1,24 @@
 import { useForm, FormProvider, Controller } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { stepOneSchema } from "../../validation/createOffer";
-import Select from "../select/Select";
 import InputCreateOffer from "../inputs/InputCreateOffer";
 import ImageUploader from "../common/ImageUploader";
 import { thunkCities } from "../../store/cities/thunk/citiesThunk";
 import Error from "../../feedback/error/Error";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { setCategory } from "../../store/category/sliceCategory";
+import Select from "../select/Select";
 
 const StepOne = ({ onSubmit }) => {
   const dispatch = useDispatch();
   const { governorates } = useSelector((state) => state.governorates);
   const { cities } = useSelector((state) => state.cities);
-  const { category } = useSelector((state) => state.category);
+  const { category, selectedCategory } = useSelector((state) => state.category);
 
   const methods = useForm({
     resolver: zodResolver(stepOneSchema),
     defaultValues: {
-      category: "",
+      Category_name: selectedCategory || category[0],
       Governorate_name: "",
       city: "",
       description: "",
@@ -35,7 +35,6 @@ const StepOne = ({ onSubmit }) => {
   } = methods;
 
   const handleGovernorateChange = (value) => dispatch(thunkCities(value));
-
   const governorateOptions = [{ name: "المحافظة" }, ...governorates];
   const cityOptions = ["المنطقة", ...cities];
 
@@ -48,20 +47,21 @@ const StepOne = ({ onSubmit }) => {
         >
           {/* التصنيف */}
           <Controller
-            name="category"
+            name="Category_name"
             control={control}
             render={({ field }) => (
               <Select
-                options={category} // ["التصنيف", "سيارات", "عقارات", "تقنيات"]
-                type=""
+                options={category}
+                type="category"
+                value={field.value}
                 onSelect={(val) => {
-                  field.onChange(val); // تمرير القيمة مباشرة للـ react-hook-form
-                  dispatch(setCategory(val)); // تحديث الـ Redux state
+                  field.onChange(val);
+                  dispatch(setCategory(val));
                 }}
               />
             )}
           />
-          <Error error={errors.category?.message} />
+          <Error error={errors.Category_name?.message} />
 
           {/* المحافظة */}
           <Controller
@@ -71,6 +71,7 @@ const StepOne = ({ onSubmit }) => {
               <Select
                 options={governorateOptions}
                 type="governorate"
+                value={field.value}
                 onSelect={(val) => {
                   field.onChange(val);
                   handleGovernorateChange(val);
@@ -88,6 +89,7 @@ const StepOne = ({ onSubmit }) => {
               <Select
                 options={cityOptions}
                 type="city"
+                value={field.value}
                 onSelect={(val) => field.onChange(val)}
               />
             )}

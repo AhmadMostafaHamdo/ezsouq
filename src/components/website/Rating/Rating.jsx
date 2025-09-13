@@ -2,10 +2,8 @@ import { useState } from "react";
 import close from "../../../assets/images/close.svg";
 import startRating from "../../../assets/images/startRating.svg";
 import filledStar from "../../../assets/images/filledStar.svg";
-import { Link } from "react-router-dom"; // تصحيح الاستيراد
-import { useDispatch } from "react-redux";
-import cookie from "js-cookie";
-import { jwtDecode } from "jwt-decode";
+import { Link, useParams } from "react-router-dom"; // تصحيح الاستيراد
+import { useDispatch, useSelector } from "react-redux";
 import { ratingThunk } from "../../../store/rating/thunk/ratingThunk";
 import { ToastContainer } from "react-toastify";
 
@@ -13,13 +11,18 @@ const Rating = () => {
   const [rating, setRating] = useState(0);
   const [message, setMessage] = useState("");
   const dispatch = useDispatch();
-  const token = cookie.get("token");
-  const { id } = jwtDecode(token);
-  console.log(id);
-  const handleSubmit = () => {
-    dispatch(ratingThunk({ userId: id, rating }));
+  const { id } = useParams();
+  const { loading } = useSelector((state) => state.rating);
+  const handleSubmit = async () => {
+    const res = await dispatch(ratingThunk({ userId: id, rating }));
+    if (ratingThunk.fulfilled.match(res)) {
+      setTimeout(() => {
+        window.location.href = `http://localhost:3000/profile/${id}`;
+      }, 700);
+    }
   };
-
+  console.log(loading);
+  
   return (
     <div className="fixed z-10 top-0 left-0 w-full h-screen bg-[#23193E]/[.57] backdrop-blur-[20px]">
       <ToastContainer />
@@ -68,14 +71,18 @@ const Rating = () => {
             value={message}
             onChange={(e) => setMessage(e.target.value)}
             placeholder="اكتب تعليقك هنا..."
+            onKeyDown={(e) => {
+              e.key == "Enter" ? handleSubmit() : "";
+            }}
           />
 
           <div className="flex justify-between gap-4 w-full">
             <button
+              disabled={loading}
               className="bg-primary text-white rounded-xl w-28 p-1"
               onClick={handleSubmit}
             >
-              إرسال التقييم
+              {loading ? "حارٍ الإرسال ..." : " إرسال التقييم"}
             </button>
             <button className="border border-[#B1ADFF] text-primary rounded-xl w-28 p-1">
               إلغاء

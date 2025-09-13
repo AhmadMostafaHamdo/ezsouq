@@ -24,6 +24,7 @@
     "lodash": "^4.17.21",
     "lodash.debounce": "^4.0.8",
     "lottie-react": "^2.4.1",
+    "lucide-react": "^0.544.0",
     "react": "^19.1.0",
     "react-content-loader": "^7.0.2",
     "react-dom": "^19.1.0",
