@@ -1,135 +1,146 @@
 import React, { useEffect, useRef, useState } from "react";
-import cat from "../assets/images/cat.svg";
 import { useParams } from "react-router";
-import arrowSend from "../assets/images/arrowSend.svg";
 import { useDispatch, useSelector } from "react-redux";
-import { productThunkById } from "../store/product/thunk/productThunkById";
+import Cookies from "js-cookie";
+import { jwtDecode } from "jwt-decode";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
+import cat from "../assets/images/cat.svg";
+import arrowSend from "../assets/images/arrowSend.svg";
+import commentEmpty from "../assets/images/commentEmpty.svg";
+
 import Card from "../components/website/Card";
 import SortDropdown from "../components/website/SortDropdown";
 import Commit from "../components/website/commits/Commit";
 import Heading from "../components/common/Heading";
-import { thunkAddCommit } from "../store/commits/thunk/thunkAddCommit";
-import { getAllCommentsByIdThunk } from "../store/commits/thunk/getAllCommentsById";
 import CommentSkeleton from "../assets/sketlon/CommentSketlon";
+
+import { productThunkById } from "../store/product/thunk/productThunkById";
+import { getAllCommentsByIdThunk } from "../store/commits/thunk/getAllCommentsById";
+import { thunkAddCommit } from "../store/commits/thunk/thunkAddCommit";
 
 const Commits = () => {
   const [comment, setComment] = useState("");
-  const [error, setError] = useState(null);
+  const [arrow, setArrow] = useState(false);
   const ref = useRef();
+
   const { id } = useParams();
+  const dispatch = useDispatch();
+
   const { product } = useSelector((state) => state.products);
-  console.log(product)
   const { commentsByProductId, loading: commentsLoading } = useSelector(
     (state) => state.comments
   );
+  const { user } = useSelector((state) => state.auth);
+
+  const token = Cookies.get("token");
+  const { id: userId } = token ? jwtDecode(token) : {};
 
   const productComments = commentsByProductId?.[product?._id] || [];
 
-  const { user } = useSelector((state) => state.auth);
-  const dispatch = useDispatch();
+  // Fetch product
   useEffect(() => {
     ref.current?.scrollIntoView({ behavior: "smooth" });
-    const fetchData = async () => {
-      try {
-        await dispatch(productThunkById(id));
-      } catch (err) {
-        setError("Failed to fetch product data");
-      }
-    };
-    fetchData();
+    if (!id) return;
+
+    dispatch(productThunkById(id));
   }, [dispatch, id]);
 
+  // Fetch comments for product
   useEffect(() => {
     if (product?._id) {
       dispatch(getAllCommentsByIdThunk(product._id));
     }
   }, [dispatch, product?._id]);
 
+  // Handle adding comment
   const handleSend = async () => {
     if (!comment.trim()) return;
 
     try {
       await dispatch(
-        thunkAddCommit({
-          product_id: product?._id,
-          comment: comment,
-        })
-      );
+        thunkAddCommit({ product_id: product._id, comment })
+      ).unwrap();
+
       setComment("");
-      // Refresh comments after adding new one
-      dispatch(getAllCommentsByIdThunk(product?._id));
+      dispatch(getAllCommentsByIdThunk(product._id));
+      toast.success("تم إضافة التعليق بنجاح");
     } catch (err) {
-      setError("Failed to add comment");
+      toast.error(err || "حدث خطأ أثناء إضافة التعليق");
     }
   };
 
   const handleKeyPress = (e) => {
-    if (e.key === "Enter") {
-      handleSend();
-    }
+    if (e.key === "Enter") handleSend();
   };
+
   return (
-    <div ref={ref}>
-      <div className="container pt-20 flex flex-col md:flex-row gap-8">
+    <div ref={ref} className="container pt-20">
+      <ToastContainer position="top-right" autoClose={3000} />
+      <div className="flex flex-col md:flex-row gap-8">
         <div>
           <Heading title="تعليقات هذا الإعلان" />
           <Card {...product} />
         </div>
 
-        <div className="mt-8 md:mt-14 flex-1">
+        <div className="flex-1 mt-8 md:mt-14">
           <p className="font-normal text-[1.5rem]">
             {productComments.length} تعليقات
           </p>
 
-          <div className="w-full">
-            <SortDropdown />
+          <SortDropdown />
 
-            {user && (
-              <div className="flex items-center gap-4 mb-8">
-                <img
-                  src={cat}
-                  className="w-16 h-16 rounded-full"
-                  alt="User profile"
+          {user && (
+            <div className="flex items-center gap-4 mb-8">
+              <img
+                src={cat}
+                className="w-16 h-16 rounded-full"
+                alt="User profile"
+              />
+              <input
+                value={comment}
+                onKeyDown={handleKeyPress}
+                onChange={(e) => setComment(e.target.value)}
+                type="text"
+                placeholder="اكتب تعليقك..."
+                className="p-3 rounded-[5px] w-full md:w-[40vw] border border-gray-400 outline-none bg-white"
+              />
+              <button
+                onClick={handleSend}
+                disabled={!comment.trim()}
+                className={`p-2 ${
+                  comment.trim() ? "opacity-100" : "opacity-50"
+                }`}
+              >
+                <img src={arrowSend} alt="Send comment" />
+              </button>
+            </div>
+          )}
+
+          <div className="relative">
+            {commentsLoading ? (
+              <CommentSkeleton />
+            ) : productComments.length > 0 ? (
+              productComments.map((item) => (
+                <Commit
+                  key={item._id}
+                  setArrow={setArrow}
+                  comment={item.comments}
+                  createdAt={item.createdAt}
+                  user={item.user_id}
+                  id={item._id}
+                  productId={product._id}
                 />
-                <input
-                  value={comment}
-                  onKeyDown={handleKeyPress}
-                  onChange={(e) => setComment(e.target.value)}
-                  type="text"
-                  placeholder="اكتب تعليقك..."
-                  className="p-3 rounded-[5px] w-full md:w-[40vw] border-1 border-solid border-[#52516C] outline-none bg-white"
-                />
-                <button
-                  onClick={handleSend}
-                  disabled={!comment.trim()}
-                  className={`p-2 ${
-                    comment.trim() ? "opacity-100" : "opacity-50"
-                  }`}
-                >
-                  <img src={arrowSend} alt="Send comment" />
-                </button>
+              ))
+            ) : (
+              <div className="text-center text-gray-500">
+                <p>لا توجد تعليقات بعد</p>
+                <img src={commentEmpty} className="mx-auto mt-4" alt="" />
               </div>
             )}
 
-            {commentsLoading ? (
-              <>
-                <CommentSkeleton />
-                <CommentSkeleton />
-              </>
-            ) : productComments.length > 0 ? (
-              productComments.map((item) => (
-                <React.Fragment key={item._id}>
-                  <Commit
-                    comment={item.comments}
-                    createdAt={item.createdAt}
-                    user={item.user_id}
-                  />
-                  <hr className="my-6 w-full md:w-[40vw]" />
-                </React.Fragment>
-              ))
-            ) : (
-              <p className="text-gray-500">لا توجد تعليقات بعد</p>
-            )}
+            <hr className="my-3 w-full md:w-[40vw]" />
           </div>
         </div>
       </div>

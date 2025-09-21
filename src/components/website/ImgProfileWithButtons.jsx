@@ -1,30 +1,62 @@
 import React, { useEffect, useState } from "react";
 import SortDropdown from "./SortDropdown";
-import personalImg from "../../assets/images/personal.svg";
+import personalImg from "../../assets/images/pesonal.png";
 import start from "../../assets/images/start.svg";
 import { NavLink, useParams } from "react-router-dom";
 import { sortOptions } from "../../data/filterData";
 import { useDispatch, useSelector } from "react-redux";
 import { userThunkById } from "../../store/users/thunk/userThunkById";
+import { updateUserPhoto } from "../../store/users/thunk/updateUserPhoto"; // ✅ استدعاء الصحيح
+import useUserId from "../../hooks/useUserId";
 
 const ImgProfileWithButtons = () => {
   const [sortBy, setSortBy] = useState("newest");
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.users);
   const { id } = useParams();
+  const myId = useUserId(); // ID الخاص بالمستخدم الحالي
+
+  const [previewImg, setPreviewImg] = useState(null);
+
   useEffect(() => {
     dispatch(userThunkById(id));
   }, [dispatch, id]);
 
+  // تغيير الصورة
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPreviewImg(reader.result); // عرض الصورة الجديدة مباشرة
+      };
+      reader.readAsDataURL(file);
+
+      dispatch(updateUserPhoto(file)); // ✅ رفع الصورة للسيرفر
+    }
+  };
+
   return (
     <div>
       {/* صورة واسم المستخدم */}
-      <div className="flex flex-col items-center">
-        <img
-          src={personalImg}
-          alt=""
-          className="w-24 h-24 shadow-xl rounded-full"
-        />
+      <div className="flex flex-col items-center relative">
+        <label htmlFor="uploadProfile" className="cursor-pointer">
+          <img
+            src={previewImg || user?.photo || personalImg} // ✅ تأكد أن backend يرجع photo
+            alt="profile"
+            className="w-24 h-24 shadow-xl rounded-full object-cover"
+          />
+        </label>
+        {id === myId && (
+          <input
+            type="file"
+            id="uploadProfile"
+            className="hidden"
+            accept="image/*"
+            onChange={handleImageChange}
+          />
+        )}
+
         <p className="font-normal text-[1.3rem] text-[#2F2E41]">{user?.name}</p>
 
         {/* التقييم */}

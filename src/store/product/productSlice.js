@@ -3,12 +3,12 @@ import { productThunk } from "./thunk/productThunk";
 import { productThunkById } from "./thunk/productThunkById";
 import { deleteProduct } from "./thunk/deleteProduct";
 import { toggleLikeProduct } from "./thunk/toggleLikeProduct";
-import { productsThunkById } from "./thunk/productsThunkById";
+import { productsThunkForMe } from "./thunk/productsThunkById";
 
 const initialState = {
   products: [],
   product: {},
-  productsById:[],
+  productsById: [],
   loading: false,
   loadingLike: false,
   error: null,
@@ -63,6 +63,7 @@ const productSlice = createSlice({
       })
       .addCase(productThunk.fulfilled, (state, action) => {
         state.loading = false;
+        state.totalItems = action.payload.totalItems;
         state.totalPages = action.payload.totalPages;
         state.currentPage = action.payload.currentPage;
 
@@ -97,14 +98,14 @@ const productSlice = createSlice({
       .addCase(toggleLikeProduct.rejected, (state) => {
         state.loadingLike = false;
       })
-      .addCase(productsThunkById.pending, (state) => {
-        state.loading=trye;
+      .addCase(productsThunkForMe.pending, (state) => {
+        state.loading = true;
       })
-      .addCase(productsThunkById.fulfilled, (state,action)=> {
+      .addCase(productsThunkForMe.fulfilled, (state, action) => {
         state.loading = false;
-        state.productsById=action.payload
+        state.productsById = action.payload;
       })
-      .addCase(productsThunkById.rejected, (state) => {
+      .addCase(productsThunkForMe.rejected, (state) => {
         state.loading = false;
       });
   },

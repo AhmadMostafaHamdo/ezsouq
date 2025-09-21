@@ -60,8 +60,6 @@ const Statistic = () => {
       count: statistic?.Reports,
     },
   ];
-  console.log(topTwoProducts);
-  // console.log(topTwoProducts);
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(thunkStatistic());

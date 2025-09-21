@@ -27,8 +27,27 @@ export const updateUser = createAsyncThunk(
       toast.success(res.data.message);
       return res.data.response;
     } catch (error) {
-      console.log(error.response.data);
-      return rejectWithValue(error.response?.data || "Error updating user");
+      let errorMessage = "حدث خطأ غير متوقع";
+
+      // Handle network errors (no internet connection)
+      if (error.message === "Network Error" || error.code === "ERR_NETWORK") {
+        errorMessage =
+          "لا يوجد اتصال بالإنترنت، يرجى التحقق من الاتصال والمحاولة مرة أخرى";
+      }
+      // Handle timeout errors
+      else if (
+        error.code === "ECONNABORTED" ||
+        error.message.includes("timeout")
+      ) {
+        errorMessage = "انتهت مهلة الاتصال، يرجى المحاولة مرة أخرى";
+      }
+      // Handle server response errors
+      else if (error.response?.data?.message) {
+        errorMessage = error.response.data.message;
+      }
+
+      toast.error(errorMessage);
+      return rejectWithValue(errorMessage);
     }
   }
 );

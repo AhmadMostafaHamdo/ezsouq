@@ -12,7 +12,7 @@ export const ulLinks = [
     link: "/dashboard",
     img: statistic,
   },
-  
+
   {
     name: "الإعلانات",
     link: "/dashboard/offers",
@@ -25,7 +25,7 @@ export const ulLinks = [
   },
 
   {
-    name: "الإعدادات",
+    name: "المحافظات",
     link: "/dashboard/setting",
     img: setting,
   },

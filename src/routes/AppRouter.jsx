@@ -6,7 +6,8 @@ import VerifyCode from "../pages/VerifyCode";
 import RedirectIfAuthenticated from "./RedirectIfAuthenticated";
 import Main from "../components/main/Main";
 import Filters from "../components/website/Filters";
-
+import KeepLogin from "./KeepLogin";
+const NewPassword = lazy(() => import("../pages/NewPassword"));
 const App = lazy(() => import("../App"));
 const OfferDetails = lazy(() => import("../pages/OfferDetails"));
 const Login = lazy(() => import("../pages/Login"));
@@ -174,6 +175,10 @@ const router = createBrowserRouter([
     ],
   },
   {
+    path: "/dashboard/offers/:id",
+    element: <OfferDetails />,
+  },
+  {
     path: "/dashboard",
     element: <Dashoard />,
     children: [
@@ -230,6 +235,14 @@ const router = createBrowserRouter([
     element: (
       <SuspenseFallback>
         <ForgotPassword />
+      </SuspenseFallback>
+    ),
+  },
+  {
+    path: "/reset-password/:token",
+    element: (
+      <SuspenseFallback>
+        <NewPassword />
       </SuspenseFallback>
     ),
   },

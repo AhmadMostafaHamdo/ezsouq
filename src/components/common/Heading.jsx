@@ -11,7 +11,7 @@ const Heading = ({ title }) => {
       >
         <img src={arrowBtn} alt="Back arrow" />
       </Link>
-      <h1 className="font-normal w-full text-[#2F2E41] text-[1.5rem] text-center md:text-start">
+      <h1 className="font-normal w-full text-[#2F2E41] text-[1.5rem] text-center text-start">
         {title}
       </h1>
     </div>

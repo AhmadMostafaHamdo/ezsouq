@@ -3,27 +3,35 @@ import forgotPassword from "../assets/images/undraw_forgot-password_odai 1.svg";
 import { useState } from "react";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
+import { useParams } from "react-router";
 
-const ForgotPassword = () => {
-  const [email, setEmail] = useState("");
+const NewPassword = () => {
+  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const { token } = useParams(); // ناخذ التوكن من الرابط
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      if (email.trim().length === 0) {
-        toast.error("يجب إدخال الإيميل");
+      if (password.trim().length === 0) {
+        toast.error("يجب إدخال كلمة السر الجديدة");
         return;
       }
       setLoading(true);
 
-      const res = await axios.post("/send_reset_link", { email });
+      // استدعاء API الصحيح لتغيير كلمة المرور
+      const res = await axios.post(`/change_password_link?token=${token}`, {
+        newPassword: password,
+      });
 
-      toast.success(res.data?.message || "تم إرسال رابط إعادة التعيين");
+      toast.success(res.data?.message || "تم تغيير كلمة المرور بنجاح");
+      setTimeout(() => {
+        window.location.href = "/login"; // رجعه لصفحة تسجيل الدخول
+      }, 1000);
     } catch (error) {
       toast.error(error.response?.data?.message || "حدث خطأ ما");
     } finally {
-      setLoading(false); // يوقف التحميل بأي حالة
+      setLoading(false);
     }
   };
 
@@ -53,29 +61,29 @@ const ForgotPassword = () => {
             className="w-[90vw] p-3 sm:w-[357px] md:w-[357px] lg:w-[487px] m-auto"
           >
             <div className="h-[157px]">
-              <h1 className="text-primary font-bold text-[1.25rem] sm:text-[2rem] h-[67px]">
-                نسيان كلمة المرور
+              <h1 className="text-primary font-bold text-[1rem] sm:text-[1.8rem] h-[67px]">
+                كلمة السر الجديدة
               </h1>
               <p className="font-normal text-[#282828] text-[1.25rem] sm:text-[1.3rem]">
-                قم بإدخال رقم الهاتف أو البريد الالكتروني لإعادة تعيين كلمة
-                المرور
+                قم بإدخال كلمة السر الجديدة وستصبح قادرًا على استخدامها بعد
+                الحفظ
               </p>
             </div>
 
             <div className="md:w-[330px] lg:w-[487px]">
               <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full h-[56px] border-none rounded-xl bg-[#D9D8FF] text-black placeholder:text-white py-4 px-2 mb-14 mt-10"
-                placeholder="الايميل"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full h-[56px] border-none rounded-xl bg-[#D9D8FF] text-black placeholder:text-gray-600 py-4 px-2 mb-14 mt-10"
+                placeholder="كلمة المرور الجديدة"
               />
               <button
                 type="submit"
                 disabled={loading}
                 className="w-full h-[56px] bg-primary text-white font-bold rounded-xl py-4 px-2"
               >
-                {loading ? "جارٍ إرسال رمز التحقق ..." : "إرسال رمز التحقق"}
+                {loading ? "جارٍ حفظ كلمة المرور..." : "حفظ كلمة المرور"}
               </button>
             </div>
           </form>
@@ -85,4 +93,4 @@ const ForgotPassword = () => {
   );
 };
 
-export default ForgotPassword;
+export default NewPassword;

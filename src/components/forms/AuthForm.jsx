@@ -13,7 +13,7 @@ import { ToastContainer } from "react-toastify";
 import Spinner from "../../feedback/loading/Spinner";
 import { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
-
+import { jwtDecode } from "jwt-decode";
 const AuthForm = ({ fields, schema, btnAuth }) => {
   const isLogin = btnAuth !== "إنشاء حساب";
   const dispatch = useDispatch();
@@ -42,7 +42,17 @@ const AuthForm = ({ fields, schema, btnAuth }) => {
       const { name, email, password } = data;
       const info = isLogin ? { email, password } : { name, email, password };
       await dispatch(thunkAuth({ info, isLogin })).unwrap();
-      isLogin && token ? navigate("/") : navigate("/login");
+
+      if (token) {
+        const { Role } = jwtDecode(token);
+        if (Role === "OWNER") {
+          navigate("/dashboard");
+        } else if (Role === "USER") {
+          navigate("/");
+        } else {
+          navigate("/");
+        }
+      }
       reset();
     } catch (err) {}
   };

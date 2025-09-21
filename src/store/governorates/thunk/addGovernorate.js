@@ -1,16 +1,26 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 import Cookies from "js-cookie";
-export const thunkStatistic = createAsyncThunk(
-  "/statistics",
-  async (_, { rejectWithValue }) => {
+export const addGovernorate = createAsyncThunk(
+  "governorates/addGovernorate",
+  async ({ data }, { rejectWithValue }) => {
     try {
-      const res = await axios.get("/admin/statistics", {
-        headers: {
-          authorization: `Bearer ${Cookies.get("token")}`,
+      const token = Cookies.get("token");
+      const res = await axios.post(
+        "/admin/add_governorates",
+        {
+          name: data.governorate,
+          cities: data.cities,
         },
-      });
-      return res?.data?.counts;
+        {
+          headers: {
+            authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      console.log(res.data);
+      return res.data;
     } catch (error) {
       let errorMessage = "حدث خطأ غير متوقع";
 

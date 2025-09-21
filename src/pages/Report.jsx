@@ -28,7 +28,6 @@ const Report = () => {
     e.preventDefault();
     dispatch(thunkReport({ reason, message, productId: id }));
   };
-  console.log({ reason, message });
   return (
     <div
       ref={reportRef}

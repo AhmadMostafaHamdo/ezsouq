@@ -1,16 +1,20 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import axios from "axios";
 import Cookies from "js-cookie";
-export const thunkStatistic = createAsyncThunk(
-  "/statistics",
-  async (_, { rejectWithValue }) => {
+import axios from "axios";
+
+export const updateUserPhoto = createAsyncThunk(
+  "users/updatePhoto",
+  async (file, { rejectWithValue }) => {
     try {
-      const res = await axios.get("/admin/statistics", {
+      const formData = new FormData();
+      formData.append("avatar", file);
+      const res = await axios.put("/user/photo", formData, {
         headers: {
+          "Content-Type": "multipart/form-data",
           authorization: `Bearer ${Cookies.get("token")}`,
         },
       });
-      return res?.data?.counts;
+      return res.data;
     } catch (error) {
       let errorMessage = "حدث خطأ غير متوقع";
 

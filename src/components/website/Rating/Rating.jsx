@@ -21,14 +21,13 @@ const Rating = () => {
       }, 700);
     }
   };
-  console.log(loading);
-  
+
   return (
     <div className="fixed z-10 top-0 left-0 w-full h-screen bg-[#23193E]/[.57] backdrop-blur-[20px]">
       <ToastContainer />
       <div className="absolute z-40 left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-72 h-auto bg-white rounded-[2rem] shadow-[0px_4px_15.8px_0px_#00000026]">
         <div className="flex flex-col items-center px-3 py-5 font-normal opacity-100">
-          <Link to="/profile" className="self-start">
+          <Link to={`/profile/${id}/contact-info`} className="self-start">
             <img src={close} alt="close" />
           </Link>
           <h1 className="leading-9">قيّم تجربتك مع المعلن</h1>

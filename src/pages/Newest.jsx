@@ -9,8 +9,9 @@ const Newest = () => {
     city: "",
     sortBy: "price",
     page: 1,
-    limit: 8,
+    limit: 3,
   });
+    const [page, setPage] = useState(1);
   useEffect(() => {
     dispatch(productThunk(filters));
   }, [dispatch]);

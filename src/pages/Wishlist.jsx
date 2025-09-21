@@ -10,11 +10,10 @@ const Wishlist = () => {
   const dispatch = useDispatch();
   const ref = useRef();
   const { products = [], loading } = useSelector((state) => state.wishlist);
-  console.log(products);
   useEffect(() => {
     ref.current.scrollIntoView();
     dispatch(getAllWishes());
-  }, [dispatch]);ءء
+  }, [dispatch]);
   return (
     <div className="container pt-14" ref={ref}>
       <Heading title={"الرجوع للرئيسية"} />

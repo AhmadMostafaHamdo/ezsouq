@@ -16,20 +16,23 @@ import TimeAgo from "../../components/TimeAgo";
 import { productThunk } from "../../store/product/thunk/productThunk";
 import { deleteProduct } from "../../store/product/thunk/deleteProduct";
 import { ToastContainer } from "react-toastify";
+import Pagination from "../../components/dashoard/Pagination";
+import { Link } from "react-router";
 
 const Offers = () => {
   const [infoTable, setInfoTable] = useState(false);
   const [showDetails, setShowDetails] = useState(false);
   const [deleteOfferToggle, setDeleteOfferToggle] = useState(false);
   const [selectedProductId, setSelectedProductId] = useState(null);
-
+  const [page, setPage] = useState(1); // ✅ حالة الصفحة المحلية
   const dispatch = useDispatch();
+
   const {
     products = [],
     totalPages = 1,
-    currentPage = 1,
+    totalItems = 0,
   } = useSelector((state) => state.products);
-
+  const limit = 3;
   const [visibleColumns, setVisibleColumns] = useState({
     image: true,
     title: true,
@@ -44,7 +47,6 @@ const Offers = () => {
   const detailsRef = useRef(null);
 
   const handelViews = () => setInfoTable(!infoTable);
-
   const handelShowDetails = (e) => {
     e.stopPropagation();
     setShowDetails(!showDetails);
@@ -58,7 +60,6 @@ const Offers = () => {
   };
 
   const handelDeleteOffer = (id) => {
-    console.log(id);
     setSelectedProductId(id);
     setDeleteOfferToggle(true);
   };
@@ -77,10 +78,10 @@ const Offers = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // جلب أول بيانات عند التحميل
+  // جلب بيانات الصفحة الحالية
   useEffect(() => {
-    dispatch(productThunk({ page: 1, limit: 6 }));
-  }, [dispatch]);
+    dispatch(productThunk({ page, limit }));
+  }, [dispatch, page]);
 
   return (
     <div className="overflow-hidden font-sans">
@@ -109,6 +110,8 @@ const Offers = () => {
                 className="px-7 py-1 rounded-md bg-[#BD4749] text-white"
                 onClick={() => {
                   dispatch(deleteProduct(selectedProductId));
+                  dispatch(productThunk({ page, limit }));
+
                   setDeleteOfferToggle(false);
                 }}
               >
@@ -213,101 +216,78 @@ const Offers = () => {
               </tr>
             </thead>
             <tbody className="text-[.8rem]">
-              {products?.map((product, index) => (
-                <tr className="border-t border-[#eee]" key={index}>
-                  {visibleColumns.image && (
-                    <td className="py-4 h-10">
-                      <div className="w-10 h-10 flex items-center justify-center">
-                        <img
-                          src={
-                            product?.main_photos?.[0]
-                              ? `https://api.ezsouq.store/uploads/images/${product.main_photos[0]}`
-                              : profile
-                          }
-                          alt="product"
-                          className="w-10 h-10 object-cover rounded"
-                        />
-                      </div>
-                    </td>
-                  )}
-                  {visibleColumns.title && <td>{product.name}</td>}
-                  {visibleColumns.location && (
-                    <td>
-                      {product.Governorate_name}-{product.city}
-                    </td>
-                  )}
-                  {visibleColumns.publisher && <td>مياو المياو</td>}
-                  {visibleColumns.price && <td>{product.price}</td>}
-                  {visibleColumns.date && (
-                    <td>
-                      <TimeAgo postDate={product.createdAt} />
-                    </td>
-                  )}
-                  {visibleColumns.actions && (
-                    <td>
-                      <div className="flex items-center justify-center">
-                        <img
-                          src={detailsUser}
-                          alt="details"
-                          className="ml-2"
-                          width={30}
-                        />
-                        <img
-                          src={deleteUser}
-                          alt="delete"
-                          width={30}
-                          className="cursor-pointer"
-                          onClick={() => handelDeleteOffer(product._id)}
-                        />
-                      </div>
-                    </td>
-                  )}
-                </tr>
-              ))}
+              {products
+                ?.slice((page - 1) * limit, page * limit)
+                ?.map((product, index) => (
+                  <tr className="border-t border-[#eee]" key={index}>
+                    {visibleColumns.image && (
+                      <td className="py-4 h-10">
+                        <div className="w-10 h-10 flex items-center justify-center">
+                          <img
+                            src={
+                              product?.main_photos?.[0]
+                                ? `https://api.ezsouq.store/uploads/images/${product.main_photos[0]}`
+                                : profile
+                            }
+                            alt="product"
+                            className="w-10 h-10 object-cover rounded"
+                          />
+                        </div>
+                      </td>
+                    )}
+                    {visibleColumns.title && (
+                      <td className="text-center">{product.name}</td>
+                    )}
+                    {visibleColumns.location && (
+                      <td className="text-center">
+                        {product.Governorate_name}-{product.city}
+                      </td>
+                    )}
+                    {visibleColumns.publisher && (
+                      <td className="text-center">مياو المياو</td>
+                    )}
+                    {visibleColumns.price && (
+                      <td className="text-center">{product.price}</td>
+                    )}
+                    {visibleColumns.date && (
+                      <td className="text-center">
+                        <TimeAgo postDate={product.createdAt} />
+                      </td>
+                    )}
+                    {visibleColumns.actions && (
+                      <td className="text-center">
+                        <div className="flex items-center justify-center">
+                          <Link to={product?._id}>
+                            <img
+                              src={detailsUser}
+                              alt="details"
+                              className="ml-2"
+                              width={30}
+                            />
+                          </Link>
+                          <img
+                            src={deleteUser}
+                            alt="delete"
+                            width={30}
+                            className="cursor-pointer"
+                            onClick={() => handelDeleteOffer(product._id)}
+                          />
+                        </div>
+                      </td>
+                    )}
+                  </tr>
+                ))}
             </tbody>
           </table>
 
           {/* Pagination */}
-          <div className="flex-between text-[#959595] mt-3">
-            <p>
-              عرض {products?.length} من {totalPages * (products?.length || 6)}
-            </p>
-            <div className="flex-center gap-2">
-              {currentPage > 1 && (
-                <img
-                  src={arrowRight}
-                  alt="prev"
-                  className="cursor-pointer"
-                  onClick={() =>
-                    dispatch(productThunk({ page: currentPage - 1, limit: 6 }))
-                  }
-                />
-              )}
-              {Array.from({ length: totalPages }, (_, i) => (
-                <span
-                  key={i}
-                  className={`cursor-pointer ${
-                    currentPage === i + 1 ? "font-bold" : ""
-                  }`}
-                  onClick={() =>
-                    dispatch(productThunk({ page: i + 1, limit: 6 }))
-                  }
-                >
-                  {i + 1}
-                </span>
-              ))}
-              {currentPage < totalPages && (
-                <img
-                  src={arrowLeft}
-                  alt="next"
-                  className="cursor-pointer"
-                  onClick={() =>
-                    dispatch(productThunk({ page: currentPage + 1, limit: 6 }))
-                  }
-                />
-              )}
-            </div>
-          </div>
+          <Pagination
+            currentPage={page}
+            totalPages={totalPages}
+            totalItems={totalItems}
+            itemsPerPage={6}
+            onPageChange={(p) => setPage(p)}
+          />
         </div>
       </div>
     </div>

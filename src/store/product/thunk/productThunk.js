@@ -1,4 +1,5 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
+import { data } from "autoprefixer";
 import axios from "axios";
 
 export const productThunk = createAsyncThunk(
@@ -21,13 +22,32 @@ export const productThunk = createAsyncThunk(
       // إرجاع البيانات مع معلومات الترحيم
       return {
         products: res?.data?.items,
-        totalPages: res.data.totalPages,
-        currentPage: filters.page,
+        totalItems: res?.data?.totalItems,
+        totalPages: res?.data?.totalPages,
+        currentPage: res?.data?.currentPage,
       };
     } catch (error) {
-      return rejectWithValue(
-        error.response?.data?.message || "حدث خطأ في جلب المنتجات"
-      );
+      let errorMessage = "حدث خطأ غير متوقع";
+
+      // Handle network errors (no internet connection)
+      if (error.message === "Network Error" || error.code === "ERR_NETWORK") {
+        errorMessage =
+          "لا يوجد اتصال بالإنترنت، يرجى التحقق من الاتصال والمحاولة مرة أخرى";
+      }
+      // Handle timeout errors
+      else if (
+        error.code === "ECONNABORTED" ||
+        error.message.includes("timeout")
+      ) {
+        errorMessage = "انتهت مهلة الاتصال، يرجى المحاولة مرة أخرى";
+      }
+      // Handle server response errors
+      else if (error.response?.data?.message) {
+        errorMessage = error.response.data.message;
+      }
+
+      toast.error(errorMessage);
+      return rejectWithValue(errorMessage);
     }
   }
 );

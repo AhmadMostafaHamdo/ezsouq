@@ -1,16 +1,20 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 import Cookies from "js-cookie";
-export const thunkStatistic = createAsyncThunk(
-  "/statistics",
-  async (_, { rejectWithValue }) => {
+export const updateComment = createAsyncThunk(
+  "/commits/updateCommit",
+  async ({ comment_id, comments }, { rejectWithValue }) => {
     try {
-      const res = await axios.get("/admin/statistics", {
-        headers: {
-          authorization: `Bearer ${Cookies.get("token")}`,
-        },
-      });
-      return res?.data?.counts;
+      const res = await axios.put(
+        `/user/update_comment/${comment_id}`,
+        { comments },
+        {
+          headers: {
+            authorization: `Bearer ${Cookies.get("token")}`,
+          },
+        }
+      );
+      return res.data;
     } catch (error) {
       let errorMessage = "حدث خطأ غير متوقع";
 

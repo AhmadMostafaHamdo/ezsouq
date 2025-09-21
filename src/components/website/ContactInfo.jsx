@@ -54,12 +54,12 @@ const ContactInfo = () => {
   useEffect(() => {
     if (user) {
       setFormData({
-        name: user?.name || "الاسم",
-        workplace: user?.workplace || "مكان العمل",
-        work_type: user?.work_type || "نوع العمل",
-        Location: user?.Location || "الموقع",
-        phone: user?.phone || "رقم الهاتف",
-        whats_app: user?.whats_app || "رقم الواتس",
+        name: user?.name || "",
+        workplace: user?.workplace || "",
+        work_type: user?.work_type || "",
+        Location: user?.Location || "",
+        phone: user?.phone || "",
+        whats_app: user?.whats_app || "",
       });
       setIsChanged(false); // reset بعد تحميل البيانات
     }
@@ -102,12 +102,24 @@ const ContactInfo = () => {
           <div className="flex flex-col mt-3 gap-3 items-center font-normal">
             <form onSubmit={handelSubmit}>
               {[
-                { field: "name", icon: null },
-                { field: "workplace", icon: infoSite },
-                { field: "work_type", icon: infoWork },
-                { field: "Location", icon: homeInfo },
-                { field: "phone", icon: infoMobile },
-                { field: "whats_app", icon: infoWhats },
+                { field: "name", icon: null, placeholder: "الاسم" },
+                {
+                  field: "workplace",
+                  icon: infoSite,
+                  placeholder: "مكان العمل",
+                },
+                {
+                  field: "work_type",
+                  icon: infoWork,
+                  placeholder: "نوع العمل",
+                },
+                { field: "Location", icon: homeInfo, placeholder: "الموقع" },
+                { field: "phone", icon: infoMobile, placeholder: "رقم الهاتف" },
+                {
+                  field: "whats_app",
+                  icon: infoWhats,
+                  placeholder: "رقم الواتس",
+                },
               ].map((item, index) => (
                 <div key={index} className="relative">
                   <input
@@ -119,6 +131,7 @@ const ContactInfo = () => {
                         : ""
                     }`}
                     value={formData[item.field]}
+                    placeholder={item.placeholder}
                     onChange={(e) => handleChange(item.field, e.target.value)}
                     onBlur={handleBlur}
                   />

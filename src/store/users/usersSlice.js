@@ -2,12 +2,14 @@ import { createSlice } from "@reduxjs/toolkit";
 import { userThunkById } from "./thunk/userThunkById";
 import { getAllUsers } from "./thunk/getAllUsers";
 import { updateUser } from "./thunk/updateUser";
+import { deleteUser } from "./thunk/deleteUser";
 
-const initialState = {  
+const initialState = {
   users: [],
   user: [],
   loading: false,
   loadingUpdateUser: false,
+  loadingDelete: false,
   error: null,
 };
 const usersSlice = createSlice({
@@ -33,7 +35,10 @@ const usersSlice = createSlice({
     });
     builder.addCase(getAllUsers.fulfilled, (state, action) => {
       state.loading = false;
-      state.users = action.payload;
+      state.users = action.payload.users;
+      state.totalItems = action.payload.totalItems;
+      state.totalPages = action.payload.totalPages;
+      state.currentPage = action.payload.currentPage;
     });
     builder.addCase(getAllUsers.rejected, (state, action) => {
       state.loading = false;
@@ -49,6 +54,17 @@ const usersSlice = createSlice({
     });
     builder.addCase(updateUser.rejected, (state, action) => {
       state.loadingUpdateUser = false;
+      state.error = action.payload;
+    });
+    builder.addCase(deleteUser.pending, (state) => {
+      state.loadingDelete = true;
+      state.error = null;
+    });
+    builder.addCase(deleteUser.fulfilled, (state, action) => {
+      state.loadingDelete = false;
+    });
+    builder.addCase(deleteUser.rejected, (state, action) => {
+      state.loadingDelete = false;
       state.error = action.payload;
     });
   },

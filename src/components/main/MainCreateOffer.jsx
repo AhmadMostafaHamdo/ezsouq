@@ -15,6 +15,7 @@ import {
   stepDecrease,
   clearStep,
 } from "../../store/steps/stepsSlice";
+import { toast } from "react-toastify";
 
 const MainCreateOffer = () => {
   const dispatch = useDispatch();
@@ -44,9 +45,7 @@ const MainCreateOffer = () => {
 
     // دمج بيانات الخطوتين
     const finalData = { ...stepOneData, ...stepTwoData };
-console.log(finalData)
     const formData = new FormData();
-first;
     // إضافة الحقول النصية والرقمية
     Object.entries(finalData).forEach(([key, value]) => {
       if (key === "main_photos" || key === "video") return;
@@ -70,7 +69,7 @@ first;
         params: { owner_id: userId },
         headers: { Authorization: `Bearer ${token}` },
       });
-      console.log("✅ تم النشر بنجاح", res.data);
+      toast.success(res.data?.message);
       dispatch(clearStep());
     } catch (error) {
       console.error("❌ فشل النشر:", error.response?.data || error.message);

@@ -1,8 +1,9 @@
 import { Link } from "react-router";
 import Lottie from "lottie-react";
 import animationData from "../../assets/lottifiles/web home animation.json";
-
+import Cookies from "js-cookie";
 const Main = () => {
+  const token = Cookies.get("token");
   return (
     <div className="flex w-screen overflow-hidden  pt-24  md:pt-44 flex-col-reverse bg-primary pb-24  text-white md:h-[636px] md:flex-row md:px-20">
       {/* Text Content Section */}
@@ -17,7 +18,7 @@ const Main = () => {
         </p>
 
         <Link
-          to="/create-offer"
+          to={token ? "/create-offer" : "/login"}
           className="mt-8  block h-[8vh] w-[70vw] flex-center rounded-xl bg-white text-[1rem] font-bold text-primary md:h-[60px] md:w-[262px]"
         >
           نشر إعلان

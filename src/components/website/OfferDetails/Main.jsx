@@ -23,13 +23,11 @@ import { viewsThunk } from "../../../store/views/thunk/thunkViews";
 const Main = () => {
   const { product } = useSelector((state) => state.products);
   const { user } = useSelector((state) => state.users);
-  console.log("product => ", product?.Owner);
   const [selectedImage, setSelectedImage] = useState("");
   const [isImageLoaded, setIsImageLoaded] = useState(false);
   const { id } = useParams();
   const dispatch = useDispatch();
   const imgRef = useRef(null);
-
   // ✅ تحميل المنتج
   useEffect(() => {
     if (id) dispatch(productThunkById(id));
