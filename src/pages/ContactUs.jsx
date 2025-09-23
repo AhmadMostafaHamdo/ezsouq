@@ -6,15 +6,37 @@ import facebook from "../assets/images/facebook.svg";
 import Instagram from "../assets/images/instgram.svg";
 import message from "../assets/images/message.svg";
 import googlPlay from "../assets/images/googlPlay.svg";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { useEffect } from "react";
 import DividerWithText from "../components/dividerWithText/DividerWithText";
 import Heading from "../components/common/Heading";
+import axios from "axios";
 const ContactUs = () => {
   const contact = useRef();
+  const [form, setForm] = useState({
+    name: "",
+    email: "",
+    message: "",
+    subject: "",
+  });
   useEffect(() => {
     contact.current.scrollIntoView();
   }, []);
+  const handelChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+  const handelSubmit = async (e) => {
+    e.preventDefault();
+    console.log(form);
+    try {
+      const res = await axios.post("/user/contact", {
+        form,
+      });
+      console.log(res.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
   return (
     <div className="pt-20 pb-8" ref={contact}>
       <div className="container flex ite flex-col md:flex-row gap-6 md:gap-40">
@@ -24,11 +46,17 @@ const ContactUs = () => {
             نحن هنا للإجابة على استفساراتك ومساعدتك، لا تتردد في التواصل
             <br className="hidden md:block" /> معنا في أي وقت.
           </p>
-          <form className="md:w-[20rem] lg:w-[28rem] mt-6 ">
+          <form
+            className="md:w-[20rem] lg:w-[28rem] mt-6"
+            onSubmit={handelSubmit}
+          >
             <div className="relative w-full">
               <input
                 type="text"
-                placeholder="الاسم"
+                name="name"
+                value={form.name}
+                onChange={handelChange}
+                placeholder=" الاسم  (اختياري)"
                 className="relative w-full py-3 px-7 rounded-[5px] border border-solid-1 border-[#B9B5FF]"
               />
               <img
@@ -39,6 +67,9 @@ const ContactUs = () => {
             <div className="relative w-full my-5">
               <input
                 type="email"
+                value={form.email}
+                name="email"
+                onChange={handelChange}
                 placeholder="البريد الالكتروني"
                 className="relative w-full py-3 px-7 rounded-[5px] border border-solid-1 border-[#B9B5FF]"
               />
@@ -50,13 +81,13 @@ const ContactUs = () => {
             <div>
               <textarea
                 placeholder="نص الرسالة.."
+                value={form.message}
+                name="message"
+                onChange={handelChange}
                 className=" rounded-[5px] p-2 w-full border border-solid-1 border-[#B9B5FF] outline-none max-h-24 min-h-24"
               ></textarea>
             </div>
-            <button
-              type="submit"
-              className="w-full bg-primary font-bold rounded-[5px] text-white py-2 mt-4"
-            >
+            <button className="w-full bg-primary font-bold rounded-[5px] text-white py-2 mt-4">
               إرسال
             </button>
           </form>

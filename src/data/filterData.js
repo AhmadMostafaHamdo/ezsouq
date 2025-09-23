@@ -13,7 +13,7 @@ export const selectOptions = ["جميع التصنيفات", "سيارات", "ع
 export const ulLinksLogin = [
   { name: "الرئيسية", link: "/" },
   { name: "الأحدث", link: "/newest" },
-  { name: "منوعات", link: "/oldest" },
+  { name: "منوعات", link: "/all-product" },
   { name: "سيارات", link: "/cars" },
   { name: "عقارات", link: "/real-estate" },
   { name: "موبايلات", link: "/tech" },

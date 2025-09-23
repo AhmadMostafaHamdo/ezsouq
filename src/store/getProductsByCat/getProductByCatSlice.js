@@ -6,12 +6,23 @@ const initialState = {
   loading: false,
   error: null,
   totalPages: 1,
+  currentPage: 1,
 };
 
 const productByCatSlice = createSlice({
   name: "productsByCat",
   initialState,
   reducers: {
+    // ✅ Reset عند تغيير الكاتيجوري
+    resetProducts: (state) => {
+      state.products = [];
+      state.loading = false;
+      state.error = null;
+      state.totalPages = 1;
+      state.currentPage = 1;
+    },
+
+    // ✅ تحديث اللايكات محلياً
     setLikeLocalByCat: (state, action) => {
       const { productId, userId, liked } = action.payload;
 
@@ -41,7 +52,17 @@ const productByCatSlice = createSlice({
       })
       .addCase(thunkGetProductByCat.fulfilled, (state, action) => {
         state.loading = false;
-        state.products = action.payload;
+
+        // ✅ إذا الصفحة الأولى → استبدل
+        // ✅ إذا الصفحة أكبر من 1 → أضف فوق القديمة (concat)
+        if (action.payload.currentPage === 1) {
+          state.products = action.payload.items;
+        } else {
+          state.products = [...state.products, ...action.payload.items];
+        }
+
+        state.totalPages = action.payload.totalPages;
+        state.currentPage = action.payload.currentPage;
       })
       .addCase(thunkGetProductByCat.rejected, (state, action) => {
         state.loading = false;
@@ -50,5 +71,8 @@ const productByCatSlice = createSlice({
   },
 });
 
-export const { setLikeLocalByCat } = productByCatSlice.actions;
+// ✅ Export actions
+export const { setLikeLocalByCat, resetProducts } = productByCatSlice.actions;
+
+// ✅ Export reducer
 export default productByCatSlice.reducer;

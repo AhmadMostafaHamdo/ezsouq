@@ -19,6 +19,7 @@ import Spinner from "../../../feedback/loading/Spinner";
 import ThumbnailImage from "../../../feedback/loading/ThumbnailImage";
 import { userThunkById } from "../../../store/users/thunk/userThunkById";
 import { viewsThunk } from "../../../store/views/thunk/thunkViews";
+import Heading from "../../common/Heading";
 
 const Main = () => {
   const { product } = useSelector((state) => state.products);
@@ -101,7 +102,10 @@ const Main = () => {
   }, []);
   return (
     <div className=" bg-[#F7F7FF] md:pt-2 overflow-x-hidden h-fit">
-      <div className="container items-center md:items-start flex flex-col md:flex-row md:gap-8 lg:gap-11 pt-[5rem]">
+      <div className="mt-[4rem]">
+        <Heading title="الرجوع" />
+      </div>
+      <div className="container items-center md:items-start flex flex-col md:flex-row md:gap-8 lg:gap-11 -mt-5">
         <div className="flex flex-col items-center w-fit gap-6 md:mt-5">
           <div className="w-[100vw] h-[30vh] md:h-[53vh] md:w-[50vh] lg:w-[60vh] md:rounded-2xl relative bg-[#F7F7FF]">
             {selectedImage && (

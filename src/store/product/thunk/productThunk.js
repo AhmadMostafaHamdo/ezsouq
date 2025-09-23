@@ -19,6 +19,7 @@ export const productThunk = createAsyncThunk(
       // التصحيح: إضافة المسار الصحيح
       const url = `/user/fliteredProducts?${queryParams.toString()}`;
       const res = await axios.get(url);
+      console.log(res.data)
       // إرجاع البيانات مع معلومات الترحيم
       return {
         products: res?.data?.items,
