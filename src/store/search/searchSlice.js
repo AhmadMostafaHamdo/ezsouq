@@ -31,8 +31,14 @@ const searchedProductsSlice = createSlice({
         state.loading = false;
         state.error = null;
 
-        // Update with API response data
-        state.data = action.payload.data || [];
+        if (action.payload.currentPage > 1) {
+          // Append new data
+          state.data = [...state.data, ...(action.payload.data || [])];
+        } else {
+          // Reset data when it's the first page
+          state.data = action.payload.data || [];
+        }
+
         state.currentPage = action.payload.currentPage || 1;
         state.totalPages = action.payload.totalPages || 0;
         state.totalItems = action.payload.totalItems || 0;
@@ -40,8 +46,6 @@ const searchedProductsSlice = createSlice({
       .addCase(searchThunk.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
-
-        // Clear data on error
         state.data = [];
         state.currentPage = 1;
         state.totalPages = 0;

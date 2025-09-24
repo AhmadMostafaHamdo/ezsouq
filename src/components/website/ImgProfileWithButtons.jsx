@@ -8,11 +8,13 @@ import { useDispatch, useSelector } from "react-redux";
 import { userThunkById } from "../../store/users/thunk/userThunkById";
 import { updateUserPhoto } from "../../store/users/thunk/updateUserPhoto"; // ✅ استدعاء الصحيح
 import useUserId from "../../hooks/useUserId";
+import { ToastContainer } from "react-toastify";
+import Spinner from "../../feedback/loading/Spinner";
 
 const ImgProfileWithButtons = () => {
   const [sortBy, setSortBy] = useState("newest");
   const dispatch = useDispatch();
-  const { user } = useSelector((state) => state.users);
+  const { user, loadind } = useSelector((state) => state.users);
   const { id } = useParams();
   const myId = useUserId(); // ID الخاص بالمستخدم الحالي
 
@@ -24,6 +26,7 @@ const ImgProfileWithButtons = () => {
 
   // تغيير الصورة
   const handleImageChange = (e) => {
+    console.log(e.target.files[0]);
     const file = e.target.files[0];
     if (file) {
       const reader = new FileReader();
@@ -38,14 +41,20 @@ const ImgProfileWithButtons = () => {
 
   return (
     <div>
+      <ToastContainer />
       {/* صورة واسم المستخدم */}
       <div className="flex flex-col items-center relative">
         <label htmlFor="uploadProfile" className="cursor-pointer">
-          <img
-            src={previewImg || user?.photo || personalImg} // ✅ تأكد أن backend يرجع photo
-            alt="profile"
-            className="w-24 h-24 shadow-xl rounded-full object-cover"
-          />
+          {loadind ? (
+            <Spinner />
+          ) : (
+            <img
+              src={previewImg || user?.avatar || personalImg} // ✅ تأكد أن backend يرجع photo
+              alt="profile"
+              className="w-24 h-24 shadow-xl rounded-full object-cover"
+              loading="lazy"
+            />
+          )}
         </label>
         {id === myId && (
           <input

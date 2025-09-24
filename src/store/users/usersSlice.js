@@ -3,6 +3,7 @@ import { userThunkById } from "./thunk/userThunkById";
 import { getAllUsers } from "./thunk/getAllUsers";
 import { updateUser } from "./thunk/updateUser";
 import { deleteUser } from "./thunk/deleteUser";
+import { updateUserPhoto } from "./thunk/updateUserPhoto";
 
 const initialState = {
   users: [],
@@ -65,6 +66,17 @@ const usersSlice = createSlice({
     });
     builder.addCase(deleteUser.rejected, (state, action) => {
       state.loadingDelete = false;
+      state.error = action.payload;
+    });
+    builder.addCase(updateUserPhoto.pending, (state) => {
+      state.loading = true;
+      state.error = null;
+    });
+    builder.addCase(updateUserPhoto.fulfilled, (state) => {
+      state.loading = false;
+    });
+    builder.addCase(updateUserPhoto.rejected, (state, action) => {
+      state.loading = false;
       state.error = action.payload;
     });
   },

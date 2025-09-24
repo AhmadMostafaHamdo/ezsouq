@@ -104,7 +104,9 @@ const HeaderLogin = () => {
               <div className="flex flex-col absolute top-14 bg-secondary left-0 text-[.7rem] text-black shadow-md p-3 rounded-md">
                 <button
                   onClick={() => {
-                    window.location.href = `/profile/${userId}`;
+                    if (userId) {
+                      window.location.href = `/profile/${userId}`;
+                    }
                     setMenu(false);
                   }}
                   className="mb-2 shadow-sm w-20 hover:text-primary"
@@ -135,9 +137,7 @@ const HeaderLogin = () => {
 
       {/* Modal لتأكيد تسجيل الخروج */}
       {showLogoutModal && (
-        <div
-          className="fixed inset-0 flex items-center justify-center bg-black backdrop-filter:blur(20px) bg-opacity-40 z-50"
-        >
+        <div className="fixed inset-0 flex items-center justify-center bg-black backdrop-filter:blur(20px) bg-opacity-40 z-50">
           <div className="bg-white rounded-2xl p-6 w-72 text-center shadow-lg ">
             <img src={confirmLogout} alt="" className="w-20 m-auto" />
             <h3 className="my-2 text-black">تسجيل الخروج</h3>

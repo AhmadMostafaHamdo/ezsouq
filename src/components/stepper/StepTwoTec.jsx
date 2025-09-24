@@ -26,14 +26,14 @@ const StepTwoTec = ({ onSubmit }) => {
       >
         <InputCreateOffer placeholder="الجهاز" {...methods.register("name")} />
         {methods.formState.errors.name && (
-          <p className="text-red-500">
+          <p className="text-red">
             {methods.formState.errors.name.message}
           </p>
         )}
 
         <InputCreateOffer placeholder="اللون" {...methods.register("color")} />
         {methods.formState.errors.color && (
-          <p className="text-red-500">
+          <p className="text-red">
             {methods.formState.errors.color.message}
           </p>
         )}
@@ -59,7 +59,7 @@ const StepTwoTec = ({ onSubmit }) => {
           </label>
         </div>
         {methods.formState.errors.isnew && (
-          <p className="text-red-500">
+          <p className="text-red">
             {methods.formState.errors.isnew.message}
           </p>
         )}
@@ -69,7 +69,7 @@ const StepTwoTec = ({ onSubmit }) => {
           {...methods.register("processor")}
         />
         {methods.formState.errors.processor && (
-          <p className="text-red-500">
+          <p className="text-red">
             {methods.formState.errors.processor.message}
           </p>
         )}
@@ -79,14 +79,14 @@ const StepTwoTec = ({ onSubmit }) => {
           {...methods.register("memory")}
         />
         {methods.formState.errors.memory && (
-          <p className="text-red-500">
+          <p className="text-red">
             {methods.formState.errors.memory.message}
           </p>
         )}
 
         <VideoUploader name="video" label="إضافة فيديو" />
         {methods.formState.errors.video && (
-          <p className="text-red-500">
+          <p className="text-red">
             {methods.formState.errors.video.message}
           </p>
         )}

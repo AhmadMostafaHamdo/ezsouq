@@ -1,6 +1,7 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { data } from "autoprefixer";
 import axios from "axios";
+import { toast } from "react-toastify";
 
 export const productThunk = createAsyncThunk(
   "products/fetch",

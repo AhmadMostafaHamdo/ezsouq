@@ -1,6 +1,7 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 import Cookies from "js-cookie";
+import { toast } from "react-toastify";
 export const addGovernorate = createAsyncThunk(
   "governorates/addGovernorate",
   async ({ data }, { rejectWithValue }) => {

@@ -15,7 +15,7 @@ import { setFilter } from "../../store/filter/filterSlice";
 
 const Filters = () => {
   const dispatch = useDispatch();
-
+console.log(allCategory)
   const filters = useSelector((state) => state.filters);
   const {
     products = [],

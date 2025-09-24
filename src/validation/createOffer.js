@@ -32,14 +32,15 @@ export const stepOneSchema = z.object({
   ),
   main_photos: z
     .array(z.instanceof(File))
-    .min(1, "يجب رفع صورة واحدة على الأقل"),
+    .min(3, "يجب رفغ ثلاث صور")
+    .max(3, "لا تستطيع رفع أكثر من ثلاث صور"),
 });
 
 /* الخطوة ٢ – سيارات */
 export const stepTwoCarsSchema = z.object({
-  carName: z.string().nonempty("يجب إدخال اسم السيارة"),
+  name: z.string().nonempty("يجب إدخال اسم السيارة"),
   color: z.string().nonempty("يجب إدخال اللون"),
-  dealType: z.enum(["rent", "sale"], {
+  for_sale: z.enum(["rent", "sale"], {
     errorMap: () => ({ message: "اختر نوع العملية" }),
   }),
   isnew: z.enum(["true", "false"], {
@@ -62,12 +63,13 @@ export const stepTwoTecSchema = z.object({
 
 /* الخطوة ٢ – عقارات */
 export const stepTwoRealStateSchema = z.object({
-  type: z.string().nonempty("اختر نوع العقار"),
-  dealType: z.enum(["rent", "sale"], {
+  real_estate_type: z.string().nonempty("اختر نوع العقار"),
+  for_sale: z.enum(["rent", "sale"], {
     errorMap: () => ({ message: "اختر نوع العملية" }),
   }),
-  condition: z.enum(["مفروشة", "غير مفروشة"], {
+  is_Furniture: z.enum(["مفروشة", "غير مفروشة"], {
     errorMap: () => ({ message: "اختر حالة العقار" }),
   }),
   video: z.instanceof(File).optional(),
+  name: z.string().nonempty(),
 });

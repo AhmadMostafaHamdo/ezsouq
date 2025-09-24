@@ -9,6 +9,7 @@ export const searchThunk = createAsyncThunk(
       const res = await axios.get(
         `user/search_product?keyword=${keyword}&page=${page}`
       );
+      console.log(res.data)
       return res.data;
     } catch (error) {
       let errorMessage = "حدث خطأ غير متوقع";

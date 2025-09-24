@@ -15,7 +15,7 @@ import {
   stepDecrease,
   clearStep,
 } from "../../store/steps/stepsSlice";
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 
 const MainCreateOffer = () => {
   const dispatch = useDispatch();
@@ -44,34 +44,52 @@ const MainCreateOffer = () => {
     if (!stepOneData) return;
 
     // دمج بيانات الخطوتين
-    const finalData = { ...stepOneData, ...stepTwoData };
+    const finalData = {
+      ...stepOneData,
+      ...stepTwoData,
+      owner_id: userId,
+    };
+
     const formData = new FormData();
+
     // إضافة الحقول النصية والرقمية
     Object.entries(finalData).forEach(([key, value]) => {
-      if (key === "main_photos" || key === "video") return;
+      if (key === "main_photos" || key === "video") return; // الصور والفيديو نضيفهم لحال
       if (value !== undefined && value !== null) {
         formData.append(key, value);
       }
     });
 
-    // إضافة الصور
-    finalData.main_photos?.forEach((file) => {
-      formData.append("main_photos", file);
-    });
+    // إضافة الصور (مصفوفة)
+    if (Array.isArray(finalData.main_photos)) {
+      finalData.main_photos.forEach((file) => {
+        formData.append("main_photos", file);
+      });
+    }
 
     // إضافة الفيديو
     if (finalData.video) {
       formData.append("video", finalData.video);
     }
 
+    // ✅ Debug: عرض القيم قبل الإرسال
+    console.log("📌 Final FormData:");
+    for (let pair of formData.entries()) {
+      console.log(pair[0], pair[1]);
+    }
+
     try {
       const res = await axios.post("/user/add_product", formData, {
-        params: { owner_id: userId },
-        headers: { Authorization: `Bearer ${token}` },
+        params: { owner_id: userId }, // إذا الباك يطلبها بالـ query
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
+        },  
       });
-      toast.success(res.data?.message);
+      toast.success(res.data?.message || "تم نشر الإعلان بنجاح");
       dispatch(clearStep());
     } catch (error) {
+      toast.error(error.response?.data?.message || "فشل في نشر الإعلان");
       console.error("❌ فشل النشر:", error.response?.data || error.message);
     }
   };
@@ -81,6 +99,7 @@ const MainCreateOffer = () => {
 
   return (
     <div className="pt-14" ref={offerRef}>
+      <ToastContainer />
       <Heading title="الرجوع" />
       <div className="bg-[#F7F7FF] flex-center flex-col -mt-10">
         <h1 className="font-normal text-[2rem]">نشر إعلان</h1>
@@ -88,7 +107,7 @@ const MainCreateOffer = () => {
 
         {/* ================= Step Forms ================= */}
         {currentStep === 1 && <StepOne onSubmit={handleStepOneSubmit} />}
-        {currentStep === 2 && selectedCategory === "تقنيات" && (
+        {currentStep === 2 && selectedCategory === "موبايلات" && (
           <StepTwoTec onSubmit={handleStepTwoSubmit} />
         )}
         {currentStep === 2 && selectedCategory === "سيارات" && (

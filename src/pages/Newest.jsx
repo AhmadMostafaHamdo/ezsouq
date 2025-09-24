@@ -52,14 +52,14 @@ console.log(products[0])
   return (
     <div className="py-14">
       <Heading title='الرجوع'/>
-      <div className="container flex-between flex-wrap gap-5">
+      <div className="container flex flex-wrap gap-5">
         {products?.map((product) => (
           <Card key={product._id} {...product} />
         ))}
       </div>
 
       {/* ✅ مؤشر تحميل */}
-      <div className="flex-center gap-8 mt-4 flex-wrap">
+      <div className="flex-center gap-12 mt-4 flex-wrap">
         {loading &&
           Array.from({ length: 4 }).map((_, i) => <CardSkeleton key={i} />)}
       </div>

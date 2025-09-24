@@ -14,7 +14,7 @@ const StepOne = ({ onSubmit }) => {
   const { governorates } = useSelector((state) => state.governorates);
   const { cities } = useSelector((state) => state.cities);
   const { category, selectedCategory } = useSelector((state) => state.category);
-
+console.log("selectedCategory", selectedCategory);
   const methods = useForm({
     resolver: zodResolver(stepOneSchema),
     defaultValues: {
@@ -62,7 +62,6 @@ const StepOne = ({ onSubmit }) => {
             )}
           />
           <Error error={errors.Category_name?.message} />
-
           {/* المحافظة */}
           <Controller
             name="Governorate_name"

@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  category: ["سيارات", "عقارات", "تقنيات"], // لا تضع خيار "التصنيف" كقيمة
+  category: ["سيارات", "عقارات", "موبايلات"], // لا تضع خيار "التصنيف" كقيمة
   selectedCategory: "",
 };
 

@@ -1,7 +1,6 @@
 import { useRef } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import InputCreateOffer from "../inputs/InputCreateOffer";
 import Select from "../select/Select";
 import { stepTwoRealStateSchema } from "../../validation/createOffer";
 
@@ -11,11 +10,24 @@ const StepTwoRealState = ({ onSubmit }) => {
     register,
     handleSubmit,
     setValue,
+    control,
     formState: { errors },
   } = useForm({
     resolver: zodResolver(stepTwoRealStateSchema),
-    defaultValues: { type: "", dealType: "", condition: "", video: undefined },
+    defaultValues: {
+      real_estate_type: "",
+      for_sale: "",
+      is_Furniture: "",
+      video: undefined,
+      name: "",
+    },
   });
+
+  // عند تغيير real_estate_type ننسخ القيمة إلى name تلقائياً
+  const handleRealEstateChange = (val) => {
+    setValue("real_estate_type", val);
+    setValue("name", val); // ✅ اسم الإعلان نفس نوع العقار
+  };
 
   return (
     <form
@@ -23,19 +35,31 @@ const StepTwoRealState = ({ onSubmit }) => {
       onSubmit={handleSubmit(onSubmit)}
       className="flex flex-col gap-3 w-[80vw] md:w-[60vw] lg:w-[45vw] pb-6 text-[#B9B5FF]"
     >
-      <Select
-        options={[{ name: "النوع" }, { name: "شقة" }, { name: "بيت" }]}
-        type="governorate"
+      {/* اختيار نوع العقار */}
+      <Controller
+        name="real_estate_type"
+        control={control}
+        render={({ field }) => (
+          <Select
+            options={[{ name: "النوع" }, { name: "شقة" }, { name: "بيت" }]}
+            type="governorate"
+            value={field.value}
+            onSelect={handleRealEstateChange} // ✅ استخدم الدالة الجديدة
+          />
+        )}
       />
-      {errors.type && <p className="text-red-500">{errors.type.message}</p>}
+      {errors.real_estate_type && (
+        <p className="text-red">{errors.real_estate_type.message}</p>
+      )}
 
+      {/* خيارات البيع / الإيجار والحالة المفروشة */}
       <div className="flex gap-6 my-3">
         <div>
           <label className="block cursor-pointer">
             <input
               type="radio"
               value="rent"
-              {...register("dealType")}
+              {...register("for_sale")}
               className="ml-2"
             />{" "}
             أجار
@@ -44,13 +68,13 @@ const StepTwoRealState = ({ onSubmit }) => {
             <input
               type="radio"
               value="sale"
-              {...register("dealType")}
+              {...register("for_sale")}
               className="ml-2"
             />{" "}
             بيع
           </label>
-          {errors.dealType && (
-            <p className="text-red-500">{errors.dealType.message}</p>
+          {errors.for_sale && (
+            <p className="text-red">{errors.for_sale.message}</p>
           )}
         </div>
 
@@ -59,7 +83,7 @@ const StepTwoRealState = ({ onSubmit }) => {
             <input
               type="radio"
               value="مفروشة"
-              {...register("condition")}
+              {...register("is_Furniture")}
               className="ml-2"
             />{" "}
             مفروشة
@@ -68,17 +92,18 @@ const StepTwoRealState = ({ onSubmit }) => {
             <input
               type="radio"
               value="غير مفروشة"
-              {...register("condition")}
+              {...register("is_Furniture")}
               className="ml-2"
             />{" "}
             غير مفروشة
           </label>
-          {errors.condition && (
-            <p className="text-red-500">{errors.condition.message}</p>
+          {errors.is_Furniture && (
+            <p className="text-red">{errors.is_Furniture.message}</p>
           )}
         </div>
       </div>
 
+      {/* رفع الفيديو */}
       <input
         type="file"
         ref={videoRef}
@@ -86,7 +111,7 @@ const StepTwoRealState = ({ onSubmit }) => {
         className="hidden"
         onChange={(e) => setValue("video", e.target.files?.[0])}
       />
-      {errors.video && <p className="text-red-500">{errors.video.message}</p>}
+      {errors.video && <p className="text-red">{errors.video.message}</p>}
 
       <button
         type="submit"

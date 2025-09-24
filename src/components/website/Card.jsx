@@ -139,7 +139,7 @@ const Card = ({
     <article
       onClick={handleOfferClick}
       title={name}
-      className="p-2 w-[86vw] md:w-52 lg:w-60 m-auto shadow-card bg-white rounded-lg cursor-pointer transition-transform hover:scale-[1.02]"
+      className="p-2 w-[86vw] md:w-52 lg:w-60  shadow-card bg-white rounded-lg cursor-pointer transition-transform hover:scale-[1.02]"
     >
       <div className="flex flex-col items-start">
         {/* Header */}

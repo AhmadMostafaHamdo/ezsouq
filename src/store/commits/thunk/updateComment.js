@@ -1,6 +1,7 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 import Cookies from "js-cookie";
+import { toast } from "react-toastify";
 export const updateComment = createAsyncThunk(
   "/commits/updateCommit",
   async ({ comment_id, comments }, { rejectWithValue }) => {
@@ -35,7 +36,7 @@ export const updateComment = createAsyncThunk(
         errorMessage = error.response.data.message;
       }
 
-      toast.error(errorMessage);
+      toastast.error(errorMessage);
       return rejectWithValue(errorMessage);
     }
   }

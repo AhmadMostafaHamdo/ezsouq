@@ -11,14 +11,21 @@ import Spinner from "../feedback/loading/Spinner";
 import { Link } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import { setCurrentPage } from "../store/search/searchSlice";
+import { thunkGovernorates } from "../store/governorates/thunk/thunkGovernorates";
+import { thunkCities } from "../store/cities/thunk/citiesThunk";
 
 const Search = () => {
   const contactRef = useRef(null);
-  const [searchValue, setSearchValue] = useState("");
-  const [filter, setFilter] = useState(false);
   const dispatch = useDispatch();
 
-  // Get state from Redux
+  const { governorates = [] } = useSelector((state) => state.governorates);
+  const { cities = [], loadingCity } = useSelector((state) => state.cities);
+
+  const [searchValue, setSearchValue] = useState("");
+  const [governorate, setGovernorate] = useState("");
+  const [city, setCity] = useState("");
+  const [filter, setFilter] = useState(false);
+
   const {
     data: searchedProducts = [],
     loading,
@@ -27,7 +34,7 @@ const Search = () => {
     totalItems,
   } = useSelector((state) => state.search);
 
-  // Debounced search function
+  // Debounced search
   const debouncedSearch = useCallback(
     debounce((value, page = 1) => {
       if (value.trim()) {
@@ -40,23 +47,50 @@ const Search = () => {
   // Scroll to top on mount
   useEffect(() => {
     contactRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, []);
+    dispatch(thunkGovernorates()); // تحميل المحافظات عند الفتح
+  }, [dispatch]);
 
-  // Trigger search when searchValue changes (resets to page 1)
+  // Reset & search when searchValue changes
   useEffect(() => {
     if (searchValue.trim()) {
-      debouncedSearch(searchValue, 1);
-      // Reset to page 1 when search term changes
       dispatch(setCurrentPage(1));
+      debouncedSearch(searchValue, 1);
     }
     return () => debouncedSearch.cancel();
   }, [searchValue, debouncedSearch, dispatch]);
 
-  // Handle page changes
-  const handlePageChange = (page) => {
-    dispatch(setCurrentPage(page));
-    debouncedSearch(searchValue, page);
-  };
+  // Infinite scroll
+  useEffect(() => {
+    const handleScroll = () => {
+      if (
+        window.innerHeight + window.scrollY >=
+          document.body.offsetHeight - 500 &&
+        !loading &&
+        currentPage < totalPages
+      ) {
+        dispatch(setCurrentPage(currentPage + 1));
+        debouncedSearch(searchValue, currentPage + 1);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [
+    dispatch,
+    searchValue,
+    currentPage,
+    totalPages,
+    loading,
+    debouncedSearch,
+  ]);
+
+  // عند تغيير المحافظة → استدعاء المدن
+  useEffect(() => {
+    if (governorate) {
+      dispatch(thunkCities(governorate));
+      setCity(""); // إعادة تعيين المدينة
+    }
+  }, [dispatch, governorate]);
 
   const handleInputChange = (e) => {
     setSearchValue(e.target.value);
@@ -72,87 +106,12 @@ const Search = () => {
     setFilter(false);
   };
 
-  // Pagination component
-  const renderPagination = () => {
-    if (totalPages <= 1) return null;
-
-    const pages = [];
-    const maxVisiblePages = 5;
-    let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
-    let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
-
-    // Adjust if we're at the beginning or end
-    if (endPage - startPage < maxVisiblePages - 1) {
-      startPage = Math.max(1, endPage - maxVisiblePages + 1);
-    }
-
-    // Previous button
-    pages.push(
-      <button
-        key="prev"
-        onClick={() => handlePageChange(currentPage - 1)}
-        disabled={currentPage === 1}
-        className={`w-10 h-10 rounded-full flex items-center justify-center ${
-          currentPage === 1
-            ? "bg-gray-200 text-gray-400 cursor-not-allowed"
-            : "bg-gray-200 text-gray-700 hover:bg-primary hover:text-white"
-        }`}
-      >
-        &lt;
-      </button>
-    );
-
-    // Page numbers
-    for (let i = startPage; i <= endPage; i++) {
-      pages.push(
-        <button
-          key={i}
-          onClick={() => handlePageChange(i)}
-          className={`w-10 h-10 rounded-full ${
-            currentPage === i
-              ? "bg-primary text-white"
-              : "bg-gray-200 text-gray-700 hover:bg-primary hover:text-white"
-          }`}
-        >
-          {i}
-        </button>
-      );
-    }
-
-    // Next button
-    pages.push(
-      <button
-        key="next"
-        onClick={() => handlePageChange(currentPage + 1)}
-        disabled={currentPage === totalPages}
-        className={`w-10 h-10 rounded-full flex items-center justify-center ${
-          currentPage === totalPages
-            ? "bg-gray-200 text-gray-400 cursor-not-allowed"
-            : "bg-gray-200 text-gray-700 hover:bg-primary hover:text-white"
-        }`}
-      >
-        &gt;
-      </button>
-    );
-
-    return (
-      <div className="flex justify-center my-8">
-        <div className="flex gap-2 items-center">
-          {pages}
-          <span className="text-gray-600 ml-4">
-            صفحة {currentPage} من {totalPages} - {totalItems} نتيجة
-          </span>
-        </div>
-      </div>
-    );
-  };
-
   return (
     <div className="bg-[#F7F7FF]" ref={contactRef}>
       <ToastContainer />
       {filter && (
         <div className="fixed top-0 left-0 w-full h-screen bg-[#23193E]/[.57] backdrop-blur-[20] z-10">
-          <div className="p-4 w-80 h-fit bg-white left-0 top-[3.22rem] absolute rounded-tr-[25px] rounded-br-[25px]">
+          <div className="p-4 w-80 h-fit bg-white left-0 top-[3rem] absolute rounded-tr-[25px] rounded-br-[25px]">
             <div className="flex-between">
               <p>فلترة حسب:</p>
               <Link to="/search" onClick={handelClick}>
@@ -160,24 +119,48 @@ const Search = () => {
               </Link>
             </div>
             <div>
+              {/* نوع */}
               <select className="outline-none mt-4 w-full p-2 bg-white rounded border border-[#B9B5FF]">
                 <option value="">النوع</option>
-                <option value="لابتوب">عقارات</option>
+                <option value="عقارات">عقارات</option>
                 <option value="موبايلات">موبايلات</option>
-                <option value="تابلت">سيارات</option>
+                <option value="سيارات">سيارات</option>
               </select>
-              <select className="outline-none mt-4  w-full p-2 bg-white rounded border border-[#B9B5FF]">
-                <option value="">النوع</option>
-                <option value="لابتوب">عقارات</option>
-                <option value="موبايلات">موبايلات</option>
-                <option value="تابلت">سيارات</option>
+
+              {/* المحافظات */}
+              <select
+                value={governorate}
+                onChange={(e) => setGovernorate(e.target.value)}
+                className="outline-none mt-4 w-full p-2 bg-white rounded border border-[#B9B5FF]"
+              >
+                <option value="">اختر المحافظة</option>
+                {Array.isArray(governorates) &&
+                  governorates.length > 0 &&
+                  governorates.map((gover) => (
+                    <option key={gover._id} value={gover.name}>
+                      {gover.name}
+                    </option>
+                  ))}
               </select>
-              <select className="outline-none mt-4 w-full p-2 bg-white rounded border border-[#B9B5FF]">
-                <option value="">النوع</option>
-                <option value="لابتوب">عقارات</option>
-                <option value="موبايلات">موبايلات</option>
-                <option value="تابلت">سيارات</option>
+
+              {/* المدن */}
+              <select
+                value={city}
+                onChange={(e) => setCity(e.target.value)}
+                className="outline-none mt-4 w-full p-2 bg-white rounded border border-[#B9B5FF]"
+                disabled={!governorate || loadingCity}
+              >
+                <option value="">اختر المدينة</option>
+                {Array.isArray(cities) &&
+                  cities.length > 0 &&
+                  cities.map((cityName, i) => (
+                    <option key={i} value={cityName}>
+                      {cityName}
+                    </option>
+                  ))}
               </select>
+
+              {/* حالة المنتج */}
               <div className="outline-none flex gap-5 my-4">
                 <label className="block cursor-pointer">
                   <input type="radio" value="جديدة" className="ml-2" />
@@ -188,7 +171,17 @@ const Search = () => {
                   مستعملة
                 </label>
               </div>
-              <div className="flex-between">
+
+              {/* الوقت */}
+              <select className="outline-none mt-4 w-full p-2 bg-white rounded border border-[#B9B5FF]">
+                <option value="">الوقت</option>
+                <option value="اليوم">اليوم</option>
+                <option value="هذا الاسبوع">هذا الأسبوع</option>
+                <option value="هذا الشهر">هذا الشهر</option>
+              </select>
+
+              {/* زرار */}
+              <div className="flex-between mt-2">
                 <button className="flex-center rounded-xl py-[.4rem] px-5 border-[1px] text-[#B1ADFF] border-[#B1ADFF]">
                   إعادة تعيين
                 </button>
@@ -204,10 +197,12 @@ const Search = () => {
           </div>
         </div>
       )}
+
+      {/* البحث */}
       <div className="container pt-20">
         <div className="flex items-center gap-4 md:gap-10 flex-col md:flex-row">
-          <div className="flex items-center  md:w-auto">
-            <h1 className="font-normal text-[#2F2E41] text-xl md:text-[1.5rem] leading-9 mb-3 ml-4  md:mb-0">
+          <div className="flex items-center md:w-auto">
+            <h1 className="font-normal text-[#2F2E41] text-xl md:text-[1.5rem] leading-9 mb-3 ml-4 md:mb-0">
               البحث والفلترة
             </h1>
             <div className="flex-between gap-4 w-fit">
@@ -237,7 +232,8 @@ const Search = () => {
             <img src={emptySearch} alt="" className="m-auto w-44 mt-6" />
           </div>
         )}
-        {loading ? (
+
+        {loading && currentPage === 1 ? (
           <div className="flex-center mt-40">
             <Spinner />
           </div>
@@ -263,12 +259,21 @@ const Search = () => {
               <>
                 <div className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 py-10">
                   {searchedProducts.map((product) => (
-                    <Card key={product.id} {...product} />
+                    <Card key={product._id} {...product} />
                   ))}
                 </div>
 
-                {/* Pagination */}
-                {renderPagination()}
+                {/* Infinite scroll loader */}
+                {loading && currentPage > 1 && (
+                  <div className="flex justify-center py-6">
+                    <Spinner />
+                  </div>
+                )}
+                {currentPage >= totalPages && searchedProducts.length > 0 && (
+                  <p className="text-center text-gray-500 my-6">
+                    انتهت النتائج ({totalItems} نتيجة)
+                  </p>
+                )}
               </>
             )}
           </>
@@ -278,7 +283,7 @@ const Search = () => {
   );
 };
 
-// Simple debounce implementation
+// Simple debounce
 function debounce(func, wait) {
   let timeout;
   const debounced = (...args) => {

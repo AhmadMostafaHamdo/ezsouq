@@ -1,5 +1,6 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
+import { toast } from "react-toastify";
 
 export const thunkCities = createAsyncThunk(
   "/user/cities",
@@ -26,8 +27,7 @@ export const thunkCities = createAsyncThunk(
       else if (error.response?.data?.message) {
         errorMessage = error.response.data.message;
       }
-
-      toast.error(errorMessage);
+      if (governorateName != "المحافظة") toast.error(errorMessage);
       return rejectWithValue(errorMessage);
     }
   }

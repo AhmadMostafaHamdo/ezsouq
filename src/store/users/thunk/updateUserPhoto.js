@@ -1,6 +1,7 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import Cookies from "js-cookie";
 import axios from "axios";
+import { toast } from "react-toastify";
 
 export const updateUserPhoto = createAsyncThunk(
   "users/updatePhoto",
@@ -14,8 +15,11 @@ export const updateUserPhoto = createAsyncThunk(
           authorization: `Bearer ${Cookies.get("token")}`,
         },
       });
+      toast.success(res.data?.message);
+      console.log(res.data);
       return res.data;
     } catch (error) {
+      console.log(error);
       let errorMessage = "حدث خطأ غير متوقع";
 
       // Handle network errors (no internet connection)
