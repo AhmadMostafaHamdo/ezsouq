@@ -11,7 +11,7 @@ const Newest = () => {
   const [filters, setFilters] = useState({
     order: "desc",
     city: "",
-    sortBy: "price",
+    sortBy: "time",
     page: 1,
     limit: 8, // بتقدر تكبرها
   });

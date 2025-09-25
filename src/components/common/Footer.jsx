@@ -43,29 +43,42 @@ const Footer = () => {
         <div className="w-[150px] ">
           <ul className="flex flex-col gap-3">
             <li className="mb-[.9rem]">
-              <Link to="" className="font-bold text-[1.2rem]">
-                تواصل معنا
-              </Link>
+              <span className="font-bold text-[1.2rem]">تواصل معنا</span>
             </li>
-            <li className="flex">
-              <img src={emailIcon} className="ml-[10px]" loading="lazy" />
-              <Link
-                to=""
+
+            {/* الإيميل */}
+            <li className="flex items-center">
+              <img
+                src={emailIcon}
+                className="ml-[10px]"
+                loading="lazy"
+                alt="Email"
+              />
+              <a
+                href="mailto:ezsouq@gmail.com"
                 className="font-semibold text-[1.2rem] text-[#D9D8FF]"
               >
                 ezsouq@gmail.com
-              </Link>
+              </a>
             </li>
-            <li className="flex">
-              <img src={phoneIcone} className="ml-[10px]" loading="lazy" />
-              <Link
-                to=""
-                className="font-semibold text-[1.2rem] text-[#D9D8FF] "
+
+            {/* الهاتف */}
+            <li className="flex items-center">
+              <img
+                src={phoneIcone}
+                className="ml-[10px]"
+                loading="lazy"
+                alt="Phone"
+              />
+              <a
+                href="tel:099999999"
+                className="font-semibold text-[1.2rem] text-[#D9D8FF]"
               >
                 099999999
-              </Link>
+              </a>
             </li>
           </ul>
+
           <div className="flex-between mt-3">
             <img src={instagram} loading="lazy" />
             <img src={facebook} loading="lazy" />

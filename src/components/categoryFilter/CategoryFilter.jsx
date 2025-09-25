@@ -13,7 +13,7 @@ const CategoryFilter = ({ category }) => {
     totalPages = 1,
     currentPage = 1,
   } = useSelector((state) => state.productsByCat);
-
+console.log(products)
   const dispatch = useDispatch();
   const [page, setPage] = useState(1);
 
