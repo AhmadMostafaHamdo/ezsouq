@@ -1,33 +1,36 @@
+// searchThunk.js
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 import { toast } from "react-toastify";
 
 export const searchThunk = createAsyncThunk(
   "/user/search_product",
-  async ({ keyword, page = 1 }, { rejectWithValue }) => {
+  async (params, { rejectWithValue }) => {
     try {
-      const res = await axios.get(
-        `user/search_product?keyword=${keyword}&page=${page}`
-      );
-      console.log(res.data)
+      const query = new URLSearchParams();
+
+      // مرر كل الفلاتر بشكل ديناميكي
+      Object.entries(params).forEach(([key, value]) => {
+        if (value !== "" && value !== null && value !== undefined) {
+          query.append(key, value);
+        }
+      });
+
+      const res = await axios.get(`/user/search_product?${query.toString()}`);
+      console.log("🔍 Search Response:", res.data);
       return res.data;
     } catch (error) {
       let errorMessage = "حدث خطأ غير متوقع";
 
-      // Handle network errors
       if (error.message === "Network Error" || error.code === "ERR_NETWORK") {
         errorMessage =
           "لا يوجد اتصال بالإنترنت، يرجى التحقق من الاتصال والمحاولة مرة أخرى";
-      }
-      // Handle timeout errors
-      else if (
+      } else if (
         error.code === "ECONNABORTED" ||
         error.message.includes("timeout")
       ) {
         errorMessage = "انتهت مهلة الاتصال، يرجى المحاولة مرة أخرى";
-      }
-      // Handle server response errors
-      else if (error.response?.data?.message) {
+      } else if (error.response?.data?.message) {
         errorMessage = error.response.data.message;
       }
 

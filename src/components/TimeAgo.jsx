@@ -8,13 +8,16 @@ const formatArabic = (number, unit) => {
   return `${number} ${unit.singular}`;
 };
 
-// Time calculation constants
-const MINUTE = 60;
-const HOUR = 3600;
-const DAY = 86400;
-const MONTH = 2592000; // 30 days
-const YEAR = 31536000; // 365 days
+// Time calculation constants in seconds
+const TIME_UNITS = {
+  MINUTE: 60,
+  HOUR: 3600,
+  DAY: 86400,
+  MONTH: 2592000, // 30 days
+  YEAR: 31536000, // 365 days
+};
 
+// Main component
 function TimeAgo({ postDate }) {
   const [timeAgo, setTimeAgo] = useState("");
 
@@ -23,6 +26,7 @@ function TimeAgo({ postDate }) {
       const now = new Date();
       const postDateObj = new Date(postDate);
 
+      // Handle invalid date
       if (isNaN(postDateObj)) {
         setTimeAgo("تاريخ غير صحيح");
         return;
@@ -30,67 +34,41 @@ function TimeAgo({ postDate }) {
 
       const seconds = Math.floor((now - postDateObj) / 1000);
 
-      if (seconds < 0) {
-        setTimeAgo("الآن");
-        return;
-      }
-
+      // Handle future or very recent posts
       if (seconds < 5) {
         setTimeAgo("الآن");
         return;
       }
 
+      // Arabic time units with singular, dual, plural forms
       const units = [
         {
-          threshold: YEAR,
-          unit: {
-            singular: "سنة",
-            dual: "سنتين",
-            plural: "سنوات",
-          },
+          threshold: TIME_UNITS.YEAR,
+          unit: { singular: "سنة", dual: "سنتين", plural: "سنوات" },
         },
         {
-          threshold: MONTH,
-          unit: {
-            singular: "شهر",
-            dual: "شهرين",
-            plural: "أشهر",
-          },
+          threshold: TIME_UNITS.MONTH,
+          unit: { singular: "شهر", dual: "شهرين", plural: "أشهر" },
         },
         {
-          threshold: DAY,
-          unit: {
-            singular: "يوم",
-            dual: "يومين",
-            plural: "أيام",
-          },
+          threshold: TIME_UNITS.DAY,
+          unit: { singular: "يوم", dual: "يومين", plural: "أيام" },
         },
         {
-          threshold: HOUR,
-          unit: {
-            singular: "ساعة",
-            dual: "ساعتين",
-            plural: "ساعات",
-          },
+          threshold: TIME_UNITS.HOUR,
+          unit: { singular: "ساعة", dual: "ساعتين", plural: "ساعات" },
         },
         {
-          threshold: MINUTE,
-          unit: {
-            singular: "دقيقة",
-            dual: "دقيقتين",
-            plural: "دقائق",
-          },
+          threshold: TIME_UNITS.MINUTE,
+          unit: { singular: "دقيقة", dual: "دقيقتين", plural: "دقائق" },
         },
         {
           threshold: 1,
-          unit: {
-            singular: "ثانية",
-            dual: "ثانيتين",
-            plural: "ثوان",
-          },
+          unit: { singular: "ثانية", dual: "ثانيتين", plural: "ثوان" },
         },
       ];
 
+      // Find the largest unit to display
       for (const { threshold, unit } of units) {
         if (seconds >= threshold) {
           const interval = Math.floor(seconds / threshold);
@@ -102,21 +80,21 @@ function TimeAgo({ postDate }) {
 
     calculateTimeAgo();
 
-    // Only set interval if time is recent (< 1 day)
-    let timer;
-    const now = new Date();
+    // Update every minute if the post is recent (< 1 day)
     const postDateObj = new Date(postDate);
-    const isRecent = now - postDateObj < 86400000; // 1 day in ms
+    const now = new Date();
+    const isRecent = now - postDateObj < TIME_UNITS.DAY * 1000;
 
+    let timer;
     if (isRecent && !isNaN(postDateObj)) {
-      timer = setInterval(calculateTimeAgo, 60000);
+      timer = setInterval(calculateTimeAgo, 60000); // update every minute
     }
 
-    return () => clearInterval(timer);
+    return () => clearInterval(timer); // Cleanup interval on unmount
   }, [postDate]);
 
-  // Handle display based on calculated value
-  if (["الآن", "في المستقبل", "تاريخ غير صحيح"].includes(timeAgo)) {
+  // Display based on calculated time
+  if (["الآن", "تاريخ غير صحيح"].includes(timeAgo)) {
     return <span className="text-red-800">{timeAgo}</span>;
   }
 

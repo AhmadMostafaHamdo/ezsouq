@@ -31,9 +31,20 @@ export const stepOneSchema = z.object({
       .positive("السعر يجب أن يكون أكبر من الصفر")
   ),
   main_photos: z
-    .array(z.instanceof(File))
-    .min(3, "يجب رفغ ثلاث صور")
-    .max(3, "لا تستطيع رفع أكثر من ثلاث صور"),
+    .array(
+      z
+        .instanceof(File)
+        .refine(
+          (file) => file.size <= 5 * 1024 * 1024,
+          "حجم الصورة يجب أن لا يتجاوز 5 ميغابايت"
+        )
+    )
+    .min(3, "يجب رفع ثلاث صور")
+    .max(3, "لا تستطيع رفع أكثر من ثلاث صور")
+    .refine((files) => {
+      const names = files.map((f) => f.name);
+      return new Set(names).size === names.length;
+    }, "لا يمكن رفع نفس الصورة أكثر من مرة"),
 });
 
 /* الخطوة ٢ – سيارات */
@@ -51,13 +62,21 @@ export const stepTwoCarsSchema = z.object({
 
 /* الخطوة ٢ – تقنيات */
 export const stepTwoTecSchema = z.object({
-  name: z.string().nonempty("يجب إدخال اسم الجهاز"),
+  name: z
+    .string()
+    .min(1, "يجب إدخال اسم الجهاز")
+    .max(24, "لا يمكن أن يزيد عن 24 حرفًا"),
   color: z.string().nonempty("يجب إدخال اللون"),
   isnew: z.enum(["true", "false"], {
     errorMap: () => ({ message: "اختر الحالة" }),
   }),
   processor: z.string().nonempty("يجب إدخال نوع المعالج"),
-  memory: z.string().nonempty("يجب إدخال الذاكرة"),
+  memory: z
+    .string()
+    .nonempty("يجب إدخال الذاكرة")
+    .transform((val) => Number(val))
+    .refine((val) => !isNaN(val), "يجب أن يكون رقمًا")
+    .refine((val) => val >= 1, "يجب إدخال الذاكرة"),
   video: z.instanceof(File).optional(),
 });
 

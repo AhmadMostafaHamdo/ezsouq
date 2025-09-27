@@ -21,10 +21,21 @@ const Search = () => {
   const { governorates = [] } = useSelector((state) => state.governorates);
   const { cities = [], loadingCity } = useSelector((state) => state.cities);
 
+  // البحث وفلترة
   const [searchValue, setSearchValue] = useState("");
+  const [filter, setFilter] = useState(false);
+
+  const [category, setCategory] = useState("");
   const [governorate, setGovernorate] = useState("");
   const [city, setCity] = useState("");
-  const [filter, setFilter] = useState(false);
+  const [isNew, setIsNew] = useState(""); // "1" جديدة، "0" مستعملة
+  const [realEstateType, setRealEstateType] = useState("");
+  const [minPrice, setMinPrice] = useState("");
+  const [maxPrice, setMaxPrice] = useState("");
+
+  // sort & order
+  const [sortBy, setSortBy] = useState(""); // price / createdAt
+  const [order, setOrder] = useState(""); // asc / desc
 
   const {
     data: searchedProducts = [],
@@ -34,30 +45,51 @@ const Search = () => {
     totalItems,
   } = useSelector((state) => state.search);
 
-  // Debounced search
   const debouncedSearch = useCallback(
-    debounce((value, page = 1) => {
-      if (value.trim()) {
-        dispatch(searchThunk({ keyword: value, page }));
-      }
+    debounce((params) => {
+      dispatch(searchThunk(params));
     }, 500),
     [dispatch]
   );
 
-  // Scroll to top on mount
   useEffect(() => {
     contactRef.current?.scrollIntoView({ behavior: "smooth" });
-    dispatch(thunkGovernorates()); // تحميل المحافظات عند الفتح
+    dispatch(thunkGovernorates());
   }, [dispatch]);
 
-  // Reset & search when searchValue changes
+  // البحث التلقائي عند تغيير قيمة البحث
   useEffect(() => {
     if (searchValue.trim()) {
       dispatch(setCurrentPage(1));
-      debouncedSearch(searchValue, 1);
+      debouncedSearch({
+        keyword: searchValue,
+        page: 1,
+        category,
+        governorate,
+        city,
+        isnew: isNew,
+        real_estate_type: realEstateType,
+        minPrice,
+        maxPrice,
+        sortBy,
+        order,
+      });
     }
     return () => debouncedSearch.cancel();
-  }, [searchValue, debouncedSearch, dispatch]);
+  }, [
+    searchValue,
+    debouncedSearch,
+    dispatch,
+    category,
+    governorate,
+    city,
+    isNew,
+    realEstateType,
+    minPrice,
+    maxPrice,
+    sortBy,
+    order,
+  ]);
 
   // Infinite scroll
   useEffect(() => {
@@ -68,42 +100,74 @@ const Search = () => {
         !loading &&
         currentPage < totalPages
       ) {
-        dispatch(setCurrentPage(currentPage + 1));
-        debouncedSearch(searchValue, currentPage + 1);
+        const nextPage = currentPage + 1;
+        dispatch(setCurrentPage(nextPage));
+        dispatch(
+          searchThunk({
+            keyword: searchValue,
+            page: nextPage,
+            category,
+            governorate,
+            city,
+            isnew: isNew,
+            real_estate_type: realEstateType,
+            minPrice,
+            maxPrice,
+            sortBy,
+            order,
+          })
+        );
       }
     };
-
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, [
     dispatch,
     searchValue,
+    category,
+    governorate,
+    city,
+    isNew,
+    realEstateType,
+    minPrice,
+    maxPrice,
+    sortBy,
+    order,
     currentPage,
     totalPages,
     loading,
-    debouncedSearch,
   ]);
 
-  // عند تغيير المحافظة → استدعاء المدن
   useEffect(() => {
     if (governorate) {
       dispatch(thunkCities(governorate));
-      setCity(""); // إعادة تعيين المدينة
+      setCity("");
     }
   }, [dispatch, governorate]);
 
-  const handleInputChange = (e) => {
-    setSearchValue(e.target.value);
-  };
-
+  const handleInputChange = (e) => setSearchValue(e.target.value);
   const hasSearchResults =
     searchedProducts.length > 0 && searchValue.trim() !== "";
-  const handelClick = () => {
-    setFilter(!filter);
-  };
+  const handelClick = () => setFilter(!filter);
 
   const handelSearchFilter = () => {
     setFilter(false);
+    dispatch(setCurrentPage(1));
+    dispatch(
+      searchThunk({
+        keyword: searchValue,
+        page: 1,
+        category,
+        governorate,
+        city,
+        isnew: isNew,
+        real_estate_type: realEstateType,
+        minPrice,
+        maxPrice,
+        sortBy,
+        order,
+      })
+    );
   };
 
   return (
@@ -119,8 +183,12 @@ const Search = () => {
               </Link>
             </div>
             <div>
-              {/* نوع */}
-              <select className="outline-none mt-4 w-full p-2 bg-white rounded border border-[#B9B5FF]">
+              {/* النوع */}
+              <select
+                value={category}
+                onChange={(e) => setCategory(e.target.value)}
+                className="outline-none mt-4 w-full p-2 bg-white rounded border border-[#B9B5FF]"
+              >
                 <option value="">النوع</option>
                 <option value="عقارات">عقارات</option>
                 <option value="موبايلات">موبايلات</option>
@@ -134,13 +202,11 @@ const Search = () => {
                 className="outline-none mt-4 w-full p-2 bg-white rounded border border-[#B9B5FF]"
               >
                 <option value="">اختر المحافظة</option>
-                {Array.isArray(governorates) &&
-                  governorates.length > 0 &&
-                  governorates.map((gover) => (
-                    <option key={gover._id} value={gover.name}>
-                      {gover.name}
-                    </option>
-                  ))}
+                {governorates.map((gover) => (
+                  <option key={gover._id} value={gover.name}>
+                    {gover.name}
+                  </option>
+                ))}
               </select>
 
               {/* المدن */}
@@ -151,38 +217,73 @@ const Search = () => {
                 disabled={!governorate || loadingCity}
               >
                 <option value="">اختر المدينة</option>
-                {Array.isArray(cities) &&
-                  cities.length > 0 &&
-                  cities.map((cityName, i) => (
-                    <option key={i} value={cityName}>
-                      {cityName}
-                    </option>
-                  ))}
+                {cities.map((cityName, i) => (
+                  <option key={i} value={cityName}>
+                    {cityName}
+                  </option>
+                ))}
+              </select>
+              {/* نوع العقار */}
+              {category === "عقارات" && (
+                <select
+                  value={realEstateType}
+                  onChange={(e) => setRealEstateType(e.target.value)}
+                  className="outline-none mt-4 w-full p-2 bg-white rounded border border-[#B9B5FF]"
+                >
+                  <option value="">نوع العقار</option>
+                  <option value="شقة">شقة</option>
+                  <option value="بيت">بيت</option>
+                  <option value="أرض">أرض</option>
+                </select>
+              )}
+
+              {/* الترتيب */}
+              <select
+                value={sortBy && order ? `${sortBy}_${order}` : ""}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  if (value === "price_asc") {
+                    setSortBy("price");
+                    setOrder("asc");
+                  } else if (value === "price_desc") {
+                    setSortBy("price");
+                    setOrder("desc");
+                  } else if (value === "createdAt_asc") {
+                    setSortBy("createdAt");
+                    setOrder("asc");
+                  } else if (value === "createdAt_desc") {
+                    setSortBy("createdAt");
+                    setOrder("desc");
+                  } else {
+                    setSortBy("");
+                    setOrder("");
+                  }
+                }}
+                className="outline-none mt-4 w-full p-2 bg-white rounded border border-[#B9B5FF]"
+              >
+                <option value="">ترتيب حسب</option>
+                <option value="price_asc">السعر: من الأرخص للأغلى</option>
+                <option value="price_desc">السعر: من الأغلى للأرخص</option>
+                <option value="createdAt_asc">الأقدم</option>
+                <option value="createdAt_desc">الأحدث</option>
               </select>
 
-              {/* حالة المنتج */}
-              <div className="outline-none flex gap-5 my-4">
-                <label className="block cursor-pointer">
-                  <input type="radio" value="جديدة" className="ml-2" />
-                  جديدة
-                </label>
-                <label className="block cursor-pointer">
-                  <input type="radio" value="مستعملة" className="ml-2" />
-                  مستعملة
-                </label>
-              </div>
-
-              {/* الوقت */}
-              <select className="outline-none mt-4 w-full p-2 bg-white rounded border border-[#B9B5FF]">
-                <option value="">الوقت</option>
-                <option value="اليوم">اليوم</option>
-                <option value="هذا الاسبوع">هذا الأسبوع</option>
-                <option value="هذا الشهر">هذا الشهر</option>
-              </select>
-
-              {/* زرار */}
+              {/* الأزرار */}
               <div className="flex-between mt-2">
-                <button className="flex-center rounded-xl py-[.4rem] px-5 border-[1px] text-[#B1ADFF] border-[#B1ADFF]">
+                <button
+                  className="flex-center rounded-xl py-[.4rem] px-5 border-[1px] text-[#B1ADFF] border-[#B1ADFF]"
+                  onClick={() => {
+                    setCategory("");
+                    setGovernorate("");
+                    setCity("");
+                    setIsNew("");
+                    setRealEstateType("");
+                    setMinPrice("");
+                    setMaxPrice("");
+                    setSortBy("");
+                    setOrder("");
+                  }}
+                >
                   إعادة تعيين
                 </button>
                 <button
@@ -198,7 +299,7 @@ const Search = () => {
         </div>
       )}
 
-      {/* البحث */}
+      {/* عرض النتائج */}
       <div className="container pt-20">
         <div className="flex items-center gap-4 md:gap-10 flex-col md:flex-row">
           <div className="flex items-center md:w-auto">
@@ -263,7 +364,6 @@ const Search = () => {
                   ))}
                 </div>
 
-                {/* Infinite scroll loader */}
                 {loading && currentPage > 1 && (
                   <div className="flex justify-center py-6">
                     <Spinner />
@@ -283,7 +383,7 @@ const Search = () => {
   );
 };
 
-// Simple debounce
+// Debounce helper
 function debounce(func, wait) {
   let timeout;
   const debounced = (...args) => {

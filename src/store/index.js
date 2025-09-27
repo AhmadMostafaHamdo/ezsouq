@@ -66,10 +66,6 @@ const persistCommits = {
   key: "commits",
   storage,
 };
-const persistReport = {
-  key: "report",
-  storage,
-};
 const persistViews = {
   key: "views",
   storage,
@@ -95,9 +91,9 @@ const rootReducer = combineReducers({
   users: persistReducer(persistUsers, users),
   wishlist: persistReducer(persistWishlist, wishlist),
   productsByCat: persistReducer(persistProductsByCat, productsByCat),
-  rating:ratingReducer,
+  rating: ratingReducer,
   comments: persistReducer(persistCommits, comments),
-  report: persistReducer(persistReport, report),
+  report,
   views: persistReducer(persistViews, views),
   category: persistReducer(persistCategory, category),
   statistic: persistReducer(persistStatistic, statistic),

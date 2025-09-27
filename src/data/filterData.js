@@ -17,7 +17,7 @@ export const ulLinksLogin = [
   { name: "سيارات", link: "/cars" },
   { name: "عقارات", link: "/real-estate" },
   { name: "موبايلات", link: "/tech" },
-  { name: "نشر إعلان", link: "/create-offer" },
+  { name: "نشر إعلان", link: "/create-offer" }, 
 ];
 export const ulLinks = [
   { name: "الرئيسية", link: "" },
@@ -28,11 +28,11 @@ export const ulLinks = [
   { name: "سياسة الخصوصية", link: "/privacy-policy" },
 ];
 export const ulLinksFooter = [
-  { name: "الرئيسية", link: "" },
-  { name: "عنا", link: "" },
+  { name: "الرئيسية", link: "/" },
+  { name: "عنا", link: "/about-us" },
   { name: "نشر إعلان", link: "/create-offer" },
-  { name: "إعلاناتي", link: "" },
-  { name: "اتصل بنا", link: "/contact-us" },
+  { name: "إعلاناتي", link: "/profile" },
+  { name: "تواصل معنا برسالة", link: "/contact-us" },
   { name: "سياسة الخصوصية", link: "/privacy-policy" },
 ];
 export const sortOptions = [

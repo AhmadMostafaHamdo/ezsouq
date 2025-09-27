@@ -13,12 +13,15 @@ import { setCurrentPage } from "../../store/search/searchSlice";
 import Card from "../website/Card";
 import Spinner from "../../feedback/loading/Spinner";
 
-// Simple debounce
+/* =========================================
+   Simple debounce function
+   Delays function execution by wait ms
+========================================= */
 function debounce(func, wait) {
   let timeout;
   const debounced = (...args) => {
     clearTimeout(timeout);
-    timeout = setTimeout(() => func.apply(this, args), wait);
+    timeout = setTimeout(() => func(...args), wait);
   };
   debounced.cancel = () => clearTimeout(timeout);
   return debounced;
@@ -32,12 +35,12 @@ const Header = () => {
   const isScrolled = useScrolled(10);
   const dispatch = useDispatch();
 
-  // جلب بيانات البحث من Redux
+  // Redux search state
   const { data: searchedProducts = [], loading } = useSelector(
     (state) => state.search
   );
 
-  // Debounced search
+  // Debounced search handler
   const debouncedSearch = useCallback(
     debounce((val) => {
       if (val.trim()) {
@@ -53,9 +56,7 @@ const Header = () => {
     debouncedSearch(e.target.value);
   };
 
-  const handleClearSearch = () => {
-    setSearchValue("");
-  };
+  const handleClearSearch = () => setSearchValue("");
 
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
   const toggleSearch = () => setIsSearchVisible(!isSearchVisible);
@@ -76,7 +77,7 @@ const Header = () => {
           <button
             onClick={toggleSidebar}
             className="flex-center w-8 h-8 lg:hidden"
-            aria-label="Toggle menu"
+            aria-label={isSidebarOpen ? "Close menu" : "Open menu"}
           >
             <img
               src={isSidebarOpen ? closeIcon : menuIcon}
@@ -105,6 +106,7 @@ const Header = () => {
                 onChange={handleChange}
                 placeholder="بحث..."
                 className="w-full p-2 rounded-md bg-white text-black"
+                aria-label="Search input"
               />
             </div>
           )}
@@ -130,6 +132,7 @@ const Header = () => {
               onChange={handleChange}
               placeholder="بحث..."
               className="w-full p-2 rounded-md bg-[#D7D5FF] border-none outline-none text-black"
+              aria-label="Search input"
             />
           </div>
 
@@ -160,19 +163,20 @@ const Header = () => {
         </div>
       </header>
 
-      {/* نتائج البحث فوق الـ Home */}
+      {/* Search Results */}
       {searchValue && (
         <div className="absolute top-[4rem] left-0 w-full bg-white z-10 shadow-lg p-6 min-h-[200px]">
-          {/* زر إزالة صفحة البحث */}
+          {/* Clear Search Button */}
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-lg font-bold text-gray-700">
               نتائج البحث عن: {searchValue}
             </h2>
             <button
               onClick={handleClearSearch}
-              className="text-red font-bold text-lg  hover:underline "
+              className="text-red font-bold text-lg hover:underline"
+              aria-label="Clear search"
             >
-              ✖ 
+              ✖
             </button>
           </div>
 

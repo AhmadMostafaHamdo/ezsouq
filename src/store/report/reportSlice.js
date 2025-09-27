@@ -11,7 +11,8 @@ const reportSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder.addCase(thunkReport.pending, (state) => {
-      (state.loading = true), (state.error = null);
+      state.loading = true;
+      state.error = null;
     });
     builder.addCase(thunkReport.fulfilled, (state, action) => {
       state.error = null;

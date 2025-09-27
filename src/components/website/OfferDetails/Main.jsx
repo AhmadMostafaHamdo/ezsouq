@@ -1,5 +1,8 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useMemo } from "react";
+import { Link, useParams } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 
+// Images
 import iconProfile from "../../../assets/images/profileIcon.svg";
 import phoneIcon from "../../../assets/images/phoneIcon.svg";
 import whatsIcon from "../../../assets/images/whatsIcon.svg";
@@ -8,18 +11,18 @@ import personalImg from "../../../assets/images/personal.svg";
 import start from "../../../assets/images/start.svg";
 import leftArrow from "../../../assets/images/leftArrow.svg";
 import rightArrow from "../../../assets/images/rightArrow.svg";
-import { Link, useParams } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { productThunkById } from "../../../store/product/thunk/productThunkById";
 import car from "../../../assets/images/carIconDetails.svg";
 import location from "../../../assets/images/locationIcondDetails.svg";
 import time from "../../../assets/images/timeIconDetails.svg";
+
+// Components & Thunks
 import TimeAgo from "../../TimeAgo";
 import Spinner from "../../../feedback/loading/Spinner";
 import ThumbnailImage from "../../../feedback/loading/ThumbnailImage";
+import Heading from "../../common/Heading";
+import { productThunkById } from "../../../store/product/thunk/productThunkById";
 import { userThunkById } from "../../../store/users/thunk/userThunkById";
 import { viewsThunk } from "../../../store/views/thunk/thunkViews";
-import Heading from "../../common/Heading";
 
 const Main = () => {
   const { product, loading } = useSelector((state) => state.products);
@@ -29,38 +32,33 @@ const Main = () => {
   const { id } = useParams();
   const dispatch = useDispatch();
   const imgRef = useRef(null);
-  // ✅ تحميل المنتج
+
+  // Fetch product by ID
   useEffect(() => {
     if (id) dispatch(productThunkById(id));
   }, [dispatch, id]);
 
-  // ✅ تسجيل المشاهدات
+  // Register product views
   useEffect(() => {
     if (id) dispatch(viewsThunk(id));
   }, [dispatch, id]);
 
-  // ✅ تحميل بيانات الناشر
+  // Fetch publisher info when product is loaded
   useEffect(() => {
     if (product?.Owner?._id) {
       dispatch(userThunkById(product.Owner._id));
     }
-  }, [dispatch, product]);
-  // ✅ تعيين الصورة الأساسية والصغيرة الأولى تلقائيًا عند تحميل المنتج
+  }, [dispatch, product?.Owner?._id]);
+
+  // Set first main image as selected image
   useEffect(() => {
     if (product?.main_photos?.length) {
-      setSelectedImage(product.main_photos[0]); // أول صورة رئيسية
-      setIsImageLoaded(false); // إعادة تعيين حالة التحميل
+      setSelectedImage(product.main_photos[0]);
+      setIsImageLoaded(false);
     }
   }, [product]);
 
-  // ✅ تعيين الصورة الأساسية
-  useEffect(() => {
-    if (product?.main_photos?.length && !selectedImage) {
-      setSelectedImage(product.main_photos[0]);
-    }
-  }, [product, selectedImage]);
-
-  // ✅ إعادة تعيين حالة التحميل عند تغيير الصورة
+  // Reset image loaded state when selected image changes
   useEffect(() => {
     setIsImageLoaded(false);
     if (imgRef.current?.complete) {
@@ -68,46 +66,44 @@ const Main = () => {
     }
   }, [selectedImage]);
 
-  const handelSelectImage = (img) => {
-    setSelectedImage(img);
-  };
+  // Cleanup selected image on unmount
+  useEffect(() => {
+    return () => setSelectedImage("");
+  }, []);
 
-  const handleImageLoad = () => {
-    setIsImageLoaded(true);
-  };
+  const mainPhotos = useMemo(() => product?.main_photos || [], [product]);
 
+  // Handle image selection from thumbnails
+  const handleSelectImage = (img) => setSelectedImage(img);
+
+  // Handle main image load
+  const handleImageLoad = () => setIsImageLoaded(true);
+
+  // Navigate to previous image
   const previousImg = () => {
-    if (!product?.main_photos?.length) return;
-    const currentIndex = product.main_photos.indexOf(selectedImage);
-    if (currentIndex === -1) return;
+    if (!mainPhotos.length) return;
+    const currentIndex = mainPhotos.indexOf(selectedImage);
     const previousIndex =
-      (currentIndex - 1 + product.main_photos.length) %
-      product.main_photos.length;
-    setSelectedImage(product.main_photos[previousIndex]);
+      (currentIndex - 1 + mainPhotos.length) % mainPhotos.length;
+    setSelectedImage(mainPhotos[previousIndex]);
   };
 
+  // Navigate to next image
   const nextImg = () => {
-    if (!product?.main_photos?.length) return;
-    const currentIndex = product.main_photos.indexOf(selectedImage);
-    if (currentIndex === -1) return;
-    const nextIndex = (currentIndex + 1) % product.main_photos.length;
-    setSelectedImage(product.main_photos[nextIndex]);
+    if (!mainPhotos.length) return;
+    const currentIndex = mainPhotos.indexOf(selectedImage);
+    const nextIndex = (currentIndex + 1) % mainPhotos.length;
+    setSelectedImage(mainPhotos[nextIndex]);
   };
 
-  if (!product)
+  if (!product) {
     return (
       <div className="flex justify-center items-center h-screen">
         <Spinner className="w-12 h-12" />
       </div>
     );
+  }
 
-  const mainPhotos = product?.main_photos || [];
-  useEffect(() => {
-    return () => {
-      setSelectedImage("");
-    };
-  }, []);
-  console.log(product);
   return (
     <div>
       {loading ? (
@@ -115,11 +111,15 @@ const Main = () => {
           <Spinner />
         </div>
       ) : (
-        <div className=" bg-[#F7F7FF] md:pt-2 overflow-x-hidden h-fit">
+        <div className="bg-[#F7F7FF] md:pt-2 overflow-x-hidden h-fit">
+          {/* Heading */}
           <div className="mt-[4rem]">
             <Heading title="الرجوع" />
           </div>
+
+          {/* Main Content */}
           <div className="container items-center md:items-start flex flex-col md:flex-row md:gap-8 lg:gap-11 -mt-5">
+            {/* Left Column - Images */}
             <div className="flex flex-col items-center w-fit gap-6 md:mt-5">
               <div className="w-[100vw] h-[30vh] md:h-[53vh] md:w-[50vh] lg:w-[60vh] md:rounded-2xl relative bg-[#F7F7FF]">
                 {selectedImage && (
@@ -134,7 +134,7 @@ const Main = () => {
                     <img
                       ref={imgRef}
                       src={`https://api.ezsouq.store/uploads/images/${selectedImage}`}
-                      alt="Main product"
+                      alt="الصورة الرئيسية للمنتج"
                       className={`md:h-full h-full w-full object-contain md:rounded-2xl bg-[#F7F7FF] ${
                         isImageLoaded ? "opacity-100" : "opacity-0"
                       } transition-opacity duration-300`}
@@ -145,24 +145,26 @@ const Main = () => {
                   </>
                 )}
 
+                {/* Navigation Arrows */}
                 {mainPhotos.length > 1 && (
                   <div className="absolute flex justify-between w-[92%] left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2">
                     <button
                       className="w-8 h-8 bg-[#F7F7FF] backdrop-blur flex items-center justify-center rounded-md shadow-md"
                       onClick={previousImg}
                     >
-                      <img src={rightArrow} alt="Previous" loading="lazy" />
+                      <img src={rightArrow} alt="السابق" loading="lazy" />
                     </button>
                     <button
                       className="w-8 h-8 bg-[#F7F7FF] backdrop-blur flex items-center justify-center rounded-md shadow-md"
                       onClick={nextImg}
                     >
-                      <img src={leftArrow} alt="Next" loading="lazy" />
+                      <img src={leftArrow} alt="التالي" loading="lazy" />
                     </button>
                   </div>
                 )}
               </div>
 
+              {/* Thumbnails */}
               {mainPhotos.length > 1 && (
                 <div className="hidden md:flex gap-[.3rem]">
                   {mainPhotos.map((img, index) => (
@@ -170,14 +172,14 @@ const Main = () => {
                       key={index}
                       src={img}
                       isSelected={selectedImage === img}
-                      onClick={() => handelSelectImage(img)}
+                      onClick={() => handleSelectImage(img)}
                     />
                   ))}
                 </div>
               )}
             </div>
 
-            {/* Product Details Section */}
+            {/* Right Column - Product Details */}
             <div className="w-full md:w-[70vw] pt-4 md:pt-2 pb-1">
               <div className="flex justify-between md:block">
                 <div className="md:flex md:justify-between">
@@ -186,7 +188,7 @@ const Main = () => {
                   </h1>
                   <img
                     src={heartDetails}
-                    alt="Favorite"
+                    alt="مفضلة"
                     className="hidden md:inline w-8 h-8 lg:w-9 lg:h-9"
                   />
                 </div>
@@ -195,21 +197,22 @@ const Main = () => {
                 </p>
               </div>
 
+              {/* Product Info */}
               <ul className="my-2">
                 <li className="flex gap-2 items-center mb-2 font-normal text-[#716D97]">
-                  <img src={car} alt="Car icon" />
+                  <img src={car} alt="رمز السيارة" />
                   <span className="text-[1rem]">{product?.name}</span>
                 </li>
                 <li className="flex gap-2 items-center mb-2 font-normal text-[#716D97]">
-                  <img src={location} alt="Location icon" />
+                  <img src={location} alt="رمز الموقع" />
                   <span className="text-[1rem]">
                     {product?.Governorate_name} - {product?.city}
                   </span>
                 </li>
                 <li className="flex gap-2 items-center mb-2 font-normal text-[#716D97]">
-                  <img src={time} alt="Time icon" loading="lazy" />
+                  <img src={time} alt="رمز الوقت" loading="lazy" />
                   <span className="text-[1rem]">
-                    {<TimeAgo postDate={product?.createdAt} />}
+                    <TimeAgo postDate={product?.createdAt} />
                   </span>
                 </li>
 
@@ -221,21 +224,23 @@ const Main = () => {
                         key={index}
                         src={img}
                         isSelected={selectedImage === img}
-                        onClick={() => handelSelectImage(img)}
+                        onClick={() => handleSelectImage(img)}
                       />
                     ))}
                   </div>
                 )}
               </ul>
 
+              {/* Product Description */}
               <p className="text-[#827FB2] text-[.9rem]">
-                {product.Category_name == "موبايلات" && (
+                {/* Conditional Attributes */}
+                {product.Category_name === "موبايلات" && (
                   <div className="flex">
                     {product?.processor && (
                       <div>
                         المعالج :
                         <span className="text-primary font-bold mx-1">
-                          {product?.processor}
+                          {product.processor}
                         </span>
                       </div>
                     )}
@@ -243,41 +248,39 @@ const Main = () => {
                       <div>
                         , اللون :
                         <span className="text-primary font-bold mx-1">
-                          {product?.color}
+                          {product.color}
                         </span>
                       </div>
                     )}
-                    <br />
                   </div>
                 )}
-                {product.Category_name == "عقارات" && (
+                {product.Category_name === "عقارات" && (
                   <div className="flex">
                     {product?.real_estate_type && (
                       <div>
                         نوع العقار :
                         <span className="text-primary font-bold mx-1">
-                          {product?.real_estate_type}
+                          {product.real_estate_type}
                         </span>
                       </div>
                     )}
-                    {product?.for_sale && (
+                    {product?.for_sale !== undefined && (
                       <div>
                         , العقار :
                         <span className="text-primary font-bold mx-1">
-                          {product?.for_sale ? "للبيع" : "للأجار"}
+                          {product.for_sale ? "للبيع" : "للأجار"}
                         </span>
                       </div>
                     )}
-                    <br />
                   </div>
                 )}
-                {product.Category_name == "سيارات" && (
+                {product.Category_name === "سيارات" && (
                   <div className="flex">
                     {product?.shape && (
                       <div>
                         النوع :
                         <span className="text-primary font-bold mx-1">
-                          {product?.shape}
+                          {product.shape}
                         </span>
                       </div>
                     )}
@@ -285,17 +288,19 @@ const Main = () => {
                       <div>
                         , اللون :
                         <span className="text-primary font-bold mx-1">
-                          product?.color
+                          {product.color}
                         </span>
                       </div>
                     )}
-                    <br />
                   </div>
                 )}
+                <br />
                 {product.description}
               </p>
+
               <hr className="text-[#D9D9D9] mt-3" />
 
+              {/* Publisher Info */}
               <div>
                 <h3 className="text-[#3F3D56] text-[1.1rem] my-2 font-normal">
                   معلومات الناشر
@@ -304,25 +309,25 @@ const Main = () => {
                   <div>
                     <img
                       src={personalImg}
-                      alt="Publisher"
+                      alt="صورة الناشر"
                       className="w-16 h-16 lg:w-24 lg:h-24"
                     />
                   </div>
                   <div>
                     <li className="flex items-center gap-2 mb-2">
-                      <img src={iconProfile} alt="" />
+                      <img src={iconProfile} alt="رمز الملف الشخصي" />
                       <span className="font-normal text-[.7rem] lg:text-[.88rem] text-[#716D97]">
                         {user?.name}
                       </span>
                     </li>
                     <li className="flex items-center gap-2 mb-2">
-                      <img src={phoneIcon} alt="" />
+                      <img src={phoneIcon} alt="رمز البريد الإلكتروني" />
                       <span className="font-normal text-[.7rem] lg:text-[.88rem] text-[#716D97]">
                         {user?.email}
                       </span>
                     </li>
                     <li className="flex items-center gap-2 mb-2">
-                      <img src={whatsIcon} alt="" />
+                      <img src={whatsIcon} alt="رمز الواتس آب" />
                       <span className="font-normal text-[.7rem] lg:text-[.88rem] text-[#716D97]">
                         {user?.whats_app}
                       </span>
@@ -330,7 +335,7 @@ const Main = () => {
                   </div>
                   <div className="flex flex-col items-end gap-4">
                     <p className="flex items-center justify-end mb-6">
-                      <img src={start} alt="Rating" className="w-4 h-4" />
+                      <img src={start} alt="تقييم" className="w-4 h-4" />
                       <span className="mr-1 font-normal text-[.9rem] text-[#1D2232]">
                         {user?.averageRating
                           ? user.averageRating.toFixed(1)
@@ -348,6 +353,8 @@ const Main = () => {
               </div>
             </div>
           </div>
+
+          {/* Report Link */}
           <Link to={`/offer-details/${id}/report`}>
             <p className="text-center text-[12px] font-normal text-[#7E7E7E] pt-5 pb-10 underline cursor-pointer">
               ابلاغ عن هذا الإعلان

@@ -1,30 +1,29 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useParams } from "react-router";
+import { ToastContainer } from "react-toastify";
+
 import ImgProfileWithButtons from "./ImgProfileWithButtons";
+import Spinner from "../../feedback/loading/Spinner";
+
 import homeInfo from "../../assets/images/homeInfo.svg";
 import infoWork from "../../assets/images/infoWork.svg";
 import infoSite from "../../assets/images/infoSite.svg";
 import infoWhats from "../../assets/images/infoWhats.svg";
 import infoMobile from "../../assets/images/infoMobile.svg";
-import updatedIcon from "../../assets/images/updatedIcon.svg";
-import { updateUser } from "../../store/users/thunk/updateUser";
-import useUserId from "../../hooks/useUserId";
-import { userThunkById } from "../../store/users/thunk/userThunkById";
-import { ToastContainer } from "react-toastify";
-import Spinner from "../../feedback/loading/Spinner";
-import { useParams } from "react-router";
 import infoEmail from "../../assets/images/infoEmail.svg";
+import updatedIcon from "../../assets/images/updatedIcon.svg";
+
+import { updateUser } from "../../store/users/thunk/updateUser";
+import { userThunkById } from "../../store/users/thunk/userThunkById";
+import useUserId from "../../hooks/useUserId";
 
 const ContactInfo = () => {
   const dispatch = useDispatch();
-  const id = useUserId();
-  const params = useParams();
-  const { user, loadingUpdateUser } = useSelector((state) => state.users);
+  const myId = useUserId(); // ID of current logged-in user
+  const { id: paramId } = useParams();
 
-  // تحديث بيانات المستخدم من السيرفر
-  useEffect(() => {
-    dispatch(userThunkById(id));
-  }, [dispatch, id]);
+  const { user, loadingUpdateUser } = useSelector((state) => state.users);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -34,20 +33,24 @@ const ContactInfo = () => {
     phone: "",
     whats_app: "",
   });
-
   const [editableField, setEditableField] = useState(null);
   const [isChanged, setIsChanged] = useState(false);
 
-  // تحديث الفورم بعد جلب بيانات المستخدم
+  // Fetch user data
+  useEffect(() => {
+    dispatch(userThunkById(myId));
+  }, [dispatch, myId]);
+
+  // Update form data when user changes
   useEffect(() => {
     if (user) {
       setFormData({
-        name: user?.name || "",
-        workplace: user?.workplace || "",
-        work_type: user?.work_type || "",
-        Location: user?.Location || "",
-        phone: user?.phone || "",
-        whats_app: user?.whats_app || "",
+        name: user.name || "",
+        workplace: user.workplace || "",
+        work_type: user.work_type || "",
+        Location: user.Location || "",
+        phone: user.phone || "",
+        whats_app: user.whats_app || "",
       });
       setIsChanged(false);
     }
@@ -63,15 +66,10 @@ const ContactInfo = () => {
     setIsChanged(changed);
   };
 
-  const handleEditClick = (field) => {
-    setEditableField(field);
-  };
+  const handleEditClick = (field) => setEditableField(field);
+  const handleBlur = () => setEditableField(null);
 
-  const handleBlur = () => {
-    setEditableField(null);
-  };
-
-  const handelSubmit = (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     if (isChanged) {
       dispatch(updateUser(formData));
@@ -79,7 +77,7 @@ const ContactInfo = () => {
     }
   };
 
-  // بيانات العرض للآخرين مع التحقق من القيم الفارغة
+  // Data to display for other users
   const contactInfo = [
     {
       img: homeInfo,
@@ -93,11 +91,7 @@ const ContactInfo = () => {
       title: "نوع العمل",
       desc: user?.work_type || "لم يتم تحديده",
     },
-    {
-      img: infoSite,
-      title: "مكان التواجد",
-      desc: "دمشق ، المزة",
-    },
+    { img: infoSite, title: "مكان التواجد", desc: "دمشق ، المزة" },
     {
       img: infoEmail,
       title: "البريد الالكتروني",
@@ -120,10 +114,10 @@ const ContactInfo = () => {
       <ToastContainer />
       <ImgProfileWithButtons />
 
-      {id == params.id ? (
-        // صفحة الملف الشخصي للمستخدم نفسه
+      {myId == paramId ? (
+        // Current user's profile
         <div className="flex flex-col mt-3 gap-3 items-center font-normal">
-          <form onSubmit={handelSubmit}>
+          <form onSubmit={handleSubmit}>
             {[
               { field: "name", icon: null, placeholder: "الاسم" },
               { field: "workplace", icon: infoSite, placeholder: "مكان العمل" },
@@ -135,8 +129,8 @@ const ContactInfo = () => {
                 icon: infoWhats,
                 placeholder: "رقم الواتس",
               },
-            ].map((item, index) => (
-              <div key={index} className="relative">
+            ].map((item, idx) => (
+              <div key={idx} className="relative">
                 <input
                   type="text"
                   disabled={editableField !== item.field}
@@ -153,21 +147,22 @@ const ContactInfo = () => {
                 {item.icon && (
                   <img
                     src={item.icon}
-                    alt=""
+                    alt={`أيقونة ${item.placeholder}`}
                     width={16}
                     className="absolute top-1/2 -translate-y-1/2 right-2"
                   />
                 )}
                 <img
-                  onClick={() => handleEditClick(item.field)}
                   src={updatedIcon}
-                  alt="edit"
+                  alt="تعديل"
                   className="absolute top-1/2 -translate-y-1/2 left-2 cursor-pointer"
+                  onClick={() => handleEditClick(item.field)}
                 />
               </div>
             ))}
 
             <button
+              type="submit"
               disabled={!isChanged || loadingUpdateUser}
               className={`w-full p-3 rounded-md mt-4 font-medium transition ${
                 !isChanged
@@ -180,14 +175,18 @@ const ContactInfo = () => {
           </form>
         </div>
       ) : (
-        // صفحة عرض الملف الشخصي للآخرين
+        // Other user's profile view
         <div className="flex-center md:justify-between flex-wrap gap-7 w-[80vw] md:w-[66vw] m-auto pt-3">
-          {contactInfo.map((info, index) => (
+          {contactInfo.map((info, idx) => (
             <div
-              key={index}
+              key={idx}
               className="flex flex-col justify-center gap-2 rounded-lg items-center w-3/4 md:w-56 h-[30vh] p-4 shadow-[0px_15px_32.8px_0px_#23193E1A]"
             >
-              <img src={info.img} alt="" className="w-8 h-8" />
+              <img
+                src={info.img}
+                alt={`أيقونة ${info.title}`}
+                className="w-8 h-8"
+              />
               <p className="text-[1.1rem] text-primary font-normal">
                 {info.title}
               </p>

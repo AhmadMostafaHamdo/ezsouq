@@ -28,6 +28,7 @@ const Report = lazy(() => import("../pages/Report"));
 const Commits = lazy(() => import("../pages/Commits"));
 const Newest = lazy(() => import("../pages/Newest"));
 const Rating = lazy(() => import("../components/website/Rating/Rating"));
+const We = lazy(() => import("../pages/AboutUs"));
 const Dashoard = lazy(() => import("../pages/dashboard/Dashboard"));
 const Setting = lazy(() => import("../pages/dashboard/Setting"));
 const RatingDashboard = lazy(() => import("../pages/dashboard/Rating"));
@@ -151,6 +152,14 @@ const router = createBrowserRouter([
         element: (
           <SuspenseFallback>
             <PrivacyPolicy />
+          </SuspenseFallback>
+        ),
+      },
+      {
+        path: "/about-us",
+        element: (
+          <SuspenseFallback>
+            <We />
           </SuspenseFallback>
         ),
       },

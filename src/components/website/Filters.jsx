@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { allCategory, sortOptions } from "../../data/filterData";
 import scrollPostsIcon from "../../assets/images/Group 6.svg";
@@ -15,6 +15,8 @@ import { setFilter } from "../../store/filter/filterSlice";
 
 const Filters = () => {
   const dispatch = useDispatch();
+
+  // Redux state
   const filters = useSelector((state) => state.filters);
   const {
     products = [],
@@ -24,9 +26,11 @@ const Filters = () => {
   const { governorates = [] } = useSelector((state) => state.governorates);
   const { cities = [], loadingCity } = useSelector((state) => state.cities);
 
-  const observerRef = useRef(null); // ref لمراقبة العنصر الأخير
+  const observerRef = useRef(null); // Ref for IntersectionObserver
 
-  /* Fetch products with debounce */
+  /* =========================================
+     Fetch products with debounce
+  ======================================== */
   useEffect(() => {
     const debouncedFetch = debounce(() => {
       dispatch(productThunk(filters));
@@ -36,12 +40,16 @@ const Filters = () => {
     return () => debouncedFetch.cancel();
   }, [dispatch, filters]);
 
-  /* Load governorates on mount */
+  /* =========================================
+     Load governorates on mount
+  ======================================== */
   useEffect(() => {
     dispatch(thunkGovernorates());
   }, [dispatch]);
 
-  /* Load cities when governorate changes */
+  /* =========================================
+     Load cities when governorate changes
+  ======================================== */
   useEffect(() => {
     if (filters.governorate) {
       dispatch(thunkCities(filters.governorate));
@@ -50,7 +58,9 @@ const Filters = () => {
     }
   }, [dispatch, filters.governorate]);
 
-  /* Select first city when cities load */
+  /* =========================================
+     Set default city when cities load
+  ======================================== */
   useEffect(() => {
     if (filters.governorate && cities.length > 0) {
       if (!filters.city || !cities.includes(filters.city)) {
@@ -59,30 +69,41 @@ const Filters = () => {
     }
   }, [dispatch, cities, filters.governorate, filters.city]);
 
-  const handleFilterChange = (name, value) => {
-    dispatch(
-      setFilter({
-        [name]: value,
-        page: name === "page" ? value : 1,
-      })
-    );
-  };
+  /* =========================================
+     Handle filter change
+     - Updates Redux state
+     - Reset page if not paginating
+  ======================================== */
+  const handleFilterChange = useCallback(
+    (name, value) => {
+      dispatch(
+        setFilter({
+          [name]: value,
+          page: name === "page" ? value : 1,
+        })
+      );
+    },
+    [dispatch]
+  );
 
-  const loadMore = () => {
+  /* =========================================
+     Load more products for infinite scroll
+  ======================================== */
+  const loadMore = useCallback(() => {
     if (filters.page < totalPages && !loading) {
       handleFilterChange("page", filters.page + 1);
     }
-  };
+  }, [filters.page, totalPages, loading, handleFilterChange]);
 
-  /* Infinite scroll with IntersectionObserver */
+  /* =========================================
+     Infinite scroll with IntersectionObserver
+  ======================================== */
   useEffect(() => {
     if (observerRef.current) observerRef.current.disconnect();
 
     const observer = new IntersectionObserver(
       (entries) => {
-        if (entries[0].isIntersecting) {
-          loadMore();
-        }
+        if (entries[0].isIntersecting) loadMore();
       },
       { threshold: 1 }
     );
@@ -91,9 +112,8 @@ const Filters = () => {
     if (target) observer.observe(target);
 
     observerRef.current = observer;
-
     return () => observer.disconnect();
-  }, [filters.page, totalPages, loading]);
+  }, [loadMore]);
 
   return (
     <div className="pr-4 md:pr-14 bg-[#F7F7FF] pt-6 pb-20">
@@ -163,7 +183,7 @@ const Filters = () => {
         )}
       </div>
 
-      {/* Trigger element for infinite scroll */}
+      {/* Infinite Scroll Trigger */}
       {filters.page < totalPages && (
         <div
           id="loadMoreTrigger"
@@ -177,7 +197,7 @@ const Filters = () => {
         </div>
       )}
 
-      {/* No Results Message */}
+      {/* No Results */}
       {!loading && products.length === 0 && (
         <div className="text-center py-10">
           <p className="text-xl text-gray-500">
