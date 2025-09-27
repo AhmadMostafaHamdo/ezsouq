@@ -18,6 +18,7 @@ import { deleteProduct } from "../../store/product/thunk/deleteProduct";
 import { ToastContainer } from "react-toastify";
 import Pagination from "../../components/dashoard/Pagination";
 import { Link } from "react-router";
+import Spinner from "../../feedback/loading/Spinner";
 
 const Offers = () => {
   const [infoTable, setInfoTable] = useState(false);
@@ -31,6 +32,7 @@ const Offers = () => {
     products = [],
     totalPages = 1,
     totalItems = 0,
+    loading,
   } = useSelector((state) => state.products);
   const limit = 3;
   const [visibleColumns, setVisibleColumns] = useState({
@@ -216,67 +218,83 @@ const Offers = () => {
               </tr>
             </thead>
             <tbody className="text-[.8rem]">
-              {products
-                ?.slice((page - 1) * limit, page * limit)
-                ?.map((product, index) => (
-                  <tr className="border-t border-[#eee]" key={index}>
-                    {visibleColumns.image && (
-                      <td className="py-4 h-10">
-                        <div className="w-10 h-10 flex items-center justify-center">
-                          <img
-                            src={
-                              product?.main_photos?.[0]
-                                ? `https://api.ezsouq.store/uploads/images/${product.main_photos[0]}`
-                                : profile
-                            }
-                            alt="product"
-                            className="w-10 h-10 object-cover rounded"
-                          />
-                        </div>
-                      </td>
-                    )}
-                    {visibleColumns.title && (
-                      <td className="text-center">{product.name}</td>
-                    )}
-                    {visibleColumns.location && (
-                      <td className="text-center">
-                        {product.Governorate_name}-{product.city}
-                      </td>
-                    )}
-                    {visibleColumns.publisher && (
-                      <td className="text-center">مياو المياو</td>
-                    )}
-                    {visibleColumns.price && (
-                      <td className="text-center">{product.price}</td>
-                    )}
-                    {visibleColumns.date && (
-                      <td className="text-center">
-                        <TimeAgo postDate={product.createdAt} />
-                      </td>
-                    )}
-                    {visibleColumns.actions && (
-                      <td className="text-center">
-                        <div className="flex items-center justify-center">
-                          <Link to={product?._id}>
+              {loading ? (
+                <tr>
+                  <td
+                    colSpan={
+                      Object.keys(visibleColumns).filter(
+                        (col) => visibleColumns[col]
+                      ).length
+                    }
+                  >
+                    <div className="flex justify-center items-center h-40">
+                      <Spinner />
+                    </div>
+                  </td>
+                </tr>
+              ) : (
+                products
+                  ?.slice((page - 1) * limit, page * limit)
+                  ?.map((product, index) => (
+                    <tr className="border-t border-[#eee]" key={index}>
+                      {visibleColumns.image && (
+                        <td className="py-4 h-10">
+                          <div className="w-10 h-10 flex items-center justify-center">
                             <img
-                              src={detailsUser}
-                              alt="details"
-                              className="ml-2"
-                              width={30}
+                              src={
+                                product?.main_photos?.[0]
+                                  ? `https://api.ezsouq.store/uploads/images/${product.main_photos[0]}`
+                                  : profile
+                              }
+                              alt="product"
+                              className="w-10 h-10 object-cover rounded"
                             />
-                          </Link>
-                          <img
-                            src={deleteUser}
-                            alt="delete"
-                            width={30}
-                            className="cursor-pointer"
-                            onClick={() => handelDeleteOffer(product._id)}
-                          />
-                        </div>
-                      </td>
-                    )}
-                  </tr>
-                ))}
+                          </div>
+                        </td>
+                      )}
+                      {visibleColumns.title && (
+                        <td className="text-center">{product.name}</td>
+                      )}
+                      {visibleColumns.location && (
+                        <td className="text-center">
+                          {product.Governorate_name}-{product.city}
+                        </td>
+                      )}
+                      {visibleColumns.publisher && (
+                        <td className="text-center">مياو المياو</td>
+                      )}
+                      {visibleColumns.price && (
+                        <td className="text-center">{product.price}</td>
+                      )}
+                      {visibleColumns.date && (
+                        <td className="text-center">
+                          <TimeAgo postDate={product.createdAt} />
+                        </td>
+                      )}
+                      {visibleColumns.actions && (
+                        <td className="text-center">
+                          <div className="flex items-center justify-center">
+                            <Link to={product?._id}>
+                              <img
+                                src={detailsUser}
+                                alt="details"
+                                className="ml-2"
+                                width={30}
+                              />
+                            </Link>
+                            <img
+                              src={deleteUser}
+                              alt="delete"
+                              width={30}
+                              className="cursor-pointer"
+                              onClick={() => handelDeleteOffer(product._id)}
+                            />
+                          </div>
+                        </td>
+                      )}
+                    </tr>
+                  ))
+              )}
             </tbody>
           </table>
 

@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { ToastContainer, toast } from "react-toastify";
 
 import cat from "../../../assets/images/cat.svg";
@@ -15,6 +15,7 @@ import { deleteComment } from "../../../store/commits/thunk/deleteCommit";
 import { updateComment } from "../../../store/commits/thunk/updateComment";
 import { getAllCommentsByIdThunk } from "../../../store/commits/thunk/getAllCommentsById";
 import { thunkReplayCommit } from "../../../store/commits/thunk/replayComment";
+import { getRepliesByCommentId } from "../../../store/commits/thunk/getRepliesByCommentId";
 
 const Commit = ({ comment, createdAt, user, setArrow, id, productId }) => {
   const [arrowCommit, setArrowCommit] = useState(false);
@@ -27,6 +28,8 @@ const Commit = ({ comment, createdAt, user, setArrow, id, productId }) => {
   const inputRef = useRef(null);
   const dispatch = useDispatch();
 
+  const { replies } = useSelector((state) => state.comments);
+  const commentReplies = replies[id] || [];
   useEffect(() => {
     if (updateCommentMode && inputRef.current) {
       inputRef.current.focus();
@@ -48,15 +51,15 @@ const Commit = ({ comment, createdAt, user, setArrow, id, productId }) => {
       .unwrap()
       .then(() => {
         toast.success("تم إرسال الرد!");
+        dispatch(getRepliesByCommentId(id)); // تحديث الردود بعد الإرسال
       })
       .catch((err) => toast.error(err));
     setReplyText("");
     setShowReplyInput(false);
   };
 
-  // تأكيد تعديل التعليق
+  // تعديل التعليق
   const handleConfirmUpdate = () => {
-    console.log("dadsasdas");
     if (!commentText.trim()) return;
     dispatch(updateComment({ comment_id: id, comments: commentText }))
       .unwrap()
@@ -70,23 +73,34 @@ const Commit = ({ comment, createdAt, user, setArrow, id, productId }) => {
 
   // حذف التعليق
   const handleDeleteComment = (commentId) => {
-    dispatch(deleteComment({ comment_id: commentId }))
+    dispatch(deleteComment({ comment_id: commentId, productId }))
       .unwrap()
       .then(() => {
-        dispatch(getAllCommentsByIdThunk(productId));
         toast.success("تم حذف التعليق!");
       })
       .catch((err) =>
-        err == "لم يتم العثور على التعليق"
+        err === "لم يتم العثور على التعليق"
           ? toast.error("هذا التعليق ليس لك")
-          : err
+          : toast.error(err)
       );
   };
 
+  // جلب وعرض الردود
+  const toggleReplies = () => {
+    if (!arrowCommit) {
+      dispatch(getRepliesByCommentId(id));
+    }
+    setArrowCommit(!arrowCommit);
+    setArrow(!arrowCommit);
+  };
   return (
     <div className="flex gap-2 mt-4 pb-2">
       <ToastContainer />
-      <img src={cat} alt="" className="w-16 h-16 object-cover" />
+      <img
+        src={user?.avatar}
+        alt=""
+        className="w-16 h-16 object-cover rounded-[50%]"
+      />
       <div className="flex items-start justify-between w-2/5">
         <div className="flex flex-col w-full">
           {/* اسم المستخدم ووقت النشر */}
@@ -99,7 +113,7 @@ const Commit = ({ comment, createdAt, user, setArrow, id, productId }) => {
             </span>
           </div>
 
-          {/* نص التعليق + زر تأكيد التعديل */}
+          {/* نص التعليق */}
           <div className="flex items-center gap-2">
             <input
               type="text"
@@ -119,48 +133,68 @@ const Commit = ({ comment, createdAt, user, setArrow, id, productId }) => {
             )}
           </div>
 
-          {/* عرض الردود وأيقونات */}
-          <div className="flex items-center gap-2 font-normal text-[1rem] text-[#615D81] mt-2">
-            <span>عرض الردود (1)</span>
-            <span
-              onClick={() => {
-                setArrowCommit(!arrowCommit);
-                setArrow(!arrowCommit);
-              }}
-              className="cursor-pointer"
-            >
-              {arrowCommit ? (
-                <img src={arrowTopCommit} alt="" />
-              ) : (
-                <img src={arrowBottomCommit} alt="" />
-              )}
-            </span>
-            <img
-              src={replayCommit}
-              alt=""
-              className="mr-4 cursor-pointer"
-              onClick={() => setShowReplyInput(!showReplyInput)}
-            />
-          </div>
-
-          {/* حقل الرد */}
-          {showReplyInput && (
-            <div className="mt-2 flex gap-2">
-              <input
-                type="text"
-                placeholder="اكتب ردك..."
-                className="border border-gray-300 rounded-lg px-3 py-1 w-full"
-                value={replyText}
-                onChange={(e) => setReplyText(e.target.value)}
+          <div className="relative">
+            {/* زر عرض الردود */}
+            <div className="flex items-center gap-2 font-normal  text-[1rem] text-[#615D81] mt-2">
+              <span>عرض الردود ({commentReplies.length})</span>
+              <span onClick={toggleReplies} className="cursor-pointer">
+                {arrowCommit ? (
+                  <img src={arrowTopCommit} alt="" />
+                ) : (
+                  <img src={arrowBottomCommit} alt="" />
+                )}
+              </span>
+              <img
+                src={replayCommit}
+                alt=""
+                className="mr-4 cursor-pointer"
+                onClick={() => setShowReplyInput(!showReplyInput)}
               />
-              <button
-                onClick={handleReplySubmit}
-                className="bg-primary text-white px-3 py-1 rounded-lg"
-              >
-                إرسال
-              </button>
             </div>
-          )}
+
+            {/* حقل الرد */}
+            {showReplyInput && (
+              <div className="mt-2 flex gap-2">
+                <input
+                  type="text"
+                  placeholder="اكتب ردك..."
+                  className="border border-gray-300 rounded-lg px-3 py-1 w-full"
+                  value={replyText}
+                  onChange={(e) => setReplyText(e.target.value)}
+                />
+                <button
+                  onClick={handleReplySubmit}
+                  className="bg-primary text-white px-3 py-1 rounded-lg"
+                >
+                  إرسال
+                </button>
+              </div>
+            )}
+
+            {/* قائمة الردود */}
+            {arrowCommit && (
+              <div className="ml-8 mt-3">
+                {commentReplies.length > 0 ? (
+                  commentReplies.map((reply) => (
+                    <div key={reply._id} className="flex gap-2 mb-2">
+                      <img src={cat} alt="" className="w-12 h-12" />
+                      <div className="bg-gray-100 px-3 py-2 rounded-lg">
+                        <span className="font-bold text-sm text-primary">
+                          {reply.user_id?.name}
+                        </span>
+                        <p className="text-sm">{reply.comments}</p>
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <p className="text-gray-500">لا توجد ردود بعد</p>
+                )}
+              </div>
+            )}
+            {arrowCommit && (
+              <div className="absolute w-[1px] h-[calc(100%-3rem)] bg-[#bcbacab6] top-3 -right-10"></div>
+            )}
+          </div>
         </div>
 
         {/* خيارات تعديل وحذف */}

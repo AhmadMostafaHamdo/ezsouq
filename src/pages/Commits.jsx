@@ -19,40 +19,71 @@ import CommentSkeleton from "../assets/sketlon/CommentSketlon";
 import { productThunkById } from "../store/product/thunk/productThunkById";
 import { getAllCommentsByIdThunk } from "../store/commits/thunk/getAllCommentsById";
 import { thunkAddCommit } from "../store/commits/thunk/thunkAddCommit";
+import { getRepliesByCommentId } from "../store/commits/thunk/getRepliesByCommentId";
 
 const Commits = () => {
   const [comment, setComment] = useState("");
-  const [arrow, setArrow] = useState(false);
-  const ref = useRef();
+  const [page, setPage] = useState(1);
+  const observerRef = useRef();
 
   const { id } = useParams();
   const dispatch = useDispatch();
 
   const { product } = useSelector((state) => state.products);
-  const { commentsByProductId, loading: commentsLoading } = useSelector(
-    (state) => state.comments
-  );
+  const {
+    commentsByProductId,
+    loading: commentsLoading,
+    replies,
+  } = useSelector((state) => state.comments);
   const { user } = useSelector((state) => state.auth);
-
   const token = Cookies.get("token");
   const { id: userId } = token ? jwtDecode(token) : {};
 
-  const productComments = commentsByProductId?.[product?._id] || [];
+  // ✅ Extract comments with meta
+  const productComments = commentsByProductId?.[product?._id]?.comments || [];
+  const totalComments =
+    commentsByProductId?.[product?._id]?.total || productComments.length;
+  const totalPages = commentsByProductId?.[product?._id]?.pages || 1;
+  const currentPage = commentsByProductId?.[product?._id]?.page || 1;
 
   // Fetch product
   useEffect(() => {
-    ref.current?.scrollIntoView({ behavior: "smooth" });
     if (!id) return;
-
     dispatch(productThunkById(id));
   }, [dispatch, id]);
 
-  // Fetch comments for product
+  // Fetch first page of comments
   useEffect(() => {
     if (product?._id) {
-      dispatch(getAllCommentsByIdThunk(product._id));
+      setPage(1);
+      dispatch(getAllCommentsByIdThunk({ product_id: product._id, page: 1 }));
     }
   }, [dispatch, product?._id]);
+
+  // Intersection observer for infinite scroll
+  const lastCommentRef = (node) => {
+    if (commentsLoading) return;
+    if (observerRef.current) observerRef.current.disconnect();
+
+    observerRef.current = new IntersectionObserver((entries) => {
+      if (
+        entries[0].isIntersecting &&
+        currentPage < totalPages &&
+        !commentsLoading
+      ) {
+        setPage((prev) => prev + 1);
+      }
+    });
+
+    if (node) observerRef.current.observe(node);
+  };
+
+  // Load next page
+  useEffect(() => {
+    if (page > 1 && product?._id && currentPage < totalPages) {
+      dispatch(getAllCommentsByIdThunk({ product_id: product._id, page }));
+    }
+  }, [page, product?._id, currentPage, totalPages, dispatch]);
 
   // Handle adding comment
   const handleSend = async () => {
@@ -64,7 +95,7 @@ const Commits = () => {
       ).unwrap();
 
       setComment("");
-      dispatch(getAllCommentsByIdThunk(product._id));
+      dispatch(getAllCommentsByIdThunk({ product_id: product._id, page: 1 }));
       toast.success("تم إضافة التعليق بنجاح");
     } catch (err) {
       toast.error(err || "حدث خطأ أثناء إضافة التعليق");
@@ -75,8 +106,15 @@ const Commits = () => {
     if (e.key === "Enter") handleSend();
   };
 
+  // Load replies for a specific comment
+  const handleToggleReplies = (commentId) => {
+    if (!replies[commentId]) {
+      dispatch(getRepliesByCommentId(commentId));
+    }
+  };
+
   return (
-    <div ref={ref} className="container pt-20">
+    <div className="container pt-20">
       <ToastContainer position="top-right" autoClose={3000} />
       <div className="flex flex-col md:flex-row gap-8">
         <div>
@@ -85,9 +123,7 @@ const Commits = () => {
         </div>
 
         <div className="flex-1 mt-8 md:mt-14">
-          <p className="font-normal text-[1.5rem]">
-            {productComments.length} تعليقات
-          </p>
+          <p className="font-normal text-[1.5rem]">{totalComments} تعليقات</p>
 
           <SortDropdown />
 
@@ -119,26 +155,47 @@ const Commits = () => {
           )}
 
           <div className="relative">
-            {commentsLoading ? (
+            {commentsLoading && page === 1 ? (
               <CommentSkeleton />
             ) : productComments.length > 0 ? (
-              productComments.map((item) => (
-                <Commit
-                  key={item._id}
-                  setArrow={setArrow}
-                  comment={item.comments}
-                  createdAt={item.createdAt}
-                  user={item.user_id}
-                  id={item._id}
-                  productId={product._id}
-                />
-              ))
+              <>
+                {productComments.map((item, index) => {
+                  if (index === productComments.length - 1) {
+                    return (
+                      <div ref={lastCommentRef} key={item._id}>
+                        <Commit
+                          setArrow={() => handleToggleReplies(item._id)}
+                          comment={item.comments}
+                          createdAt={item.createdAt}
+                          user={item.user}
+                          id={item._id}
+                          productId={product._id}
+                        />
+                      </div>
+                    );
+                  } else {
+                    return (
+                      <Commit
+                        key={item._id}
+                        setArrow={() => handleToggleReplies(item._id)}
+                        comment={item.comments}
+                        createdAt={item.createdAt}
+                        user={item.user}
+                        id={item._id}
+                        productId={product._id}
+                      />
+                    );
+                  }
+                })}
+              </>
             ) : (
               <div className="text-center text-gray-500">
                 <p>لا توجد تعليقات بعد</p>
                 <img src={commentEmpty} className="mx-auto mt-4" alt="" />
               </div>
             )}
+
+            {commentsLoading && page > 1 && <CommentSkeleton />}
 
             <hr className="my-3 w-full md:w-[40vw]" />
           </div>

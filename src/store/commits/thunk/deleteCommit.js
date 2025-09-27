@@ -12,7 +12,6 @@ export const deleteComment = createAsyncThunk(
           authorization: `Bearer ${Cookies.get("token")}`,
         },
       });
-      console.log(res.data);
       toast.success(res.data?.message);
       return res.data;
     } catch (error) {

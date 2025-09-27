@@ -45,6 +45,13 @@ const Main = () => {
       dispatch(userThunkById(product.Owner._id));
     }
   }, [dispatch, product]);
+  // ✅ تعيين الصورة الأساسية والصغيرة الأولى تلقائيًا عند تحميل المنتج
+  useEffect(() => {
+    if (product?.main_photos?.length) {
+      setSelectedImage(product.main_photos[0]); // أول صورة رئيسية
+      setIsImageLoaded(false); // إعادة تعيين حالة التحميل
+    }
+  }, [product]);
 
   // ✅ تعيين الصورة الأساسية
   useEffect(() => {
@@ -100,11 +107,12 @@ const Main = () => {
       setSelectedImage("");
     };
   }, []);
+  console.log(product);
   return (
     <div>
       {loading ? (
         <div className="mt-56">
-          <Spinner  size={100}/>
+          <Spinner />
         </div>
       ) : (
         <div className=" bg-[#F7F7FF] md:pt-2 overflow-x-hidden h-fit">
@@ -221,6 +229,69 @@ const Main = () => {
               </ul>
 
               <p className="text-[#827FB2] text-[.9rem]">
+                {product.Category_name == "موبايلات" && (
+                  <div className="flex">
+                    {product?.processor && (
+                      <div>
+                        المعالج :
+                        <span className="text-primary font-bold mx-1">
+                          {product?.processor}
+                        </span>
+                      </div>
+                    )}
+                    {product?.color && (
+                      <div>
+                        , اللون :
+                        <span className="text-primary font-bold mx-1">
+                          {product?.color}
+                        </span>
+                      </div>
+                    )}
+                    <br />
+                  </div>
+                )}
+                {product.Category_name == "عقارات" && (
+                  <div className="flex">
+                    {product?.real_estate_type && (
+                      <div>
+                        نوع العقار :
+                        <span className="text-primary font-bold mx-1">
+                          {product?.real_estate_type}
+                        </span>
+                      </div>
+                    )}
+                    {product?.for_sale && (
+                      <div>
+                        , العقار :
+                        <span className="text-primary font-bold mx-1">
+                          {product?.for_sale ? "للبيع" : "للأجار"}
+                        </span>
+                      </div>
+                    )}
+                    <br />
+                  </div>
+                )}
+                {product.Category_name == "سيارات" && (
+                  <div className="flex">
+                    {product?.shape && (
+                      <div>
+                        النوع :
+                        <span className="text-primary font-bold mx-1">
+                          {product?.shape}
+                        </span>
+                      </div>
+                    )}
+                    {product?.color && (
+                      <div>
+                        , اللون :
+                        <span className="text-primary font-bold mx-1">
+                          product?.color
+                        </span>
+                      </div>
+                    )}
+                    <br />
+                  </div>
+                )}
                 {product.description}
               </p>
               <hr className="text-[#D9D9D9] mt-3" />

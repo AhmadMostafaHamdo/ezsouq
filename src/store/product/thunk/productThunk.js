@@ -18,9 +18,13 @@ export const productThunk = createAsyncThunk(
       if (filters.page) queryParams.append("page", filters.page);
       if (filters.limit) queryParams.append("limit", filters.limit);
       // التصحيح: إضافة المسار الصحيح
-      const url = `/user/fliteredProducts?${queryParams.toString()}`;
+      const url =
+        filters.category != "منوعات"
+          ? `/user/fliteredProducts?${queryParams.toString()}`
+          : `/user/fliteredProducts?page=${filters.page}&city=${filters.city}&governorate=${filters.governorate}&limit=8`;
       const res = await axios.get(url);
-      console.log(res.data)
+      console.log(res.data);
+      console.log("first");
       // إرجاع البيانات مع معلومات الترحيم
       return {
         products: res?.data?.items,

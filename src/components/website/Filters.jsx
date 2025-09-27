@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { allCategory, sortOptions } from "../../data/filterData";
 import scrollPostsIcon from "../../assets/images/Group 6.svg";
@@ -15,7 +15,6 @@ import { setFilter } from "../../store/filter/filterSlice";
 
 const Filters = () => {
   const dispatch = useDispatch();
-console.log(allCategory)
   const filters = useSelector((state) => state.filters);
   const {
     products = [],
@@ -24,6 +23,8 @@ console.log(allCategory)
   } = useSelector((state) => state.products);
   const { governorates = [] } = useSelector((state) => state.governorates);
   const { cities = [], loadingCity } = useSelector((state) => state.cities);
+
+  const observerRef = useRef(null); // ref لمراقبة العنصر الأخير
 
   /* Fetch products with debounce */
   useEffect(() => {
@@ -52,7 +53,6 @@ console.log(allCategory)
   /* Select first city when cities load */
   useEffect(() => {
     if (filters.governorate && cities.length > 0) {
-      // إذا المدينة الحالية مش موجودة ضمن المدن (أو فاضية) → اختار الأولى
       if (!filters.city || !cities.includes(filters.city)) {
         dispatch(setFilter({ city: cities[0] }));
       }
@@ -69,10 +69,31 @@ console.log(allCategory)
   };
 
   const loadMore = () => {
-    if (filters.page < totalPages) {
+    if (filters.page < totalPages && !loading) {
       handleFilterChange("page", filters.page + 1);
     }
   };
+
+  /* Infinite scroll with IntersectionObserver */
+  useEffect(() => {
+    if (observerRef.current) observerRef.current.disconnect();
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          loadMore();
+        }
+      },
+      { threshold: 1 }
+    );
+
+    const target = document.querySelector("#loadMoreTrigger");
+    if (target) observer.observe(target);
+
+    observerRef.current = observer;
+
+    return () => observer.disconnect();
+  }, [filters.page, totalPages, loading]);
 
   return (
     <div className="pr-4 md:pr-14 bg-[#F7F7FF] pt-6 pb-20">
@@ -82,7 +103,7 @@ console.log(allCategory)
         items={governorates}
         selectedItem={filters.governorate}
         onSelect={(gov) => handleFilterChange("governorate", gov)}
-        className="overflow-x-auto scrollbar-hide"
+        className="scrollbar-hide"
         type="governorate"
       />
 
@@ -94,7 +115,6 @@ console.log(allCategory)
         loading={loadingCity}
         selectedItem={filters.city}
         onSelect={(city) => handleFilterChange("city", city)}
-        className="overflow-x-auto"
         type="city"
       />
 
@@ -143,21 +163,18 @@ console.log(allCategory)
         )}
       </div>
 
-      {/* Load More Button */}
-      {products.length > 0 && filters.page < totalPages && (
-        <button
-          className="flex-center mt-8 mx-auto text-base font-normal cursor-pointer text-blue-600 hover:text-blue-800 transition-colors"
-          onClick={loadMore}
-          aria-label="Load more products"
+      {/* Trigger element for infinite scroll */}
+      {filters.page < totalPages && (
+        <div
+          id="loadMoreTrigger"
+          className="h-10 mt-6 flex justify-center items-center text-gray-400"
         >
-          <span>عرض المزيد</span>
           <img
             src={scrollPostsIcon}
-            alt="Load more icon"
-            className="ml-2"
-            aria-hidden="true"
+            alt="Loading more"
+            className="w-6 h-6 animate-bounce"
           />
-        </button>
+        </div>
       )}
 
       {/* No Results Message */}

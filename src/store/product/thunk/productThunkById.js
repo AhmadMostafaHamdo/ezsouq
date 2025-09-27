@@ -5,7 +5,6 @@ export const productThunkById = createAsyncThunk(
   async (id, { rejectWithValue }) => {
     try {
       const res = await axios.get(`/user/product/${id}`);
-      console.log("p", res.data);
       return res.data;
     } catch (error) {
       let errorMessage = "حدث خطأ غير متوقع";

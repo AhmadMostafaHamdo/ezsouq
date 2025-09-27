@@ -9,8 +9,7 @@ const OfferDetails = () => {
   }, []);
   return (
     <div className="md:overflow-x-hidden" ref={offer}>
-      <HeaderLogin />
-      <Main />
+        <Main />
     </div>
   );
 };

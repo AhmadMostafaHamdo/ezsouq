@@ -6,27 +6,25 @@ import { thunkGetProductByCat } from "../../store/getProductsByCat/thunk/thunkGe
 import { resetProducts } from "../../store/getProductsByCat/getProductByCatSlice";
 import Heading from "../common/Heading";
 
-const CategoryFilter = ({ category }) => {
+const CategoryFilter = ({ category = null }) => {
   const {
     products = [],
     loading,
     totalPages = 1,
     currentPage = 1,
   } = useSelector((state) => state.productsByCat);
-console.log(products)
+
   const dispatch = useDispatch();
   const [page, setPage] = useState(1);
 
-  // 🧹 تنظيف عند تغيير الكاتيجوري
+  // 🧹 تنظيف وتحميل أول صفحة عند تغيير الكاتيجوري أو عند عدم وجوده
   useEffect(() => {
-    if (category) {
-      dispatch(resetProducts());
-      setPage(1);
-      dispatch(thunkGetProductByCat({ category, page: 1 }));
-    }
+    dispatch(resetProducts());
+    setPage(1);
+    dispatch(thunkGetProductByCat({ category, page: 1 }));
   }, [dispatch, category]);
 
-  // 📥 تحميل المزيد
+  // 📥 تحميل المزيد عند التمرير
   const loadMore = useCallback(() => {
     if (!loading && page < totalPages) {
       setPage((prev) => prev + 1);
@@ -35,7 +33,7 @@ console.log(products)
 
   // 📡 طلب المنتجات عند تغير الصفحة
   useEffect(() => {
-    if (category && page > 1) {
+    if (page > 1) {
       dispatch(thunkGetProductByCat({ category, page }));
     }
   }, [dispatch, category, page]);
@@ -58,9 +56,7 @@ console.log(products)
   return (
     <div className="py-1">
       <Heading title="الرجوع" />
-      {/* عرض المنتجات */}
-      <div className="w-full flex flex-wrap gap-9 pl-4  md:pl-12 justify-start container mb-6">
-        {/* ✅ Skeleton عند أول تحميل */}
+      <div className="w-full flex flex-wrap gap-9 pl-4 md:pl-12 justify-start container mb-6">
         {products.length === 0 && loading ? (
           Array.from({ length: 6 }).map((_, i) => <CardSkeleton key={i} />)
         ) : (
@@ -71,7 +67,6 @@ console.log(products)
                 <Card key={product._id} {...product} />
               ))}
 
-            {/* ✅ Skeleton عند تحميل المزيد */}
             {loading &&
               page > 1 &&
               Array.from({ length: 4 }).map((_, i) => <CardSkeleton key={i} />)}
