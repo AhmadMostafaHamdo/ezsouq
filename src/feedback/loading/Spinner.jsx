@@ -1,11 +1,4 @@
 // Spinner.jsx
-/* =========================================
-   Spinner Component
-   Simple reusable loading indicator
-   Props:
-   - size: diameter in pixels (default 40)
-   - className: additional tailwind classes
-========================================= */
 const Spinner = ({ size = 40, className = "" }) => {
   const spinnerStyle = {
     width: `${size}px`,

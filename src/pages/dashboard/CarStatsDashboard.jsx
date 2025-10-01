@@ -71,7 +71,7 @@ const CarStatsDashboard = () => {
         margin: "10px auto 0",
         paddingLeft: "10px",
       }}
-      className="flex-between"
+      className="flex-col md:flex-row flex-between"
     >
       <div style={{ height: "170px", width: "240px" }}>
         <ResponsivePie

@@ -6,12 +6,13 @@ import { handleThunkError } from "../../../utils/utils";
 export const addGovernorate = createAsyncThunk(
   "governorates/addGovernorate",
   async ({ data }, { rejectWithValue }) => {
+    console.log(data);
     try {
       const token = Cookies.get("token");
       const res = await axios.post(
         "/admin/add_governorates",
         {
-          name: data.governorate,
+          name: data.name,
           cities: data.cities,
         },
         {
@@ -21,10 +22,11 @@ export const addGovernorate = createAsyncThunk(
           },
         }
       );
-      console.log(res.data);
+      console.log(res.data.message)
+      toast.success(res.data?.message);
       return res.data;
     } catch (error) {
       return handleThunkError(error, rejectWithValue);
-    }
+    } 
   }
 );

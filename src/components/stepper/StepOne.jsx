@@ -8,13 +8,15 @@ import Error from "../../feedback/error/Error";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { setCategory } from "../../store/category/sliceCategory";
 import Select from "../select/Select";
+import Spinner from "../../feedback/loading/Spinner";
 
 const StepOne = ({ onSubmit }) => {
   const dispatch = useDispatch();
   const { governorates } = useSelector((state) => state.governorates);
-  const { cities } = useSelector((state) => state.cities);
+  const { cities, loadingCity } = useSelector((state) => state.cities);
+  console.log(loadingCity);
   const { category, selectedCategory } = useSelector((state) => state.category);
-console.log("selectedCategory", selectedCategory);
+  console.log("selectedCategory", selectedCategory);
   const methods = useForm({
     resolver: zodResolver(stepOneSchema),
     defaultValues: {
@@ -81,18 +83,22 @@ console.log("selectedCategory", selectedCategory);
           <Error error={errors.Governorate_name?.message} />
 
           {/* المنطقة */}
-          <Controller
-            name="city"
-            control={control}
-            render={({ field }) => (
-              <Select
-                options={cityOptions}
-                type="city"
-                value={field.value}
-                onSelect={(val) => field.onChange(val)}
-              />
-            )}
-          />
+          {loadingCity ? (
+            <Spinner />
+          ) : (
+            <Controller
+              name="city"
+              control={control}
+              render={({ field }) => (
+                <Select
+                  options={cityOptions}
+                  type="city"
+                  value={field.value}
+                  onSelect={(val) => field.onChange(val)}
+                />
+              )}
+            />
+          )}
           <Error error={errors.city?.message} />
 
           {/* الوصف */}

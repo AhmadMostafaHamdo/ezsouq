@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useParams } from "react-router";
+import { useLocation, useParams } from "react-router";
 import { ToastContainer } from "react-toastify";
 
 import ImgProfileWithButtons from "./ImgProfileWithButtons";
@@ -108,12 +108,13 @@ const ContactInfo = () => {
       desc: user?.phone || "لم يتم تحديده",
     },
   ];
+  const location = useLocation();
+  const showContactInfo = location.pathname.includes("contact-us"); // check contact tab
 
   return (
     <div className="container mb-10">
       <ToastContainer />
-      <ImgProfileWithButtons />
-
+      {showContactInfo && <ImgProfileWithButtons />}
       {myId == paramId ? (
         // Current user's profile
         <div className="flex flex-col mt-3 gap-3 items-center font-normal">

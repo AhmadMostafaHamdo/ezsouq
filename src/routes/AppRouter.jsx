@@ -1,24 +1,25 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { lazy } from "react";
 import SuspenseFallback from "../feedback/suspenseFallback/suspenseFallback";
-import ForgotPassword from "../pages/ForgotPassword";
-import VerifyCode from "../pages/VerifyCode";
-import RedirectIfAuthenticated from "./RedirectIfAuthenticated";
-import Main from "../components/main/Main";
-import Filters from "../components/website/Filters";
-import KeepLogin from "./KeepLogin";
-import AllProducts from "../pages/AllProducts";
-const NewPassword = lazy(() => import("../pages/NewPassword"));
+import GoogleAuthCallback from "../components/forms/GoogleAuthCallback";
+
+// ⚡ Lazy Load Pages & Components
 const App = lazy(() => import("../App"));
-const OfferDetails = lazy(() => import("../pages/OfferDetails"));
+
+//  Auth
 const Login = lazy(() => import("../pages/Login"));
 const Register = lazy(() => import("../pages/Register"));
-const Profile = lazy(() => import("../pages/Profile"));
-const MainProfile = lazy(() => import("../components/website/MainProfile"));
-const ContactInfo = lazy(() => import("../components/website/ContactInfo"));
-const CreateOffer = lazy(() => import("../pages/CreateOffer"));
+const ForgotPassword = lazy(() => import("../pages/ForgotPassword"));
+const VerifyCode = lazy(() => import("../pages/VerifyCode"));
+const NewPassword = lazy(() => import("../pages/NewPassword"));
+const RedirectIfAuthenticated = lazy(() => import("./RedirectIfAuthenticated"));
+
+//  Website
+const Main = lazy(() => import("../components/main/Main"));
+const Filters = lazy(() => import("../components/website/Filters"));
+const AllProducts = lazy(() => import("../pages/AllProducts"));
+const OfferDetails = lazy(() => import("../pages/OfferDetails"));
 const Wishlist = lazy(() => import("../pages/Wishlist"));
-const PrivacyPolicy = lazy(() => import("../pages/PrivacyPolicy"));
 const Cars = lazy(() => import("../pages/Cars"));
 const Tech = lazy(() => import("../pages/Tech"));
 const RealEstate = lazy(() => import("../pages/RealEstate"));
@@ -27,21 +28,36 @@ const Search = lazy(() => import("../pages/Search"));
 const Report = lazy(() => import("../pages/Report"));
 const Commits = lazy(() => import("../pages/Commits"));
 const Newest = lazy(() => import("../pages/Newest"));
-const Rating = lazy(() => import("../components/website/Rating/Rating"));
+const PrivacyPolicy = lazy(() => import("../pages/PrivacyPolicy"));
 const We = lazy(() => import("../pages/AboutUs"));
-const Dashoard = lazy(() => import("../pages/dashboard/Dashboard"));
-const Setting = lazy(() => import("../pages/dashboard/Setting"));
-const RatingDashboard = lazy(() => import("../pages/dashboard/Rating"));
-const Reports = lazy(() => import("../pages/dashboard/Reports"));
+const Profile = lazy(() => import("../pages/Profile"));
+const MainProfile = lazy(() => import("../components/website/MainProfile"));
+const ContactInfo = lazy(() => import("../components/website/ContactInfo"));
+const Rating = lazy(() => import("../components/website/Rating/Rating"));
+const CreateOffer = lazy(() => import("../pages/CreateOffer"));
 
-const Notification = lazy(() => import("../pages/dashboard/Notification"));
-
+// 📊 Dashboard
+const Dashboard = lazy(() => import("../pages/dashboard/Dashboard"));
+const Statistic = lazy(() => import("../pages/dashboard/Statistic"));
 const Offers = lazy(() => import("../pages/dashboard/Offers"));
 const UsersDashboard = lazy(() =>
   import("../components/dashoard/UsersDashboard")
 );
-const Statistic = lazy(() => import("../pages/dashboard/Statistic"));
+const UserDetails = lazy(() => import("../components/dashoard/UserDetails"));
+const RatingDashboard = lazy(() => import("../pages/dashboard/Rating"));
+const RatingDetails = lazy(() =>
+  import("../components/dashoard/RatingDetails")
+);
+const Reports = lazy(() => import("../pages/dashboard/Reports"));
+const ReportDetails = lazy(() =>
+  import("../components/dashoard/ReportsDetails")
+);
+const Setting = lazy(() => import("../pages/dashboard/Setting"));
+const Notification = lazy(() => import("../pages/dashboard/Notification"));
+
+//  Routes Configuration
 const router = createBrowserRouter([
+  //  Public Website Routes
   {
     path: "/",
     element: (
@@ -50,244 +66,88 @@ const router = createBrowserRouter([
       </SuspenseFallback>
     ),
     children: [
+      { index: true, element: <MainWithFilters /> },
+      { path: "offer-details/:id", element: <OfferDetails /> },
+      { path: "offer-details/:id/report", element: <Report /> },
+      { path: "google-callback", element: <GoogleAuthCallback /> },
+      { path: "wishlist", element: <Wishlist /> },
+      { path: "cars", element: <Cars /> },
+      { path: "tech", element: <Tech /> },
+      { path: "real-estate", element: <RealEstate /> },
+      { path: "all-product", element: <AllProducts /> },
+      { path: "newest", element: <Newest /> },
+      { path: "contact-us", element: <ContactUs /> },
+      { path: "search", element: <Search /> },
+      { path: "commits/:id", element: <Commits /> },
+      { path: "privacy-policy", element: <PrivacyPolicy /> },
+      { path: "about-us", element: <We /> },
       {
-        index: true,
-        element: (
-          <SuspenseFallback>
-            <Main />
-            <Filters />
-          </SuspenseFallback>
-        ),
-      },
-      {
-        path: "offer-details/:id",
-        element: (
-          <SuspenseFallback>
-            <OfferDetails />
-          </SuspenseFallback>
-        ),
-      },
-      {
-        path: "wishlist",
-        element: (
-          <SuspenseFallback>
-            <Wishlist />
-          </SuspenseFallback>
-        ),
-      },
-      {
-        path: "cars",
-        element: (
-          <SuspenseFallback>
-            <Cars />
-          </SuspenseFallback>
-        ),
-      },
-      {
-        path: "all-product",
-        element: (
-          <SuspenseFallback>
-            <AllProducts />
-          </SuspenseFallback>
-        ),
-      },
-      {
-        path: "newest",
-        element: (
-          <SuspenseFallback>
-            <Newest />
-          </SuspenseFallback>
-        ),
-      },
-      {
-        path: "real-estate",
-        element: (
-          <SuspenseFallback>
-            <RealEstate />
-          </SuspenseFallback>
-        ),
-      },
-      {
-        path: "contact-us",
-        element: (
-          <SuspenseFallback>
-            <ContactUs />
-          </SuspenseFallback>
-        ),
-      },
-      {
-        path: "offer-details/:id/report",
-        element: (
-          <SuspenseFallback>
-            <Report />
-          </SuspenseFallback>
-        ),
-      },
-      {
-        path: "search",
-        element: (
-          <SuspenseFallback>
-            <Search />
-          </SuspenseFallback>
-        ),
-      },
-      {
-        path: "commits/:id",
-        element: (
-          <SuspenseFallback>
-            <Commits />
-          </SuspenseFallback>
-        ),
-      },
-      {
-        path: "tech",
-        element: (
-          <SuspenseFallback>
-            <Tech />
-          </SuspenseFallback>
-        ),
-      },
-      {
-        path: "privacy-policy",
-        element: (
-          <SuspenseFallback>
-            <PrivacyPolicy />
-          </SuspenseFallback>
-        ),
-      },
-      {
-        path: "/about-us",
-        element: (
-          <SuspenseFallback>
-            <We />
-          </SuspenseFallback>
-        ),
-      },
-      {
-        path: "/profile/:id",
-        element: (
-          <SuspenseFallback>
-            <Profile />
-          </SuspenseFallback>
-        ),
+        path: "profile/:id",
+        element: <Profile />,
         children: [
           { index: true, element: <MainProfile /> },
-          {
-            path: "contact-info",
-            element: <ContactInfo />,
-          },
-          {
-            path: "rating",
-            element: <Rating />,
-          },
+          { path: "contact-info", element: <ContactInfo /> },
+          { path: "rating", element: <Rating /> },
         ],
       },
-      {
-        path: "/create-offer",
-        element: (
-          <SuspenseFallback>
-            <CreateOffer />
-          </SuspenseFallback>
-        ),
-      },
+      { path: "create-offer", element: <CreateOffer /> },
     ],
   },
-  {
-    path: "/dashboard/offers/:id",
-    element: <OfferDetails />,
-  },
+
+  //  Dashboard (Admin Panel)
   {
     path: "/dashboard",
-    element: <Dashoard />,
+    element: <Dashboard />,
     children: [
-      {
-        index: true,
-        element: <Statistic />,
-      },
-      {
-        path: "offers",
-        element: <Offers />,
-      },
-      {
-        path: "users",
-        element: <UsersDashboard />,
-      },
-      {
-        path: "setting",
-        element: <Setting />,
-      },
-      {
-        path: "rating",
-        element: <RatingDashboard />,
-      },
-      {
-        path: "reports",
-        element: <Reports />,
-      },
-      {
-        path: "notification",
-        element: <Notification />,
-      },
+      { index: true, element: <Statistic /> },
+      { path: "offers", element: <Offers /> },
+      { path: "users", element: <UsersDashboard /> },
+      { path: "users/:id", element: <UserDetails /> },
+      { path: "rating", element: <RatingDashboard /> },
+      { path: "rating/:id", element: <RatingDetails /> },
+      { path: "reports", element: <Reports /> },
+      { path: "reports/:id", element: <ReportDetails /> },
+      { path: "setting", element: <Setting /> },
+      { path: "notification", element: <Notification /> },
     ],
   },
-  {
-    path: "/create-offer",
-    element: (
-      <SuspenseFallback>
-        <CreateOffer />
-      </SuspenseFallback>
-    ),
-  },
+
+  //  Authentication
   {
     path: "login",
     element: (
       <RedirectIfAuthenticated>
-        <SuspenseFallback>
-          <Login />
-        </SuspenseFallback>
+        <Login />
       </RedirectIfAuthenticated>
-    ),
-  },
-  {
-    path: "forgot-password",
-    element: (
-      <SuspenseFallback>
-        <ForgotPassword />
-      </SuspenseFallback>
-    ),
-  },
-  {
-    path: "/reset-password/:token",
-    element: (
-      <SuspenseFallback>
-        <NewPassword />
-      </SuspenseFallback>
-    ),
-  },
-  {
-    path: "verify-code",
-    element: (
-      <SuspenseFallback>
-        <VerifyCode />
-      </SuspenseFallback>
     ),
   },
   {
     path: "register",
     element: (
-      <SuspenseFallback>
-        <RedirectIfAuthenticated>
-          <Register />
-        </RedirectIfAuthenticated>
-      </SuspenseFallback>
+      <RedirectIfAuthenticated>
+        <Register />
+      </RedirectIfAuthenticated>
     ),
   },
-  {
-    path: "*",
-    element: <h1>this Page Not Found</h1>,
-  },
+  { path: "forgot-password", element: <ForgotPassword /> },
+  { path: "reset-password/:token", element: <NewPassword /> },
+  { path: "verify-code", element: <VerifyCode /> },
+
+  //  404 Not Found
+  { path: "*", element: <h1>404 - Page Not Found</h1> },
 ]);
-const AppRouter = () => {
-  return <RouterProvider router={router} />;
-};
+
+// ⚡ Helper Component
+// For combining Main + Filters together
+function MainWithFilters() {
+  return (
+    <SuspenseFallback>
+      <Main />
+      <Filters />
+    </SuspenseFallback>
+  );
+}
+
+//  AppRouter Export
+const AppRouter = () => <RouterProvider router={router} />;
 export default AppRouter;

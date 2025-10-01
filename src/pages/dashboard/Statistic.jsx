@@ -70,9 +70,9 @@ const Statistic = () => {
   useEffect(() => {
     dispatch(topUsers());
   }, []);
-    useEffect(() => {
-      dispatch(topProducts());
-    }, []);
+  useEffect(() => {
+    dispatch(topProducts());
+  }, []);
   return (
     <>
       {loading ? (
@@ -105,16 +105,16 @@ const Statistic = () => {
               <table className="w-full bg-white ">
                 <thead className="bg-gray-50">
                   <tr>
-                    <th className="py-4 px-4 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="py-4 px-4 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
                       المستخدم
                     </th>
-                    <th className="py-4 px-4 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="py-4 px-4 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
                       الاسم
                     </th>
-                    <th className="py-4 px-4 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      البريد الإلكتروني
+                    <th className="py-4 px-4 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      عدد الاعلانات
                     </th>
-                    <th className="py-4 px-4 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="py-4 px-4 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
                       الهاتف
                     </th>
                   </tr>
@@ -125,25 +125,29 @@ const Statistic = () => {
                       <td className="py-2 px-4">
                         <div className="flex items-center justify-end">
                           <img
-                            src={personalImg}
+                            src={
+                              user?.avatar.replace(/^http/, "https")
+                                ? user?.avatar.replace(/^http/, "https")
+                                : personalImg
+                            }
                             alt="صورة المستخدم"
                             className="w-10 h-10 rounded-full object-cover"
                           />
                         </div>
                       </td>
-                      <td className="py-2 px-4 text-right text-sm font-medium text-[#23193E]">
+                      <td className="py-2 px-4 text-center text-sm font-medium text-[#23193E]">
                         {user?.userName}
                       </td>
-                      <td className="py-2 px-4 text-right text-sm text-[#706F84]">
-                        meaw@gmail.com
+                      <td className="py-2 px-4 text-center text-sm text-[#706F84]">
+                        {user?.totalProducts}
                       </td>
-                      <td className="py-2 px-4 text-right text-sm text-[#706F84]">
+                      <td className="py-2 px-4 text-center text-sm text-[#706F84]">
                         {user?.phone}
                       </td>
-                      <td className="py-2 px-4 text-right text-sm text-[#706F84]">
+                      <td className="py-2 px-4 text-center text-sm text-[#706F84]">
                         <img src={iconSettingUser} alt="" />
                       </td>
-                    </tr> 
+                    </tr>
                   ))}
                 </tbody>
               </table>
@@ -151,67 +155,52 @@ const Statistic = () => {
               <table className="w-full bg-white mt-4 ">
                 <thead className="bg-gray-50">
                   <tr>
-                    <th className="py-4 px-4 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      المستخدم
+                    <th className="py-4 px-4 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      الصورة
                     </th>
-                    <th className="py-4 px-4 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="py-4 px-4 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
                       الاسم
                     </th>
-                    <th className="py-4 px-4 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      البريد الإلكتروني
+                    <th className="py-4 px-4 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      الإعجابات
                     </th>
-                    <th className="py-4 px-4 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      الهاتف
+                    <th className="py-4 px-4 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      المشاهدات
                     </th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr>
-                    <td className="py-2 px-4">
-                      <div className="flex items-center justify-end">
-                        <img
-                          src={personalImg}
-                          alt="صورة المستخدم"
-                          className="w-10 h-10 rounded-full object-cover"
-                        />
-                      </div>
-                    </td>
-                    <td className="py-2 px-4 text-right text-sm font-medium text-[#23193E]">
-                      مياو المياو
-                    </td>
-                    <td className="py-2 px-4 text-right text-sm text-[#706F84]">
-                      meaw@gmail.com
-                    </td>
-                    <td className="py-2 px-4 text-right text-sm text-[#706F84]">
-                      0999 999 999
-                    </td>
-                    <td className="py-2 px-4 text-right text-sm text-[#706F84]">
-                      <img src={iconSettingUser} alt="" />
-                    </td>
-                  </tr>
-                  <tr>
-                    <td className="py-2 px-4">
-                      <div className="flex items-center justify-end">
-                        <img
-                          src={personalImg}
-                          alt="صورة المستخدم"
-                          className="w-10 h-10 rounded-full object-cover"
-                        />
-                      </div>
-                    </td>
-                    <td className="py-2 px-4 text-right text-sm font-medium text-[#23193E]">
-                      مياو المياو
-                    </td>
-                    <td className="py-2 px-4 text-right text-sm text-[#706F84]">
-                      meaw@gmail.com
-                    </td>
-                    <td className="py-2 px-4 text-right text-sm text-[#706F84]">
-                      0999 999 999
-                    </td>
-                    <td className="py-2 px-4 text-right text-sm text-[#706F84]">
-                      <img src={iconSettingUser} alt="" />
-                    </td>
-                  </tr>
+                  {Array.isArray(topTwoProducts) &&
+                    topTwoProducts.length > 0 &&
+                    topTwoProducts.slice(0, 2).map((product) => (
+                      <tr>
+                        <td className="py-2 px-4">
+                          <div className="flex items-center justify-end">
+                            <img
+                              src={
+                                product?.main_photo
+                                  ? `https://api.ezsouq.store/uploads/images/${product?.main_photo}`
+                                  : personalImg
+                              }
+                              alt="صورة المستخدم"
+                              className="w-10 h-10 rounded-full object-cover"
+                            />
+                          </div>
+                        </td>
+                        <td className="py-2 px-4 text-center text-sm font-medium text-[#23193E]">
+                          {product?.name}
+                        </td>
+                        <td className="py-2 px-4 text-center text-sm text-[#706F84]">
+                          {product?.totalLikes}
+                        </td>
+                        <td className="py-2 px-4 text-center text-sm text-[#706F84]">
+                          {product?.views}
+                        </td>
+                        <td className="py-2 px-4 text-center text-sm text-[#706F84]">
+                          <img src={iconSettingUser} alt="" />
+                        </td>
+                      </tr>
+                    ))}
                 </tbody>
               </table>
             </div>

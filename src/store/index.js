@@ -16,6 +16,7 @@ import storage from "redux-persist/lib/storage";
 import category from "./category/sliceCategory";
 import statistic from "./statistic/statisticSlice";
 import filter from "./filter/filterSlice";
+import sidebar from "./sidebar/sidebarSlice";
 import {
   FLUSH,
   PAUSE,
@@ -99,6 +100,7 @@ const rootReducer = combineReducers({
   statistic: persistReducer(persistStatistic, statistic),
   filters: persistReducer(persistFilter, filter),
   search,
+  sidebar,
 });
 export const store = configureStore({
   reducer: rootReducer,

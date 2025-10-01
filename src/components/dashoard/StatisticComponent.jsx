@@ -4,7 +4,7 @@ const StatisticComponent = ({ img, count, info, color }) => {
       <img src={img} alt={info} width={40} />
       <div className="leading-[1.30rem] w-[110px]">
         <span className="font-bold text-[#3F3D56]">{count}</span>
-        <p className="font-normal text-[#706F84] w-fit text-[.9rem] whitespace-nowrap ">{info}</p>
+        <p className="font-normal text-[#706F84] w-fit text-[.86rem] whitespace-nowrap ">{info}</p>
       </div>
       <div
         style={{ backgroundColor: color }}

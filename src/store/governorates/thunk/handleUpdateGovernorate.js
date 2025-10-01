@@ -22,6 +22,8 @@ export const updateGovernorate = createAsyncThunk(
           },
         }
       );
+      toast.success(res.data?.message);
+      console.log(res.data?.message);
       return res.data;
     } catch (error) {
       return handleThunkError(error, rejectWithValue);

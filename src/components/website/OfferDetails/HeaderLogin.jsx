@@ -5,7 +5,7 @@ import closeIcon from "../../../assets/images/close.png";
 import search from "../../../assets/images/search.svg";
 import emptyHeart from "../../../assets/images/emptyHeart.svg";
 import redHeart from "../../../assets/images/redHeart.svg";
-import confirmLogout from "../../../assets/images/confirmLogout.svg";
+import confirmLogout from "../../../assets/images/confirmLogout.svg";   
 
 import personal from "../../../assets/images/pesonal.png";
 import { useState } from "react";

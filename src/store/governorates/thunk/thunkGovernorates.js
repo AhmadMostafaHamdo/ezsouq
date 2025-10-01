@@ -9,6 +9,8 @@ export const thunkGovernorates = createAsyncThunk(
       const res = await axios.get("user/governorates");
       return res.data;
     } catch (error) {
+      console.log(res.data);
+
       return rejectWithValue(errorMessage);
     }
   }
