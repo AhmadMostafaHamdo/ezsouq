@@ -14,9 +14,8 @@ const StepOne = ({ onSubmit }) => {
   const dispatch = useDispatch();
   const { governorates } = useSelector((state) => state.governorates);
   const { cities, loadingCity } = useSelector((state) => state.cities);
-  console.log(loadingCity);
   const { category, selectedCategory } = useSelector((state) => state.category);
-  console.log("selectedCategory", selectedCategory);
+
   const methods = useForm({
     resolver: zodResolver(stepOneSchema),
     defaultValues: {
@@ -36,7 +35,9 @@ const StepOne = ({ onSubmit }) => {
     formState: { errors },
   } = methods;
 
+  // Handle governorate change to fetch cities
   const handleGovernorateChange = (value) => dispatch(thunkCities(value));
+
   const governorateOptions = [{ name: "المحافظة" }, ...governorates];
   const cityOptions = ["المنطقة", ...cities];
 
@@ -47,7 +48,7 @@ const StepOne = ({ onSubmit }) => {
           onSubmit={handleSubmit(onSubmit)}
           className="w-full flex-center flex-col gap-3 text-[#B9B5FF]"
         >
-          {/* التصنيف */}
+          {/* Category Selection */}
           <Controller
             name="Category_name"
             control={control}
@@ -64,7 +65,8 @@ const StepOne = ({ onSubmit }) => {
             )}
           />
           <Error error={errors.Category_name?.message} />
-          {/* المحافظة */}
+
+          {/* Governorate Selection */}
           <Controller
             name="Governorate_name"
             control={control}
@@ -82,7 +84,7 @@ const StepOne = ({ onSubmit }) => {
           />
           <Error error={errors.Governorate_name?.message} />
 
-          {/* المنطقة */}
+          {/* City Selection */}
           {loadingCity ? (
             <Spinner />
           ) : (
@@ -101,7 +103,7 @@ const StepOne = ({ onSubmit }) => {
           )}
           <Error error={errors.city?.message} />
 
-          {/* الوصف */}
+          {/* Description */}
           <textarea
             {...register("description")}
             className="w-full h-24 outline-none border-solid border-[1px] p-2 rounded-[5px] border-[#B9B5FF]"
@@ -109,11 +111,11 @@ const StepOne = ({ onSubmit }) => {
           />
           <Error error={errors.description?.message} />
 
-          {/* السعر */}
+          {/* Price */}
           <InputCreateOffer placeholder="السعر" {...register("price")} />
           <Error error={errors.price?.message} />
 
-          {/* الصور */}
+          {/* Main Photos Upload */}
           <Controller
             name="main_photos"
             control={control}
@@ -128,6 +130,7 @@ const StepOne = ({ onSubmit }) => {
           />
           <Error error={errors.main_photos?.message} />
 
+          {/* Hidden submit button for Stepper navigation */}
           <button type="submit" className="hidden" id="submit-step1"></button>
         </form>
       </FormProvider>

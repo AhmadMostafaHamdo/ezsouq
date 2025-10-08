@@ -1,3 +1,5 @@
+// Auth form fields configuration
+
 export const registerField = [
   { type: "text", name: "name", placeholder: "الاسم" },
   { type: "email", name: "email", placeholder: "الايميل" },
@@ -8,6 +10,7 @@ export const registerField = [
     placeholder: "تأكيد كلمة السر",
   },
 ];
+
 export const loginField = [
   { type: "email", name: "email", placeholder: "الايميل" },
   { type: "password", name: "password", placeholder: "كلمة السر" },

@@ -2,33 +2,32 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 import { toast } from "react-toastify";
 
-export const thunkGetProductByCat = createAsyncThunk(
-  "productsByCat/fetch",
-  async ({ category = null, page = 1 }, { rejectWithValue }) => {
+export const deleteGovernorate = createAsyncThunk(
+  "/user/cities",
+  async (governorateName, { rejectWithValue }) => {
     try {
-      // رابط API يدعم page دائماً، وCategory إذا موجود
-      const url = category
-        ? `/user/fliteredProducts?Category=${category}&page=${page}&limit=8&order=desc`
-        : `/user/fliteredProducts?page=${page}&limit=8&order=desc`;
-
-      const res = await axios.get(url);
-      return res.data; // يجب أن يحتوي على: items + totalPages + currentPage
+      const res = await axios.get(`user/cities/${governorateName}`);
+      return res.data;
     } catch (error) {
       let errorMessage = "حدث خطأ غير متوقع";
 
+      // Handle network errors (no internet connection)
       if (error.message === "Network Error" || error.code === "ERR_NETWORK") {
         errorMessage =
           "لا يوجد اتصال بالإنترنت، يرجى التحقق من الاتصال والمحاولة مرة أخرى";
-      } else if (
+      }
+      // Handle timeout errors
+      else if (
         error.code === "ECONNABORTED" ||
         error.message.includes("timeout")
       ) {
         errorMessage = "انتهت مهلة الاتصال، يرجى المحاولة مرة أخرى";
-      } else if (error.response?.data?.message) {
+      }
+      // Handle server response errors
+      else if (error.response?.data?.message) {
         errorMessage = error.response.data.message;
       }
-
-      toast.error(errorMessage);
+      if (governorateName != "المحافظة") toast.error(errorMessage);
       return rejectWithValue(errorMessage);
     }
   }

@@ -1,12 +1,11 @@
 import { Link, useNavigate } from "react-router";
 import logo from "../../assets/images/logoWithTitleWhite.svg";
 import emailIcon from "../../assets/images/ic_round-email.svg";
-import phoneIcone from "../../assets/images/ic_baseline-phone.svg";
 import Ellipse1 from "../../assets/images/Ellipse 14.svg";
 import Ellipse2 from "../../assets/images/Ellipse 15.svg";
-import instagram from "../../assets/images/ri_instagram-fill.svg";
 import googlPlay from "../../assets/images/googlPlay.svg";
 import facebook from "../../assets/images/ic_baseline-facebook.svg";
+import instagram from "../../assets/images/ri_instagram-fill.svg";
 import whatsup from "../../assets/images/ri_whatsapp-fill.svg";
 import { ulLinksFooter } from "../../data/filterData";
 import Cookies from "js-cookie";

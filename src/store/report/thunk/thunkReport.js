@@ -5,11 +5,14 @@ import { toast } from "react-toastify";
 import { handleThunkError } from "../../../utils/utils";
 export const thunkReport = createAsyncThunk(
   "/report",
-  async ({ productId, message, reason }, { rejectWithValue }) => {
+  async (
+    { reported_user, details, reason, productId },
+    { rejectWithValue }
+  ) => {
     try {
       const res = await axios.post(
-        "user/report",
-        { productId, message, reason },
+        "/user/report_user",
+        { reported_user, details, reason },
         {
           headers: {
             authorization: `Bearer ${Cookies.get("token")}`,
@@ -22,6 +25,7 @@ export const thunkReport = createAsyncThunk(
       }, 700);
       return res.data;
     } catch (error) {
+      console.log(error);
       return handleThunkError(error, rejectWithValue);
     }
   }

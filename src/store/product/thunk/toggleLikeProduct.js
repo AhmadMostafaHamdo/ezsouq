@@ -1,7 +1,6 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import Cookies from "js-cookie";
 import axios from "axios";
-import { toast } from "react-toastify";
 import { handleThunkError } from "../../../utils/utils";
 
 export const toggleLikeProduct = createAsyncThunk(

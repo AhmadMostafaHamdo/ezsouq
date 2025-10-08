@@ -1,28 +1,35 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 import Cookies from "js-cookie";
-import { handleThunkError } from "../../../utils/utils";
+import { toast } from "react-toastify";
+import { removeWishLocal } from "../wishlistSlice"; // تأكد من المسار الصحيح
+import { getAllWishes } from "./getAllWishProduct";
 
 export const likeToggleWishlistThunk = createAsyncThunk(
-  "/wishlist",
-  async (_id) => {
+  "/wishlist/toggle",
+  async (_id, { dispatch, rejectWithValue }) => {
     try {
-      // إنشاء نسخة جديدة من axios بدون baseURL
-      const instance = axios.create();
-      const res = await instance.post(
+      // إزالة المنتج محليًا مباشرة لجعل الواجهة أسرع
+      dispatch(removeWishLocal(_id));
+
+      // إرسال الطلب للسيرفر بشكل غير متزامن
+      await axios.post(
         "/user/favorite/toggle",
-        {
-          product_id: _id,
-        },
-        {
-          headers: {
-            authorization: `Bearer ${Cookies.get("token")}`,
-          },
-        }
+        { product_id: _id },
+        { headers: { authorization: `Bearer ${Cookies.get("token")}` } }
       );
-      return res.data;
+
+      // يمكن تحديث المفضلة من السيرفر إذا أحببت التأكد من التزامن
+      dispatch(getAllWishes());
+
+      return _id;
     } catch (error) {
-      return handleThunkError(error, rejectWithValue);
+      const message = error.response?.data?.message || "حدث خطأ غير متوقع";
+      toast.error(message);
+
+      // إذا فشل الطلب، يمكن إعادة المنتج إلى الحالة المحلية (Rollback)
+      // dispatch(addWishLocal(_id)); // تحتاج لإنشاء هذا الـ reducer إذا أردت
+      return rejectWithValue(message);
     }
   }
 );

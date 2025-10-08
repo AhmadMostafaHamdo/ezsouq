@@ -32,7 +32,7 @@ const Main = () => {
   const { id } = useParams();
   const dispatch = useDispatch();
   const imgRef = useRef(null);
-
+  console.log(product);
   // Fetch product by ID
   useEffect(() => {
     if (id) dispatch(productThunkById(id));
@@ -295,13 +295,13 @@ const Main = () => {
                   </div>
                 )}
                 <br />
-                {product.description}
+                <div className="break-words md:ml-44 lg:ml-32">{product.description}</div>
               </p>
 
               <hr className="text-[#D9D9D9] mt-3" />
 
               {/* Publisher Info */}
-              <div>
+              <div className="md:w-[45vw] lg:w-3/4">
                 <h3 className="text-[#3F3D56] text-[1.1rem] my-2 font-normal">
                   معلومات الناشر
                 </h3>
@@ -355,9 +355,9 @@ const Main = () => {
           </div>
 
           {/* Report Link */}
-          <Link to={`/offer-details/${id}/report`}>
+          <Link to={`/offer-details/${id}/report/${product?.Owner?._id}`}>
             <p className="text-center text-[12px] font-normal text-[#7E7E7E] pt-5 pb-10 underline cursor-pointer">
-              ابلاغ عن هذا الإعلان
+              ابلاغ عن هذا المستخدم
             </p>
           </Link>
         </div>

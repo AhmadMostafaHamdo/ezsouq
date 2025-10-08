@@ -4,16 +4,16 @@ import { lazy, Suspense } from "react";
 import Cookies from "js-cookie";
 import Spinner from "../../feedback/loading/Spinner";
 
-// Lazy load Lottie animation
+// Lazy load Lottie animation for performance
 const Lottie = lazy(() => import("lottie-react"));
 import animationData from "../../assets/lottifiles/web home animation.json";
 
-/* =========================================
-   Main Landing Section
-   - Original layout fully preserved
-   - Lazy load Lottie for performance
-   - Spinner fallback
-========================================= */
+/**
+ * Main Landing Section
+ * - Original layout preserved
+ * - Lazy load Lottie animation
+ * - Spinner fallback displayed while loading
+ */
 const Main = () => {
   const token = Cookies.get("token");
 

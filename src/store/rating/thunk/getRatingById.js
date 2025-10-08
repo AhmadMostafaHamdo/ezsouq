@@ -1,18 +1,21 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
+import Cookies from "js-cookie";
 import { toast } from "react-toastify";
 
-export const thunkGetProductByCat = createAsyncThunk(
-  "productsByCat/fetch",
-  async ({ category = null, page = 1 }, { rejectWithValue }) => {
+export const getRatingById = createAsyncThunk(
+  "/getRatingById",
+  async (userId, { rejectWithValue }) => {
     try {
-      // رابط API يدعم page دائماً، وCategory إذا موجود
-      const url = category
-        ? `/user/fliteredProducts?Category=${category}&page=${page}&limit=8&order=desc`
-        : `/user/fliteredProducts?page=${page}&limit=8&order=desc`;
+      const res = await axios.get(`/admin/rated_user/${userId}`, {
+        headers: {
+          authorization: `Bearer ${Cookies.get("token")}`,
+        },
+      });
 
-      const res = await axios.get(url);
-      return res.data; // يجب أن يحتوي على: items + totalPages + currentPage
+      console.log("User rating:", res.data);
+
+      return res.data?.data;
     } catch (error) {
       let errorMessage = "حدث خطأ غير متوقع";
 

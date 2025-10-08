@@ -25,7 +25,7 @@ const Filters = () => {
   } = useSelector((state) => state.products);
   const { governorates = [] } = useSelector((state) => state.governorates);
   const { cities = [], loadingCity } = useSelector((state) => state.cities);
-
+console.log(governorates, filters.governorate);
   const observerRef = useRef(null); // Ref for IntersectionObserver
 
   /* =========================================

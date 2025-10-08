@@ -1,12 +1,13 @@
 import logo from "../../assets/images/logoWithTitle.svg";
 
-const Logo = ({w,h}) => {
+// Reusable logo component
+const Logo = ({ w, h }) => {
   return (
-    <div className="w-full flex justify-center h-[22vh]">
+    <div className="w-full flex justify-center" style={{ height: h || "22vh" }}>
       <img
         src={logo}
         alt="logo"
-        className="w-[186px] md:w-[232px]"
+        className={`w-[${w || 186}px] md:w-[${w || 232}px]`}
         loading="lazy"
       />
     </div>

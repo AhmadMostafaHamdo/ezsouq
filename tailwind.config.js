@@ -38,11 +38,16 @@ export default {
       },
       animation: {
         wave: "wave 1.2s ease-in-out infinite",
+        "slide-fade": "slide-fade 0.3s ease-out forwards",
       },
       keyframes: {
         wave: {
           "0%, 60%, 100%": { transform: "translateY(0)" },
           "30%": { transform: "translateY(-10px)" },
+        },
+        "slide-fade": {
+          "0%": { opacity: 0, transform: "translateY(10px)" },
+          "100%": { opacity: 1, transform: "translateY(0)" },
         },
       },
     },

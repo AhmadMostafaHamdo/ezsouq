@@ -1,36 +1,51 @@
-import { useDispatch, useSelector } from "react-redux";
-import emptyWishlist from "../assets/images/emptyWishlist.svg";
 import { useEffect, useRef } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { getAllWishes } from "../store/wishlist/thunk/getAllWishProduct";
+import { likeToggleWishlistThunk } from "../store/wishlist/thunk/likeToggleWishlistThunk";
 import Card from "../components/website/Card";
-import LoadingSpinner from "../feedback/loading/LoadingSpinner";
 import Spinner from "../feedback/loading/Spinner";
 import Heading from "../components/common/Heading";
+import emptyWishlist from "../assets/images/emptyWishlist.svg";
+import { Link } from "react-router-dom";
+
 const Wishlist = () => {
   const dispatch = useDispatch();
   const ref = useRef();
   const { products = [], loading } = useSelector((state) => state.wishlist);
+
   useEffect(() => {
     ref.current.scrollIntoView();
     dispatch(getAllWishes());
   }, [dispatch]);
+
+  const handleToggleFavorite = (_id) => {
+    // ✅ Toggle المفضلة ثم إعادة جلب wishlist تلقائيًا
+    dispatch(likeToggleWishlistThunk(_id));
+  };
+
   return (
     <div className="container pt-14" ref={ref}>
       <Heading title={"الرجوع للرئيسية"} />
-      <div className=" pb-20 pt-2">
+      <div className="pb-20 pt-2">
         {loading ? (
           <div className="mt-32">
             <Spinner size={100} />
           </div>
         ) : Array.isArray(products) && products.length > 0 ? (
-          <div className="flex-between flex-wrap gap-5">
-            {products.map((product) => (
-              <Card key={product._id} {...product} />
-            ))}
+          <div className="flex flex-wrap gap-5">
+            {products.map((product) => {
+              return (
+                <Card
+                  key={product._id}
+                  {...product}
+                  onToggleFavorite={() => handleToggleFavorite(product._id)}
+                />
+              );
+            })}
           </div>
         ) : (
-          <>
-            <h1 className="font-normal text-[#2F2E41] text-[1.5rem]">
+          <div className="-mt-6">
+            <h1 className="font-normal text-[#2F2E41] translate-y-2 text-[1.5rem]">
               إعلاناتك المفضلة
             </h1>
             <div className="flex-center flex-col gap-4 mb-10">
@@ -42,11 +57,14 @@ const Wishlist = () => {
                 تصفح الإعلانات واضغط على القلب لحفظ ما
                 <br /> يعجبك هنا!
               </p>
-              <button className="bg-primary text-white rounded-xl w-44 h-12">
+              <Link
+                to="/"
+                className="bg-primary text-white flex-center rounded-xl w-44 h-12"
+              >
                 تصفح الإعلانات
-              </button>
+              </Link>
             </div>
-          </>
+          </div>
         )}
       </div>
     </div>

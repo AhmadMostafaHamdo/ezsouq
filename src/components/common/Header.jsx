@@ -14,8 +14,7 @@ import Card from "../website/Card";
 import Spinner from "../../feedback/loading/Spinner";
 
 /* =========================================
-   Simple debounce function
-   Delays function execution by wait ms
+   Debounce function to delay execution
 ========================================= */
 function debounce(func, wait) {
   let timeout;
@@ -31,6 +30,7 @@ const Header = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isSearchVisible, setIsSearchVisible] = useState(false);
   const [searchValue, setSearchValue] = useState("");
+  const [category, setCategory] = useState(""); 
 
   const isScrolled = useScrolled(10);
   const dispatch = useDispatch();
@@ -40,12 +40,12 @@ const Header = () => {
     (state) => state.search
   );
 
-  // Debounced search handler
+  // Debounced search with category
   const debouncedSearch = useCallback(
-    debounce((val) => {
-      if (val.trim()) {
+    debounce((val, cat) => {
+      if (val.trim() || cat) {
         dispatch(setCurrentPage(1));
-        dispatch(searchThunk({ keyword: val, page: 1 }));
+        dispatch(searchThunk({ keyword: val, category: cat, page: 1 }));
       }
     }, 500),
     [dispatch]
@@ -53,22 +53,30 @@ const Header = () => {
 
   const handleChange = (e) => {
     setSearchValue(e.target.value);
-    debouncedSearch(e.target.value);
+    debouncedSearch(e.target.value, category);
   };
 
-  const handleClearSearch = () => setSearchValue("");
+  const handleCategoryChange = (e) => {
+    setCategory(e.target.value);
+    debouncedSearch(searchValue, e.target.value);
+  };
+
+  const handleClearSearch = () => {
+    setSearchValue("");
+    setCategory("");
+  };
 
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
   const toggleSearch = () => setIsSearchVisible(!isSearchVisible);
 
   const hasSearchResults =
-    searchedProducts.length > 0 && searchValue.trim() !== "";
+    searchedProducts.length > 0 && (searchValue.trim() !== "" || category);
 
   return (
     <div className="relative">
-      {/* Header */}
+      {/* ================== HEADER ================== */}
       <header
-        className={`text-white py-1 font-bold text-[.87rem] fixed w-full z-20 bg-primary md:${
+        className={`text-white py-1 font-bold text-[.87rem] fixed w-full z-20 transition-all duration-300 ${
           isScrolled ? "backdrop-blur-[20px] bg-[#0F00FF80]" : "bg-primary"
         }`}
       >
@@ -77,11 +85,11 @@ const Header = () => {
           <button
             onClick={toggleSidebar}
             className="flex-center w-8 h-8 lg:hidden"
-            aria-label={isSidebarOpen ? "Close menu" : "Open menu"}
+            aria-label={isSidebarOpen ? "إغلاق القائمة" : "فتح القائمة"}
           >
             <img
               src={isSidebarOpen ? closeIcon : menuIcon}
-              alt={isSidebarOpen ? "Close menu" : "Open menu"}
+              alt={isSidebarOpen ? "إغلاق القائمة" : "فتح القائمة"}
               className="w-6 h-6"
             />
           </button>
@@ -91,22 +99,33 @@ const Header = () => {
             <button
               onClick={toggleSearch}
               className="flex-center w-8 h-8"
-              aria-label="Toggle search"
+              aria-label="إظهار البحث"
             >
-              <img src={searchIcon} alt="Search" className="w-5 h-5" />
+              <img src={searchIcon} alt="بحث" className="w-5 h-5" />
             </button>
           </div>
 
           {/* Mobile Search Input */}
           {isSearchVisible && (
-            <div className="mt-0 md:hidden flex-1">
+            <div className="mt-0 md:hidden flex-1 flex gap-2">
+              <select
+                value={category}
+                onChange={handleCategoryChange}
+                className="p-2 bg-main text-white outline-none rounded-md"
+                aria-label="اختر التصنيف"
+              >
+                <option value="">التصنيفات</option>
+                <option value="عقارات">عقارات</option>
+                <option value="موبايلات">موبايلات</option>
+                <option value="سيارات">سيارات</option>
+              </select>
               <input
                 type="text"
                 value={searchValue}
                 onChange={handleChange}
                 placeholder="بحث..."
-                className="w-full p-2 rounded-md bg-white text-black"
-                aria-label="Search input"
+                className="flex-1 p-2 rounded-md bg-white outline-none border-none text-black"
+                aria-label="مربع البحث"
               />
             </div>
           )}
@@ -117,22 +136,33 @@ const Header = () => {
               <Link to="/">
                 <img
                   src={logo}
-                  alt="Logo"
+                  alt="شعار الموقع"
                   className="object-contain w-40 h-12 md:scale-[1.7]"
                 />
               </Link>
             </div>
           )}
 
-          {/* Desktop Search Input */}
-          <div className="hidden md:flex flex-1 mx-8 max-w-xl h-10 bg-main rounded-lg shadow-sm">
+          {/* Desktop Search (Category + Input) */}
+          <div className="hidden md:flex flex-1 items-center ml-8 max-w-xl h-10 gap-2">
+            <select
+              value={category}
+              onChange={handleCategoryChange}
+              className="outline-none p-[.4rem] -ml-2 bg-[#9B95FF] rounded-br-md rounded-tr-md text-white"
+              aria-label="اختر التصنيف"
+            >
+              <option value="">التصنيفات</option>
+              <option value="عقارات">عقارات</option>
+              <option value="موبايلات">موبايلات</option>
+              <option value="سيارات">سيارات</option>
+            </select>
             <input
               type="text"
               value={searchValue}
               onChange={handleChange}
               placeholder="بحث..."
-              className="w-full p-2 rounded-md bg-[#D7D5FF] border-none outline-none text-black"
-              aria-label="Search input"
+              className="flex-1 p-[.5rem] rounded-bl-md rounded-tl-md border-r-1 border-r-white border-t-0 border-b-0 border-l-0 bg-[#9B95FF] placeholder:text-white outline-none text-black"
+              aria-label="مربع البحث"
             />
           </div>
 
@@ -163,18 +193,19 @@ const Header = () => {
         </div>
       </header>
 
-      {/* Search Results */}
-      {searchValue && (
+      {/* ================== SEARCH RESULTS ================== */}
+      {(searchValue || category) && (
         <div className="absolute top-[4rem] left-0 w-full bg-white z-10 shadow-lg p-6 min-h-[200px]">
-          {/* Clear Search Button */}
+          {/* Clear Search */}
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-lg font-bold text-gray-700">
-              نتائج البحث عن: {searchValue}
+              نتائج البحث عن: {searchValue || "بدون كلمة"}{" "}
+              {category && `في ${category}`}
             </h2>
             <button
               onClick={handleClearSearch}
               className="text-red font-bold text-lg hover:underline"
-              aria-label="Clear search"
+              aria-label="مسح البحث"
             >
               ✖
             </button>
@@ -191,11 +222,7 @@ const Header = () => {
               ))}
             </div>
           ) : (
-            <p className="text-center text-gray-500">
-              {searchValue
-                ? `لا توجد نتائج لـ "${searchValue}"`
-                : "اكتب للبحث..."}
-            </p>
+            <p className="text-center text-gray-500">لا توجد نتائج مطابقة</p>
           )}
         </div>
       )}

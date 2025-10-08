@@ -1,4 +1,3 @@
-import home from "../assets/images/dashboard/home.svg";
 import megaphone from "../assets/images/dashboard/megaphone.svg";
 import notification from "../assets/images/dashboard/notification.svg";
 import report from "../assets/images/dashboard/report.svg";
@@ -48,34 +47,6 @@ export const ulLinks = [
   },
 ];
 export const columnsRating = [
-   {
-     key: "image",
-     label: "الصورة",
-     visible: true,
-     render: () => <img src={profile} alt="صورة المستخدم" width={50} />,
-   },
-   { key: "name", label: "الاسم", visible: true },
-   { key: "email", label: "البريد الإلكتروني", visible: true },
-   {
-     key: "averageRating",
-     label: "متوسط التقييم",
-     visible: true,
-     render: (user) => user.averageRating?.toFixed(1) || "0",
-   },
-   {
-     key: "ratingsCount",
-     label: "عدد التقييمات",
-     visible: true,
-     render: (user) => user.ratings?.length || 0,
-   },
-   {
-     key: "adsCount",
-     label: "عدد الإعلانات المنشورة",
-     visible: true,
-     render: (user) => user.adsCount || 0,
-   },
- ];
-export   const columnsReports = [
   {
     key: "image",
     label: "الصورة",
@@ -85,25 +56,30 @@ export   const columnsReports = [
   { key: "name", label: "الاسم", visible: true },
   { key: "email", label: "البريد الإلكتروني", visible: true },
   {
+    key: "adsCount",
+    label: "الإجراءات",
+    visible: true,
+    render: (user) => user.adsCount || 0,
+  },
+];
+export const columnsReports = [
+  { key: "#", label: "#", visible: true },
+  { key: "reporter", label: "اسم المبلّغ", visible: true },
+  { key: "reported", label: "المستخدم المبلغ عنه", visible: true },
+  {
     key: "phone",
-    label: "رقم الهاتف",
+    label: "تاريخ الإبلاغ",
     visible: true,
     render: () => "مياو المياو",
   },
   {
     key: "ads",
-    label: "عدد الإعلانات",
+    label: "سبب الإبلاغ",
     visible: true,
     render: () => "50 مليون",
   },
   {
     key: "status",
     label: "الحالة",
-    visible: true,
-    render: () => (
-      <span className="text-[#30C795] bg-[#EAF9F4] rounded-md px-4 py-1">
-        نشط
-      </span>
-    ),
   },
 ];

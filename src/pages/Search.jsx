@@ -8,7 +8,7 @@ import emptySearch from "../assets/images/emptySearch.svg";
 import { searchThunk } from "../store/search/thunk/serachThunk";
 import Card from "../components/website/Card";
 import Spinner from "../feedback/loading/Spinner";
-import { Link } from "react-router-dom";
+import { data, Link } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import { setCurrentPage } from "../store/search/searchSlice";
 import { thunkGovernorates } from "../store/governorates/thunk/thunkGovernorates";
@@ -35,7 +35,7 @@ const Search = () => {
 
   // sort & order
   const [sortBy, setSortBy] = useState(""); // price / createdAt
-  const [order, setOrder] = useState(""); // asc / desc
+  const [order, setOrder] = useState(""); // asec / desc
 
   const {
     data: searchedProducts = [],
@@ -44,9 +44,9 @@ const Search = () => {
     totalPages,
     totalItems,
   } = useSelector((state) => state.search);
-
   const debouncedSearch = useCallback(
     debounce((params) => {
+      console.log(params );
       dispatch(searchThunk(params));
     }, 500),
     [dispatch]
@@ -165,11 +165,10 @@ const Search = () => {
         minPrice,
         maxPrice,
         sortBy,
-        order,
+        order: desc,
       })
     );
   };
-
   return (
     <div className="bg-[#F7F7FF]" ref={contactRef}>
       <ToastContainer />
@@ -242,15 +241,15 @@ const Search = () => {
                 value={sortBy && order ? `${sortBy}_${order}` : ""}
                 onChange={(e) => {
                   const value = e.target.value;
-                  if (value === "price_asc") {
+                  if (value === "asec") {
                     setSortBy("price");
-                    setOrder("asc");
-                  } else if (value === "price_desc") {
+                    setOrder("asec");
+                  } else if (value === "desc") {
                     setSortBy("price");
                     setOrder("desc");
-                  } else if (value === "createdAt_asc") {
+                  } else if (value === "createdAt_asec") {
                     setSortBy("createdAt");
-                    setOrder("asc");
+                    setOrder("asec");
                   } else if (value === "createdAt_desc") {
                     setSortBy("createdAt");
                     setOrder("desc");
@@ -262,9 +261,9 @@ const Search = () => {
                 className="outline-none mt-4 w-full p-2 bg-white rounded border border-[#B9B5FF]"
               >
                 <option value="">ترتيب حسب</option>
-                <option value="price_asc">السعر: من الأرخص للأغلى</option>
-                <option value="price_desc">السعر: من الأغلى للأرخص</option>
-                <option value="createdAt_asc">الأقدم</option>
+                <option value="asec">السعر: من الأرخص للأغلى</option>
+                <option value="desc">السعر: من الأغلى للأرخص</option>
+                <option value="createdAt_asec">الأقدم</option>
                 <option value="createdAt_desc">الأحدث</option>
               </select>
 

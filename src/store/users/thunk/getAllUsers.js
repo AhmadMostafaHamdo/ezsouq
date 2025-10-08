@@ -1,3 +1,4 @@
+// store/users/thunk/getAllUsers.js
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 import Cookies from "js-cookie";
@@ -6,17 +7,18 @@ import { handleThunkError } from "../../../utils/utils";
 
 export const getAllUsers = createAsyncThunk(
   "/getAllUsers",
-  async ({ page, limit = 4 }, { rejectWithValue }) => {
+  async ({ page, limit = 4, search = "" }, { rejectWithValue }) => {
     try {
       const res = await axios.get(
-        `/admin/get_all_users?page=${page}&limit=${limit}`,
+        `/admin/search_user?page=${page}&limit=${limit}&search=${encodeURIComponent(
+          search
+        )}`,
         {
           headers: {
             authorization: `Bearer ${Cookies.get("token")}`,
           },
         }
       );
-      console.log(res.data);
       return {
         users: res?.data?.data || [],
         totalItems: res?.data?.totalItems || 0,

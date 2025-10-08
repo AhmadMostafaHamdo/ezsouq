@@ -28,6 +28,7 @@ const AuthForm = ({ fields, schema, btnAuth }) => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
+  // Initialize React Hook Form with Zod validation
   const form = useForm({
     mode: "onChange",
     resolver: zodResolver(schema),
@@ -41,7 +42,7 @@ const AuthForm = ({ fields, schema, btnAuth }) => {
     formState: { errors, isSubmitting },
   } = form;
 
-  // إرسال الفورم التقليدية
+  // Handle normal form submission (email/password)
   const onSubmit = async (data) => {
     try {
       const { name, email, password } = data;
@@ -49,17 +50,18 @@ const AuthForm = ({ fields, schema, btnAuth }) => {
       const res = await dispatch(thunkAuth({ info, isLogin })).unwrap();
 
       if (res?.token) {
-        Cookies.set("token", res.token);
+        Cookies.set("token", res.token, { expires: 7 });
         const { Role } = jwtDecode(res.token);
         navigate(Role === "OWNER" ? "/dashboard" : "/");
       }
+
       reset();
     } catch (err) {
       console.error("Auth Error:", err);
     }
   };
 
-  // تسجيل دخول بواسطة Google
+  // Handle Google authentication redirect
   const handleAuthGoogle = (e) => {
     e.preventDefault();
     setLoadingGoogle(true);
@@ -68,6 +70,7 @@ const AuthForm = ({ fields, schema, btnAuth }) => {
     )}`;
   };
 
+  // Password visibility toggle component
   const PasswordToggle = ({ visible, onClick }) => (
     <button
       type="button"
@@ -86,7 +89,7 @@ const AuthForm = ({ fields, schema, btnAuth }) => {
           onSubmit={handleSubmit(onSubmit)}
           className="w-screen h-screen flex-center shadow-custom"
         >
-          {/* Right Section */}
+          {/* Right Section (Slider or Welcome Image) */}
           <div className="hidden md:block w-[40vw] h-full">
             {!isLogin ? (
               <ImageSlider />
@@ -102,12 +105,13 @@ const AuthForm = ({ fields, schema, btnAuth }) => {
                   src={loginImage}
                   className="max-w-full h-full"
                   loading="lazy"
+                  alt="login illustration"
                 />
               </div>
             )}
           </div>
 
-          {/* Left Section */}
+          {/* Left Section (Form Fields) */}
           <div className="w-full md:w-[60vw] h-full bg-white">
             {isLogin && (
               <div className="w-full flex justify-center h-[20vh]">
@@ -120,6 +124,7 @@ const AuthForm = ({ fields, schema, btnAuth }) => {
                 {isLogin ? "تسجيل الدخول" : "إنشاء حساب"}
               </h1>
 
+              {/* Dynamic input fields */}
               {fields.map((input, index) => (
                 <div key={index} className="relative">
                   <Input
@@ -158,6 +163,7 @@ const AuthForm = ({ fields, schema, btnAuth }) => {
                 </div>
               ))}
 
+              {/* Privacy policy checkbox for registration */}
               {!isLogin && (
                 <>
                   <div className="flex items-center">
@@ -167,9 +173,13 @@ const AuthForm = ({ fields, schema, btnAuth }) => {
                       {...register("checkbox")}
                       id="accept"
                     />
-                    <label htmlFor="accept" className="text-[12px]">
+                    <Link
+                      to="/privacy-policy"
+                      htmlFor="accept"
+                      className="text-[12px]"
+                    >
                       أوافق على سياسة الخصوصية
-                    </label>
+                    </Link>
                   </div>
                   <p className="text-red mb-1 h-[18px] text-[13px]">
                     {errors["checkbox"]?.message}
@@ -177,12 +187,14 @@ const AuthForm = ({ fields, schema, btnAuth }) => {
                 </>
               )}
 
+              {/* Forgot password link */}
               {isLogin && (
                 <Link to="/forgot-password" className="mb-3 block text-[.9rem]">
                   هل نسيت كلمة المرور؟
                 </Link>
               )}
 
+              {/* Submit button */}
               <button
                 disabled={isSubmitting}
                 className="w-full h-[2.9rem] text-white bg-primary rounded-xl"
@@ -190,6 +202,7 @@ const AuthForm = ({ fields, schema, btnAuth }) => {
                 {isSubmitting ? "جارٍ الإرسال" : btnAuth}
               </button>
 
+              {/* Link to switch between login/register */}
               <p
                 className={`${
                   isLogin ? "my-5" : "my-6 md:my-3"
@@ -204,6 +217,7 @@ const AuthForm = ({ fields, schema, btnAuth }) => {
                 </Link>
               </p>
 
+              {/* Divider and Google button */}
               <DividerWithText text="أو" />
               <button
                 type="button"

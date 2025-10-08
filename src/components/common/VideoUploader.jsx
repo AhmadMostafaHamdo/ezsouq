@@ -6,21 +6,25 @@ const VideoUploader = ({ label, name }) => {
   const fileInputRef = useRef(null);
   const videoFile = watch(name);
 
+  // Trigger file input when the container is clicked
   const handleVideoClick = () => {
     fileInputRef.current?.click();
   };
 
+  // Update form value when a video is selected
   const handleFileChange = (e) => {
-    if (e.target.files.length > 0) {
-      setValue(name, e.target.files[0], { shouldValidate: true });
+    const file = e.target.files?.[0];
+    if (file) {
+      setValue(name, file, { shouldValidate: true });
     }
   };
 
   return (
     <div className="w-full">
+      {/* Upload button */}
       <div
         onClick={handleVideoClick}
-        className="flex-between w-full p-2 rounded-[5px] border border-[#B9B5FF] cursor-pointer"
+        className="flex-between w-full p-2 rounded-[5px] border border-[#B9B5FF] cursor-pointer hover:bg-[#f9f9ff] transition"
       >
         <p>{label}</p>
         <svg
@@ -39,10 +43,16 @@ const VideoUploader = ({ label, name }) => {
           />
         </svg>
       </div>
-      {videoFile && <p className="text-xs mt-1 truncate">{videoFile.name}</p>}
+
+      {/* Display selected file name */}
+      {videoFile && (
+        <p className="text-xs mt-1 truncate text-gray-600">{videoFile.name}</p>
+      )}
+
+      {/* Hidden file input */}
       <input
-        type="file"
         ref={fileInputRef}
+        type="file"
         accept="video/*"
         className="hidden"
         onChange={handleFileChange}

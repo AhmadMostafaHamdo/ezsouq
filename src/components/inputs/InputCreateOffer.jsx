@@ -1,6 +1,6 @@
 import React from "react";
 
-// Input مع forwardRef لربطه مع react-hook-form
+// Input component with forwardRef for integration with react-hook-form
 const InputCreateOffer = React.forwardRef(
   ({ placeholder, type = "text", ...rest }, ref) => (
     <input
@@ -12,4 +12,5 @@ const InputCreateOffer = React.forwardRef(
     />
   )
 );
+
 export default InputCreateOffer;

@@ -68,7 +68,7 @@ const router = createBrowserRouter([
     children: [
       { index: true, element: <MainWithFilters /> },
       { path: "offer-details/:id", element: <OfferDetails /> },
-      { path: "offer-details/:id/report", element: <Report /> },
+      { path: "offer-details/:id/report/:userId", element: <Report /> },
       { path: "google-callback", element: <GoogleAuthCallback /> },
       { path: "wishlist", element: <Wishlist /> },
       { path: "cars", element: <Cars /> },
@@ -85,7 +85,7 @@ const router = createBrowserRouter([
         path: "profile/:id",
         element: <Profile />,
         children: [
-          { index: true, element: <MainProfile /> },
+          { index: true, element: <MainProfile /> },  
           { path: "contact-info", element: <ContactInfo /> },
           { path: "rating", element: <Rating /> },
         ],

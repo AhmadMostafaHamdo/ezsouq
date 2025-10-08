@@ -20,30 +20,33 @@ import { toast, ToastContainer } from "react-toastify";
 const MainCreateOffer = () => {
   const dispatch = useDispatch();
   const offerRef = useRef();
+
   const { currentStep } = useSelector((state) => state.steps);
   const { user } = useSelector((state) => state.users);
   const { selectedCategory } = useSelector((state) => state.category);
 
   const userId = user?._id;
   const token = Cookies.get("token");
-  const [stepOneData, setStepOneData] = useState(null);
 
+  const [stepOneData, setStepOneData] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  // Scroll to top and reset steps on mount
   useEffect(() => {
     offerRef.current.scrollIntoView();
     dispatch(clearStep());
   }, [dispatch]);
 
-  // ==================== Step One ====================
+  // ================= Step One =================
   const handleStepOneSubmit = (data) => {
     setStepOneData(data);
     dispatch(stepIncrease());
   };
 
-  // ==================== Step Two ====================
+  // ================= Step Two =================
   const handleStepTwoSubmit = async (stepTwoData) => {
     if (!stepOneData) return;
 
-    // دمج بيانات الخطوتين
+    // Merge step one and step two data
     const finalData = {
       ...stepOneData,
       ...stepTwoData,
@@ -52,49 +55,44 @@ const MainCreateOffer = () => {
 
     const formData = new FormData();
 
-    // إضافة الحقول النصية والرقمية
+    // Append text and numeric fields
     Object.entries(finalData).forEach(([key, value]) => {
-      if (key === "main_photos" || key === "video") return; // الصور والفيديو نضيفهم لحال
+      if (key === "main_photos" || key === "video") return; // skip files for now
       if (value !== undefined && value !== null) {
         formData.append(key, value);
       }
     });
 
-    // إضافة الصور (مصفوفة)
+    // Append photos array
     if (Array.isArray(finalData.main_photos)) {
       finalData.main_photos.forEach((file) => {
         formData.append("main_photos", file);
       });
     }
 
-    // إضافة الفيديو
+    // Append video
     if (finalData.video) {
       formData.append("video", finalData.video);
     }
-
-    // ✅ Debug: عرض القيم قبل الإرسال
-    console.log("📌 Final FormData:");
-    for (let pair of formData.entries()) {
-      console.log(pair[0], pair[1]);
-    }
-
     try {
+      setIsSubmitting(true);
       const res = await axios.post("/user/add_product", formData, {
-        params: { owner_id: userId }, // إذا الباك يطلبها بالـ query
+        params: { owner_id: userId },
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "multipart/form-data",
-        },  
+        },
       });
       toast.success(res.data?.message || "تم نشر الإعلان بنجاح");
       dispatch(clearStep());
     } catch (error) {
       toast.error(error.response?.data?.message || "فشل في نشر الإعلان");
-      console.error("❌ فشل النشر:", error.response?.data || error.message);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
-  // ==================== Back Button ====================
+  // ================= Back Button =================
   const handleBack = () => dispatch(stepDecrease());
 
   return (
@@ -135,9 +133,14 @@ const MainCreateOffer = () => {
             {currentStep === 2 ? (
               <button
                 onClick={() => document.querySelector("form")?.requestSubmit()}
-                className="bg-primary text-white rounded-xl py-[.4rem] px-5"
+                disabled={isSubmitting} // 🟣 disable button while submitting
+                className={`bg-primary text-white rounded-xl py-[.4rem] px-5 transition ${
+                  isSubmitting
+                    ? "opacity-60 cursor-not-allowed"
+                    : "hover:bg-[#6A65E9]"
+                }`}
               >
-                نشر الإعلان
+                {isSubmitting ? "جارٍ الإرسال..." : "نشر الإعلان"}
               </button>
             ) : (
               <button

@@ -1,19 +1,26 @@
+// === Get all ratings with pagination ===
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
+import Cookies from "js-cookie";
 import { toast } from "react-toastify";
 
-export const thunkGetProductByCat = createAsyncThunk(
-  "productsByCat/fetch",
-  async ({ category = null, page = 1 }, { rejectWithValue }) => {
+export const getAllRateing = createAsyncThunk(
+  "/getAllRateing",
+  async (page = 1, { rejectWithValue }) => {
     try {
-      // رابط API يدعم page دائماً، وCategory إذا موجود
-      const url = category
-        ? `/user/fliteredProducts?Category=${category}&page=${page}&limit=8&order=desc`
-        : `/user/fliteredProducts?page=${page}&limit=8&order=desc`;
+      // Send page & limit to backend
+      const res = await axios.get(`/admin/rated_users?page=${page}&limit=3`, {
+        headers: {
+          authorization: `Bearer ${Cookies.get("token")}`,
+        },
+      });
 
-      const res = await axios.get(url);
-      return res.data; // يجب أن يحتوي على: items + totalPages + currentPage
+      console.log("📄 Response:", res.data);
+
+      // Return data and pagination info
+      return res.data
     } catch (error) {
+      console.log(error);
       let errorMessage = "حدث خطأ غير متوقع";
 
       if (error.message === "Network Error" || error.code === "ERR_NETWORK") {

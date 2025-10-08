@@ -22,6 +22,7 @@ export const thunkAddCommit = createAsyncThunk(
       console.log(res.data);
       return res.data;
     } catch (error) {
+      console.log(error)
       return handleThunkError(error, rejectWithValue);
     }
   }

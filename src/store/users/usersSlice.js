@@ -4,6 +4,7 @@ import { getAllUsers } from "./thunk/getAllUsers";
 import { updateUser } from "./thunk/updateUser";
 import { deleteUser } from "./thunk/deleteUser";
 import { updateUserPhoto } from "./thunk/updateUserPhoto";
+import { banUser } from "./thunk/banUser";
 
 const initialState = {
   users: [],
@@ -79,6 +80,17 @@ const usersSlice = createSlice({
       state.loading = false;
       state.error = action.payload;
     });
+    builder.addCase(banUser.pending, (state) => {
+      state.loading = true;
+      state.error = null;
+    });
+    builder.addCase(banUser.fulfilled, (state) => {
+      state.loading = false;
+    });
+    builder.addCase(banUser.rejected, (state, action) => {
+      state.loading = false;
+      state.error = action.payload;
+    }); 
   },
 });
 

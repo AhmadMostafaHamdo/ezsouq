@@ -27,9 +27,9 @@ const Profile = () => {
       <ImgProfileWithButtons />
 
       {/* Dynamic content (posts / contact-info / rating) */}
-      <div>
-        <Outlet />
-      </div>
+        <div>
+          <Outlet />
+        </div>
     </main>
   );
 };

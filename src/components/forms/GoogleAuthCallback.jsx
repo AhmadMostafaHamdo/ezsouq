@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
-import {jwtDecode} from "jwt-decode";
+import { jwtDecode } from "jwt-decode";
 import Spinner from "../../feedback/loading/Spinner";
 
 const GoogleAuthCallback = () => {
@@ -9,13 +9,13 @@ const GoogleAuthCallback = () => {
 
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
-    const token = urlParams.get("token"); // استخراج الـ JWT من query param
+    const token = urlParams.get("token"); // Extract JWT from query params
 
     if (token) {
       try {
-        Cookies.set("token", token); // حفظ الـ JWT
-        const { Role } = jwtDecode(token); // استخراج الدور
-        navigate(Role === "OWNER" ? "/dashboard" : "/"); // إعادة التوجيه
+        Cookies.set("token", token); // Save JWT to cookies
+        const { Role } = jwtDecode(token); // Decode user role
+        navigate(Role === "OWNER" ? "/dashboard" : "/"); // Redirect based on role
       } catch (err) {
         console.error("Invalid token:", err);
         navigate("/login", { replace: true });
@@ -28,9 +28,7 @@ const GoogleAuthCallback = () => {
 
   return (
     <div className="flex-center h-screen bg-white flex-col">
-      <h1 className="text-xl mb-3 text-primary">
-        جاري تسجيل الدخول بواسطة جوجل...
-      </h1>
+      <h1 className="text-xl mb-3 text-primary">Signing in with Google...</h1>
       <Spinner />
     </div>
   );

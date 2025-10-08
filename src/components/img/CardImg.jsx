@@ -1,6 +1,5 @@
 import { useState } from "react";
 
-// مكون الصورة المحسن
 const CardImage = ({ src, alt }) => {
   const [loaded, setLoaded] = useState(false);
 

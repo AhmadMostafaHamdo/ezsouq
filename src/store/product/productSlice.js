@@ -12,7 +12,7 @@ const initialState = {
   loading: false,
   loadingLike: false,
   error: null,
-  savedProducts: [],
+  savedProductsByUser: {},
   totalPages: 1,
 };
 
@@ -24,13 +24,20 @@ const productSlice = createSlice({
       state.products = [];
       state.product = {};
     },
+
     setSavedProduct: (state, action) => {
-      const productId = action.payload;
-      if (!Array.isArray(state.savedProducts)) state.savedProducts = [];
-      const idx = state.savedProducts.indexOf(productId);
-      if (idx === -1) state.savedProducts.push(productId);
-      else state.savedProducts.splice(idx, 1);
+      const { userId, productId } = action.payload;
+      if (!userId) return;
+
+      if (!state.savedProductsByUser[userId]) {
+        state.savedProductsByUser[userId] = [];
+      }
+
+      const idx = state.savedProductsByUser[userId].indexOf(productId);
+      if (idx === -1) state.savedProductsByUser[userId].push(productId);
+      else state.savedProductsByUser[userId].splice(idx, 1);
     },
+
     setLikeLocal: (state, action) => {
       const { productId, userId, liked } = action.payload;
 
@@ -44,6 +51,7 @@ const productSlice = createSlice({
         return likes;
       };
 
+      // Update products array (Filters page)
       const productIndex = state.products.findIndex((p) => p._id === productId);
       if (productIndex !== -1) {
         state.products[productIndex].likes = updateLikes(
@@ -51,8 +59,19 @@ const productSlice = createSlice({
         );
       }
 
+      // Update single product (Product detail page)
       if (state.product._id === productId) {
         state.product.likes = updateLikes(state.product.likes);
+      }
+
+      // ✅ Update productsById (Profile page)
+      const productByIdIndex = state.productsById.findIndex(
+        (p) => p._id === productId
+      );
+      if (productByIdIndex !== -1) {
+        state.productsById[productByIdIndex].likes = updateLikes(
+          state.productsById[productByIdIndex].likes
+        );
       }
     },
   },
@@ -68,10 +87,8 @@ const productSlice = createSlice({
         state.currentPage = action.payload.currentPage;
 
         if (action.payload.currentPage === 1) {
-          // الصفحة الأولى → استبدال البيانات
           state.products = action.payload.products;
         } else {
-          // صفحات إضافية → دمج مع الموجود
           state.products = [...state.products, ...action.payload.products];
         }
       })

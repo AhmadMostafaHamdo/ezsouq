@@ -2,6 +2,7 @@ import { Link } from "react-router";
 import security from "../assets/images/security.svg";
 import { useEffect, useRef } from "react";
 import Heading from "../components/common/Heading";
+import Cookies from "js-cookie";
 const PrivacyPolicy = () => {
   const sections = [
     {
@@ -63,7 +64,10 @@ const PrivacyPolicy = () => {
   return (
     <div className="pt-16" ref={offer}>
       <div className="container">
-        <Heading title="سياسة الخصوصية" />
+        <Heading
+          title="سياسة الخصوصية"
+          url={Cookies.get("token") ? "/" : "/register"}
+        />
         <p className="text-primary text-[.87rem] py-2">
           نحن نُقدّر خصوصيتك ونحرص على حماية بياناتك الشخصية. توضح هذه السياسة
           كيفية جمع واستخدام ومشاركة المعلومات عند استخدامك لتطبيقنا.

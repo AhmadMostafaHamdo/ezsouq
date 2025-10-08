@@ -1,31 +1,31 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
-import { NavLink, useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import Cookies from "js-cookie";
 import { jwtDecode } from "jwt-decode";
 
 import personalImg from "../../assets/images/pesonal.png";
-import star from "../../assets/images/start.svg"; // fixed typo
+import star from "../../assets/images/start.svg";
 import { userThunkById } from "../../store/users/thunk/userThunkById";
 import { updateUserPhoto } from "../../store/users/thunk/updateUserPhoto";
 import useUserId from "../../hooks/useUserId";
 import ProfileSkeleton from "../../assets/sketlon/ProfileSkeleton";
+import ContactInfo from "./ContactInfo";
 
-const ImgProfileWithButtons = ({ activeTab, setActiveTab }) => {
+const ImgProfileWithButtons = () => {
   const [previewImg, setPreviewImg] = useState(null);
   const [profileData, setProfileData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState("posts"); // 👈 هنا المتغير الأساسي
 
   const dispatch = useDispatch();
   const { id } = useParams();
   const myId = useUserId();
 
-  // Decode role from token
   const token = Cookies.get("token");
   const { Role } = jwtDecode(token);
 
-  // Fetch user data
   useEffect(() => {
     const fetchUser = async () => {
       setLoading(true);
@@ -41,7 +41,6 @@ const ImgProfileWithButtons = ({ activeTab, setActiveTab }) => {
     if (id) fetchUser();
   }, [dispatch, id]);
 
-  // Handle profile image upload
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -53,7 +52,6 @@ const ImgProfileWithButtons = ({ activeTab, setActiveTab }) => {
     dispatch(updateUserPhoto(file));
   };
 
-  // Get avatar url with fallback
   const avatarUrl =
     previewImg ||
     (profileData?.avatar
@@ -94,8 +92,6 @@ const ImgProfileWithButtons = ({ activeTab, setActiveTab }) => {
             <p className="font-normal text-[1.3rem] text-[#2F2E41] mt-2">
               {profileData?.name || "مستخدم"}
             </p>
-
-            {/* User rating */}
             <div className="flex gap-2 items-center mt-1">
               <img src={star} alt="تقييم المستخدم" />
               <div className="font-normal flex items-center gap-1">
@@ -104,47 +100,55 @@ const ImgProfileWithButtons = ({ activeTab, setActiveTab }) => {
                     ? profileData.averageRating.toFixed(1)
                     : "0.0"}
                 </span>
-                <span className="text-[#7770E9] text-sm cursor-pointer">
+                <Link
+                  to={`/profile/${id}/rating`}
+                  className="text-[#7770E9] text-sm cursor-pointer"
+                >
                   تقييم
-                </span>
+                </Link>
               </div>
             </div>
           </div>
 
-          {/* Tabs */}
-          {Role === "USER" && (
-            <nav
-              className="flex justify-center text-[1rem] font-bold gap-3 my-3"
-              aria-label="Profile navigation"
+          {/* Tabs as Buttons */}
+          <nav className="flex justify-center text-[1rem] font-bold gap-3 my-3">
+            <Link
+              to={`/profile/${id}`}
+              onClick={() => setActiveTab("posts")}
+              className={`rounded-[3rem] py-1 px-8 transition relative ${
+                activeTab === "posts"
+                  ? "bg-[#7770E9] text-white"
+                  : "border border-[#C2BFFF] text-[#C2BFFF]"
+              }`}
             >
-              <NavLink
-                to={`/profile/${myId}`}
-                end
-                className={({ isActive }) =>
-                  `rounded-[3rem] py-1 px-8 transition ${
-                    isActive
-                      ? "bg-[#7770E9] text-white"
-                      : "border border-[#C2BFFF] text-[#C2BFFF]"
-                  }`
-                }
-              >
-                المنشورات
-              </NavLink>
-
-              <NavLink
-                to={`/profile/${myId}/contact-info`}
-                className={({ isActive }) =>
-                  `rounded-[3rem] py-1 px-8 transition ${
-                    isActive
-                      ? "bg-[#7770E9] text-white"
-                      : "border border-[#C2BFFF] text-[#C2BFFF]"
-                  }`
-                }
-              >
-                معلومات التواصل
-              </NavLink>
-            </nav>
-          )}
+              المنشورات
+              <p
+                className={`transition duration-300 absolute -bottom-[5px] ${
+                  activeTab === "posts"
+                    ? "w-10 -translate-x-1/2 opacity-100"
+                    : "w-0 opacity-0"
+                } -translate-x-[50%] left-[50%] h-[2px] rounded-md bg-primary `}
+              ></p>{" "}
+            </Link>
+            <Link
+              to={`/profile/${id}/contact-info`}
+              onClick={() => setActiveTab("contact")}
+              className={`rounded-[3rem] py-1 px-8 transition relative ${
+                activeTab === "contact"
+                  ? "bg-[#7770E9] text-white"
+                  : "border border-[#C2BFFF] text-[#C2BFFF]"
+              }`}
+            >
+              معلومات التواصل
+              <p
+                className={`transition duration-300 absolute -bottom-[5px] ${
+                  activeTab === "contact"
+                    ? "w-10 -translate-x-1/2 opacity-100"
+                    : "w-0 opacity-0"
+                } -translate-x-[50%] left-[50%] h-[2px] rounded-md bg-primary `}
+              ></p>
+            </Link>
+          </nav>
         </>
       )}
     </div>

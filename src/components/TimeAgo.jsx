@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useLocation } from "react-router";
 
 // Utility function for proper Arabic pluralization
 const formatArabic = (number, unit) => {
@@ -7,7 +8,6 @@ const formatArabic = (number, unit) => {
   if (number >= 3 && number <= 10) return `${number} ${unit.plural}`;
   return `${number} ${unit.singular}`;
 };
-
 // Time calculation constants in seconds
 const TIME_UNITS = {
   MINUTE: 60,
@@ -20,6 +20,7 @@ const TIME_UNITS = {
 // Main component
 function TimeAgo({ postDate }) {
   const [timeAgo, setTimeAgo] = useState("");
+  const location = useLocation();
 
   useEffect(() => {
     const calculateTimeAgo = () => {
@@ -28,7 +29,7 @@ function TimeAgo({ postDate }) {
 
       // Handle invalid date
       if (isNaN(postDateObj)) {
-        setTimeAgo("تاريخ غير صحيح");
+        setTimeAgo("");
         return;
       }
 
@@ -56,7 +57,7 @@ function TimeAgo({ postDate }) {
         },
         {
           threshold: TIME_UNITS.HOUR,
-          unit: { singular: "ساعة", dual: "ساعتين", plural: "ساعات" },
+          unit: { singular: "ساعة", dual: "ساعة", plural: "ساعات" },
         },
         {
           threshold: TIME_UNITS.MINUTE,
@@ -98,7 +99,11 @@ function TimeAgo({ postDate }) {
     return <span className="text-red-800">{timeAgo}</span>;
   }
 
-  return <span className="text-red-800">{timeAgo} مضت</span>;
+  return (
+    <span className="text-red-800">
+      {timeAgo} {location.pathname == "/search" ? "" : "مضت"}
+    </span>
+  );
 }
 
 export default TimeAgo;

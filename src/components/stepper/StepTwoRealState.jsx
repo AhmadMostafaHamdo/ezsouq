@@ -6,6 +6,8 @@ import { stepTwoRealStateSchema } from "../../validation/createOffer";
 
 const StepTwoRealState = ({ onSubmit }) => {
   const videoRef = useRef(null);
+
+  // Initialize React Hook Form with Zod validation
   const {
     register,
     handleSubmit,
@@ -23,7 +25,7 @@ const StepTwoRealState = ({ onSubmit }) => {
     },
   });
 
-  // عند تغيير real_estate_type ننسخ القيمة إلى name تلقائياً
+  // Auto-copy real_estate_type to name
   const handleRealEstateChange = (val) => {
     setValue("real_estate_type", val);
     setValue("name", val); // ✅ اسم الإعلان نفس نوع العقار
@@ -35,7 +37,7 @@ const StepTwoRealState = ({ onSubmit }) => {
       onSubmit={handleSubmit(onSubmit)}
       className="flex flex-col gap-3 w-[80vw] md:w-[60vw] lg:w-[45vw] pb-6 text-[#B9B5FF]"
     >
-      {/* اختيار نوع العقار */}
+      {/* Real Estate Type */}
       <Controller
         name="real_estate_type"
         control={control}
@@ -44,7 +46,7 @@ const StepTwoRealState = ({ onSubmit }) => {
             options={[{ name: "النوع" }, { name: "شقة" }, { name: "بيت" }]}
             type="governorate"
             value={field.value}
-            onSelect={handleRealEstateChange} // ✅ استخدم الدالة الجديدة
+            onSelect={handleRealEstateChange}
           />
         )}
       />
@@ -52,8 +54,9 @@ const StepTwoRealState = ({ onSubmit }) => {
         <p className="text-red">{errors.real_estate_type.message}</p>
       )}
 
-      {/* خيارات البيع / الإيجار والحالة المفروشة */}
+      {/* For Sale / Rent & Furniture Options */}
       <div className="flex gap-6 my-3">
+        {/* Sale / Rent */}
         <div>
           <label className="block cursor-pointer">
             <input
@@ -78,6 +81,7 @@ const StepTwoRealState = ({ onSubmit }) => {
           )}
         </div>
 
+        {/* Furniture Status */}
         <div>
           <label className="block cursor-pointer">
             <input
@@ -103,7 +107,7 @@ const StepTwoRealState = ({ onSubmit }) => {
         </div>
       </div>
 
-      {/* رفع الفيديو */}
+      {/* Video Upload */}
       <input
         type="file"
         ref={videoRef}
@@ -113,6 +117,7 @@ const StepTwoRealState = ({ onSubmit }) => {
       />
       {errors.video && <p className="text-red">{errors.video.message}</p>}
 
+      {/* Submit Button */}
       <button
         type="submit"
         className="self-end bg-primary text-white rounded-xl py-1 px-5"

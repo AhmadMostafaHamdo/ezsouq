@@ -1,6 +1,14 @@
 import React, { useEffect } from "react";
 
+/**
+ * Reusable Select component
+ * @param {Array} options - List of options to display
+ * @param {string} type - Type of select ("governorate", "city", or general)
+ * @param {string} value - Selected value
+ * @param {Function} onSelect - Callback when an option is selected
+ */
 const Select = ({ options = [], type, value, onSelect }) => {
+  // Set default value if none is selected
   useEffect(() => {
     if (!value && options.length > 0) {
       const firstOption =

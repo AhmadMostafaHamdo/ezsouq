@@ -5,6 +5,7 @@ import InputCreateOffer from "../inputs/InputCreateOffer";
 import VideoUploader from "../common/VideoUploader";
 
 const StepTwoTec = ({ onSubmit }) => {
+  // Initialize React Hook Form with Zod validation
   const methods = useForm({
     resolver: zodResolver(stepTwoTecSchema),
     defaultValues: {
@@ -20,24 +21,23 @@ const StepTwoTec = ({ onSubmit }) => {
   return (
     <FormProvider {...methods}>
       <form
-        id="form-step2"
+        id="form-step2-tec"
         onSubmit={methods.handleSubmit(onSubmit)}
         className="w-[80vw] md:w-[60vw] lg:w-[45vw] flex flex-col gap-3 text-[#B9B5FF] pb-6"
       >
+        {/* Device Name */}
         <InputCreateOffer placeholder="الجهاز" {...methods.register("name")} />
         {methods.formState.errors.name && (
-          <p className="text-red">
-            {methods.formState.errors.name.message}
-          </p>
+          <p className="text-red">{methods.formState.errors.name.message}</p>
         )}
 
+        {/* Color */}
         <InputCreateOffer placeholder="اللون" {...methods.register("color")} />
         {methods.formState.errors.color && (
-          <p className="text-red">
-            {methods.formState.errors.color.message}
-          </p>
+          <p className="text-red">{methods.formState.errors.color.message}</p>
         )}
 
+        {/* Condition: New / Used */}
         <div className="flex self-start gap-6">
           <label>
             <input
@@ -59,11 +59,10 @@ const StepTwoTec = ({ onSubmit }) => {
           </label>
         </div>
         {methods.formState.errors.isnew && (
-          <p className="text-red">
-            {methods.formState.errors.isnew.message}
-          </p>
+          <p className="text-red">{methods.formState.errors.isnew.message}</p>
         )}
 
+        {/* Processor */}
         <InputCreateOffer
           placeholder="المعالج"
           {...methods.register("processor")}
@@ -74,23 +73,22 @@ const StepTwoTec = ({ onSubmit }) => {
           </p>
         )}
 
+        {/* Memory */}
         <InputCreateOffer
           placeholder="الذاكرة"
           {...methods.register("memory")}
         />
         {methods.formState.errors.memory && (
-          <p className="text-red">
-            {methods.formState.errors.memory.message}
-          </p>
+          <p className="text-red">{methods.formState.errors.memory.message}</p>
         )}
 
+        {/* Video Upload */}
         <VideoUploader name="video" label="إضافة فيديو" />
         {methods.formState.errors.video && (
-          <p className="text-red">
-            {methods.formState.errors.video.message}
-          </p>
+          <p className="text-red">{methods.formState.errors.video.message}</p>
         )}
 
+        {/* Submit Button */}
         <button
           type="submit"
           className="self-end bg-primary text-white rounded-xl py-1 px-5"

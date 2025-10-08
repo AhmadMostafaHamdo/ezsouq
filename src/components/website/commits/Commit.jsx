@@ -17,7 +17,15 @@ import { getAllCommentsByIdThunk } from "../../../store/commits/thunk/getAllComm
 import { thunkReplayCommit } from "../../../store/commits/thunk/replayComment";
 import { getRepliesByCommentId } from "../../../store/commits/thunk/getRepliesByCommentId";
 
-const Commit = ({ comment, createdAt, user, setArrow, id, productId }) => {
+const Commit = ({
+  comment,
+  createdAt,
+  user,
+  setArrow,
+  id,
+  productId,
+  depth = 0,
+}) => {
   const [arrowCommit, setArrowCommit] = useState(false);
   const [showOption, setShowOption] = useState(false);
   const [showReplyInput, setShowReplyInput] = useState(false);
@@ -30,6 +38,7 @@ const Commit = ({ comment, createdAt, user, setArrow, id, productId }) => {
 
   const { replies } = useSelector((state) => state.comments);
   const commentReplies = replies[id] || [];
+
   useEffect(() => {
     if (updateCommentMode && inputRef.current) {
       inputRef.current.focus();
@@ -38,7 +47,7 @@ const Commit = ({ comment, createdAt, user, setArrow, id, productId }) => {
     }
   }, [updateCommentMode]);
 
-  // إرسال الرد
+  // send reply
   const handleReplySubmit = () => {
     if (!replyText.trim()) return;
     dispatch(
@@ -50,15 +59,15 @@ const Commit = ({ comment, createdAt, user, setArrow, id, productId }) => {
     )
       .unwrap()
       .then(() => {
-        toast.success("تم إرسال الرد!");
-        dispatch(getRepliesByCommentId(id)); // تحديث الردود بعد الإرسال
+        toast.success("Reply sent!");
+        dispatch(getRepliesByCommentId(id)); // refresh replies
       })
       .catch((err) => toast.error(err));
     setReplyText("");
     setShowReplyInput(false);
   };
 
-  // تعديل التعليق
+  // confirm edit
   const handleConfirmUpdate = () => {
     if (!commentText.trim()) return;
     dispatch(updateComment({ comment_id: id, comments: commentText }))
@@ -66,18 +75,14 @@ const Commit = ({ comment, createdAt, user, setArrow, id, productId }) => {
       .then(() => {
         setUpdateCommentMode(false);
         dispatch(getAllCommentsByIdThunk(productId));
-        toast.success("تم تعديل التعليق بنجاح!");
       })
       .catch((err) => toast.error(err));
   };
 
-  // حذف التعليق
+  // delete comment
   const handleDeleteComment = (commentId) => {
     dispatch(deleteComment({ comment_id: commentId, productId }))
       .unwrap()
-      .then(() => {
-        toast.success("تم حذف التعليق!");
-      })
       .catch((err) =>
         err === "لم يتم العثور على التعليق"
           ? toast.error("هذا التعليق ليس لك")
@@ -85,7 +90,7 @@ const Commit = ({ comment, createdAt, user, setArrow, id, productId }) => {
       );
   };
 
-  // جلب وعرض الردود
+  // toggle replies
   const toggleReplies = () => {
     if (!arrowCommit) {
       dispatch(getRepliesByCommentId(id));
@@ -93,119 +98,136 @@ const Commit = ({ comment, createdAt, user, setArrow, id, productId }) => {
     setArrowCommit(!arrowCommit);
     setArrow(!arrowCommit);
   };
+
   return (
-    <div className="flex gap-2 mt-4 pb-2">
+    <div className={`flex gap-2 mt-4 pb-2 relative ${depth > 0 ? "ml-8" : ""}`}>
+      {/* connecting line like Facebook */}
+      {depth > 0 && (
+        <div
+          className="absolute right-[-18px] top-2 bottom-0 border-r"
+          style={{ borderColor: "#E4E6EB" }}
+        ></div>
+      )}
+
       <ToastContainer />
       <img
-        src={user?.avatar}
-        alt=""
-        className="w-16 h-16 object-cover rounded-[50%]"
+        src={user?.avatar || cat}
+        alt="صورة المستخدم"
+        className="w-12 h-12 object-cover rounded-full"
       />
-      <div className="flex items-start justify-between w-2/5">
+
+      <div className="flex items-start justify-between w-3/4 lg:w-2/5">
         <div className="flex flex-col w-full">
-          {/* اسم المستخدم ووقت النشر */}
+          {/* user name and time */}
           <div className="flex gap-2 mb-1">
-            <span className="text-primary font-bold text-[1.25rem]">
+            <span className="text-[#1877F2] font-semibold text-[1rem]">
               {user?.name}
             </span>
-            <span className="font-normal text-[1rem] text-[#716D97]">
+            <span className="font-normal text-[0.9rem] text-[#65676B]">
               <TimeAgo postDate={createdAt} />
             </span>
           </div>
 
-          {/* نص التعليق */}
-          <div className="flex items-center gap-2">
+          {/* comment text */}
+          <div className="flex items-center gap-2 bg-[#F0F2F5] px-3 py-2 rounded-2xl">
             <input
               type="text"
               disabled={!updateCommentMode}
               value={commentText}
               onChange={(e) => setCommentText(e.target.value)}
               ref={inputRef}
-              className="border-none bg-[#F7F7FF] w-full rounded-md px-2 py-1"
+              className="border-none bg-transparent w-full focus:outline-none text-[#050505]"
             />
             {updateCommentMode && (
               <button
                 onClick={handleConfirmUpdate}
-                className="bg-primary text-white px-3 py-1 rounded-md text-[.8rem]"
+                className="bg-[#1877F2] text-white px-3 py-1 rounded-2xl text-sm hover:bg-[#166FE5]"
               >
-                تأكيد
+                Save
               </button>
             )}
           </div>
 
-          <div className="relative">
-            {/* زر عرض الردود */}
-            <div className="flex items-center gap-2 font-normal  text-[1rem] text-[#615D81] mt-2">
-              <span>عرض الردود ({commentReplies.length})</span>
-              <span onClick={toggleReplies} className="cursor-pointer">
+          {/* reply +إظهار الردود */}
+          <div className="relative mt-2">
+            <div className="flex items-center gap-3 text-[#65676B] text-sm">
+              <span
+                onClick={() => setShowReplyInput(!showReplyInput)}
+                className="cursor-pointer hover:text-[#1877F2]"
+              >
+                Reply
+              </span>
+              <span
+                onClick={toggleReplies}
+                className="cursor-pointer flex items-center gap-1"
+              >
                 {arrowCommit ? (
-                  <img src={arrowTopCommit} alt="" />
+                  <>
+                    <img src={arrowTopCommit} alt="السهم للأعلى" />
+                    إخفاء الردود ({commentReplies.length})
+                  </>
                 ) : (
-                  <img src={arrowBottomCommit} alt="" />
+                  <>
+                    <img src={arrowBottomCommit} alt="السهم للأسفل" />
+                    إظهار الردود ({commentReplies.length})
+                  </>
                 )}
               </span>
-              <img
-                src={replayCommit}
-                alt=""
-                className="mr-4 cursor-pointer"
-                onClick={() => setShowReplyInput(!showReplyInput)}
-              />
             </div>
 
-            {/* حقل الرد */}
+            {/* reply input */}
             {showReplyInput && (
               <div className="mt-2 flex gap-2">
                 <input
                   type="text"
-                  placeholder="اكتب ردك..."
-                  className="border border-gray-300 rounded-lg px-3 py-1 w-full"
+                  placeholder="Write a reply..."
+                  className="border border-[#CCD0D5] rounded-2xl px-3 py-1 w-full text-sm"
                   value={replyText}
                   onChange={(e) => setReplyText(e.target.value)}
                 />
                 <button
                   onClick={handleReplySubmit}
-                  className="bg-primary text-white px-3 py-1 rounded-lg"
+                  className="bg-[#1877F2] text-white px-3 py-1 rounded-2xl text-sm hover:bg-[#166FE5]"
                 >
-                  إرسال
+                  Send
                 </button>
               </div>
             )}
 
-            {/* قائمة الردود */}
+            {/* replies list */}
             {arrowCommit && (
-              <div className="ml-8 mt-3">
+              <div className="ml-6 mt-3">
                 {commentReplies.length > 0 ? (
                   commentReplies.map((reply) => (
-                    <div key={reply._id} className="flex gap-2 mb-2">
-                      <img src={cat} alt="" className="w-12 h-12" />
-                      <div className="bg-gray-100 px-3 py-2 rounded-lg">
-                        <span className="font-bold text-sm text-primary">
-                          {reply.user_id?.name}
-                        </span>
-                        <p className="text-sm">{reply.comments}</p>
-                      </div>
-                    </div>
+                    <Commit
+                      key={reply._id}
+                      comment={reply.comments}
+                      createdAt={reply.createdAt}
+                      user={reply.user_id}
+                      setArrow={setArrow}
+                      id={reply._id}
+                      productId={productId}
+                      depth={depth + 1}
+                    />
                   ))
                 ) : (
-                  <p className="text-gray-500">لا توجد ردود بعد</p>
+                  <p className="text-[#65676B] text-sm">No replies yet</p>
                 )}
               </div>
-            )}
-            {arrowCommit && (
-              <div className="absolute w-[1px] h-[calc(100%-3rem)] bg-[#bcbacab6] top-3 -right-10"></div>
             )}
           </div>
         </div>
 
-        {/* خيارات تعديل وحذف */}
+        {/* edit & delete */}
         <div className="relative">
           <img
             src={iconSettingUser}
+            alt="إعدادات التعليق"
             className="cursor-pointer"
             onClick={() => setShowOption((prev) => !prev)}
           />
           {showOption && (
-            <div className="absolute top-9 left-3 text-[.8rem] bg-white shadow-md rounded-md p-1">
+            <div className="absolute top-9 left-3 text-[.8rem] bg-white shadow-md rounded-md p-1 z-10">
               <div
                 className="flex items-center gap-1 w-36 cursor-pointer hover:bg-gray-100 p-1"
                 onClick={() => {
@@ -213,14 +235,14 @@ const Commit = ({ comment, createdAt, user, setArrow, id, productId }) => {
                   setShowOption(false);
                 }}
               >
-                <img src={updatedIcon} alt="" />
-                تعديل التعليق
+                <img src={updatedIcon} alt="تعديل" />
+               تعديل التعليق
               </div>
               <div
                 className="flex items-center gap-1 cursor-pointer hover:bg-gray-100 p-1"
                 onClick={() => handleDeleteComment(id)}
               >
-                <img src={deleteIcon} alt="" />
+                <img src={deleteIcon} alt="حذف" />
                 حذف التعليق
               </div>
             </div>

@@ -12,7 +12,7 @@ const Report = () => {
   const [message, setMessage] = useState(""); // User message
   const [reason, setReason] = useState(null); // Selected reason
 
-  const { id } = useParams();
+  const { userId, id } = useParams();
   const dispatch = useDispatch();
   const reportRef = useRef();
   const navigate = useNavigate();
@@ -41,7 +41,14 @@ const Report = () => {
     // Prevent submission if reason or message is empty
     if (!reason || message.trim().length === 0) return;
 
-    dispatch(thunkReport({ reason, message, productId: id }));
+    dispatch(
+      thunkReport({
+        reason,
+        details: message,
+        reported_user: userId,
+        productId: id,
+      })
+    );
   };
 
   return (
