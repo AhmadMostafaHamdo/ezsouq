@@ -1,39 +1,37 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { ToastContainer } from "react-toastify";
-import Pagination from "../../components/dashoard/Pagination";
 
-// Images
+// 🧩 Components
+import Pagination from "../../components/dashoard/Pagination";
+import Spinner from "../../feedback/loading/Spinner";
+
+// 🖼️ Images
 import search from "../../assets/images/search.svg";
-import menuTable from "../../assets/images/dashboard/menuTable.svg";
 import menuTable2 from "../../assets/images/dashboard/menuTable2.svg";
 import addIcon from "../../assets/images/add.svg";
 import closeIcon from "../../assets/images/close.svg";
 import updateIcon from "../../assets/images/updateIcon.svg";
 import deleteIcon from "../../assets/images/dashboard/deleteUser.svg";
 
-// Redux Thunks
+// ⚙️ Redux Thunks
 import { addGovernorate } from "../../store/governorates/thunk/addGovernorate";
 import { updateGovernorate } from "../../store/governorates/thunk/handleUpdateGovernorate";
 import { thunkGovernorates } from "../../store/governorates/thunk/thunkGovernorates";
-
-// Spinner
-import Spinner from "../../feedback/loading/Spinner";
 
 const Offers = () => {
   const dispatch = useDispatch();
   const { governorates, loading } = useSelector((state) => state.governorates);
 
-  // Pagination
+  // 🧠 Search states (input vs actual filter term)
+  const [inputValue, setInputValue] = useState(""); // user typing
+  const [searchTerm, setSearchTerm] = useState(""); // debounced term
+
+  // 📄 Pagination
   const [page, setPage] = useState(1);
   const limit = 3;
-  const totalPages = Math.ceil((governorates?.length || 0) / limit);
-  const paginatedGovernorates = governorates?.slice(
-    (page - 1) * limit,
-    page * limit
-  );
 
-  // Modal state
+  // 🪟 Modal state
   const [modal, setModal] = useState({ show: false, type: "add" }); // type: add / update
   const [currentGov, setCurrentGov] = useState({
     name: "",
@@ -42,18 +40,47 @@ const Offers = () => {
   });
   const [error, setError] = useState("");
 
-  // Fetch governorates
+  // 🚀 Fetch governorates on mount
   useEffect(() => {
     dispatch(thunkGovernorates());
   }, [dispatch]);
 
-  // Handlers for cities
+  // 🕒 Debounce search input (wait 300ms after typing stops)
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setSearchTerm(inputValue);
+      setPage(1);
+    }, 300);
+
+    return () => clearTimeout(timeout);
+  }, [inputValue]);
+
+  // 🔍 Filter governorates by name or city
+  const filteredGovernorates = useMemo(() => {
+    if (!searchTerm.trim()) return governorates;
+    const term = searchTerm.toLowerCase();
+    return governorates.filter(
+      (gov) =>
+        gov.name.toLowerCase().includes(term) ||
+        gov.cities.some((city) => city.toLowerCase().includes(term))
+    );
+  }, [searchTerm, governorates]);
+
+  // 📑 Pagination logic
+  const totalPages = Math.ceil((filteredGovernorates?.length || 0) / limit);
+  const paginatedGovernorates = filteredGovernorates?.slice(
+    (page - 1) * limit,
+    page * limit
+  );
+
+  // 🏙️ Handle city change
   const handleCityChange = (index, value) => {
     const newCities = [...currentGov.cities];
     newCities[index] = value;
     setCurrentGov((prev) => ({ ...prev, cities: newCities }));
   };
 
+  // ➕ Add / Remove city
   const addCity = () =>
     setCurrentGov((prev) => ({ ...prev, cities: [...prev.cities, ""] }));
   const removeCity = (index) =>
@@ -62,14 +89,14 @@ const Offers = () => {
       cities: prev.cities.filter((_, i) => i !== index),
     }));
 
-  // Open Add Modal
+  // 🟢 Add Modal
   const openAddModal = () => {
     setCurrentGov({ name: "", cities: [""] });
     setError("");
     setModal({ show: true, type: "add" });
   };
 
-  // Open Update Modal
+  // 🟡 Update Modal
   const openUpdateModal = (gov) => {
     setCurrentGov({
       name: gov.name,
@@ -80,26 +107,20 @@ const Offers = () => {
     setModal({ show: true, type: "update" });
   };
 
-  // Save Governorate
+  // 💾 Save governorate (add/update)
   const saveGovernorate = () => {
     const trimmedName = currentGov.name.trim();
     const filteredCities = currentGov.cities
       .map((c) => c.trim())
       .filter((c) => c);
 
-    if (!trimmedName) {
-      setError("يرجى إدخال اسم المحافظة");
-      return;
-    }
-
-    if (filteredCities.length === 0) {
-      setError("يجب إدخال مدينة واحدة على الأقل");
-      return;
-    }
+    if (!trimmedName) return setError("يرجى إدخال اسم المحافظة");
+    if (filteredCities.length === 0)
+      return setError("يجب إدخال مدينة واحدة على الأقل");
 
     const data = { name: trimmedName, cities: filteredCities };
 
-    if (modal.type === "add")dispatch(addGovernorate({ data }));
+    if (modal.type === "add") dispatch(addGovernorate({ data }));
     else if (modal.type === "update")
       dispatch(updateGovernorate({ gov_id: currentGov.id, data }));
 
@@ -107,21 +128,24 @@ const Offers = () => {
     setError("");
   };
 
-  if (loading) return <Spinner />; // Show spinner while loading
+  if (loading) return <Spinner />;
 
   return (
     <div className="overflow-hidden font-sans bg-[#F5F5F5] min-h-screen">
       <ToastContainer />
 
-      {/* Modal */}
+      {/* 🪟 Modal for Add / Update Governorate */}
       {modal.show && (
         <div className="fixed inset-0 bg-[#67676780] z-30 flex justify-center items-center p-2">
-          <div className="w-full max-w-md bg-[#FFFFFF] rounded-2xl p-6 shadow-2xl relative overflow-auto max-h-[90vh]">
+          <div
+            className="w-full max-w-md bg-[#FFFFFF] rounded-2xl p-6 shadow-2xl relative overflow-auto max-h-[90vh]"
+            alt="نافذة تعديل أو إضافة محافظة"
+          >
             <button
               onClick={() => setModal({ show: false, type: "add" })}
               className="absolute top-4 right-4"
             >
-              <img src={closeIcon} alt="إغلاق" width={20} />
+              <img src={closeIcon} alt="إغلاق النافذة" width={20} />
             </button>
 
             <h2 className="text-lg font-bold text-center mb-4">
@@ -134,9 +158,9 @@ const Offers = () => {
               </p>
             )}
 
-            {/* Governorate Name */}
+            {/* 🏙️ Governorate name */}
             <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium mb-2">
                 اسم المحافظة
               </label>
               <input
@@ -146,13 +170,14 @@ const Offers = () => {
                   setCurrentGov((prev) => ({ ...prev, name: e.target.value }))
                 }
                 placeholder="أدخل اسم المحافظة"
+                alt="إدخال اسم المحافظة"
                 className="w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-[#4F46E5]"
               />
             </div>
 
-            {/* Cities */}
+            {/* 🏘️ Cities list */}
             <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium mb-2">
                 المدن التابعة لها
               </label>
               <div className="space-y-2 max-h-44 overflow-auto">
@@ -166,6 +191,7 @@ const Offers = () => {
                       value={city}
                       onChange={(e) => handleCityChange(idx, e.target.value)}
                       placeholder={`أدخل اسم المدينة ${idx + 1}`}
+                      alt={`إدخال اسم المدينة رقم ${idx + 1}`}
                       className="flex-1 border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-[#4F46E5]"
                     />
                     {currentGov.cities.length > 1 && (
@@ -187,7 +213,7 @@ const Offers = () => {
               </button>
             </div>
 
-            {/* Modal actions */}
+            {/* 🧭 Modal actions */}
             <div className="flex flex-col sm:flex-row justify-between gap-2 mt-4">
               <button
                 onClick={() => setModal({ show: false, type: "add" })}
@@ -206,49 +232,46 @@ const Offers = () => {
         </div>
       )}
 
-      {/* Header + Search + Actions */}
+      {/* 🔍 Header + Search + Add button */}
       <div className="container mx-auto px-2 sm:px-4">
         <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center my-5 gap-2">
           <h1 className="text-xl font-bold text-center sm:text-left text-[#1F2937]">
             إدارة المحافظات
           </h1>
 
-          <div className="flex flex-col sm:flex-row gap-2 sm:gap-2 items-stretch sm:items-center w-full sm:w-auto">
-            <div className="relative flex-1 sm:flex-none w-full sm:w-auto">
+          <div className="flex flex-col sm:flex-row gap-2 items-center w-full sm:w-auto">
+            <div className="relative w-full sm:w-auto">
               <input
                 type="text"
-                className="p-2 pr-8 rounded-md w-full border border-gray-300"
-                placeholder="بحث..."
+                className="p-2 pr-8 rounded-md w-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#4F46E5]"
+                placeholder="ابحث عن مدينة أو محافظة..."
+                alt="حقل البحث عن المحافظات والمدن"
+                value={inputValue}
+                onChange={(e) => setInputValue(e.target.value)}
               />
               <img
                 src={search}
                 className="absolute top-1/2 -translate-y-1/2 right-2"
-                alt="بحث"
+                alt="رمز البحث"
               />
             </div>
 
-            <div className="flex items-center gap-2 relative">
-              <img src={menuTable} alt="قائمة" width={35} />
-              <img
-                src={menuTable2}
-                alt="قائمة"
-                width={35}
-                className="cursor-pointer"
-              />
+            <div className="flex items-center gap-2">
+              <img src={menuTable2} alt="عرض القائمة" width={35} />
               <button
-                className="bg-[#4F46E5] text-white w-fit p-2 rounded-md flex justify-between items-center hover:bg-[#4338CA]"
+                className="bg-[#4F46E5] text-white p-2 rounded-md flex items-center hover:bg-[#4338CA]"
                 onClick={openAddModal}
               >
                 إضافة محافظة
-                <img src={addIcon} className="mx-2" alt="إضافة" />
+                <img src={addIcon} className="mx-2" alt="رمز الإضافة" />
               </button>
             </div>
           </div>
         </div>
 
-        {/* Table for large screens */}
-        <div className="hidden sm:block p-4 sm:p-6 bg-white rounded-tr-3xl rounded-tl-3xl overflow-auto shadow">
-          <table className="font-medium w-full">
+        {/* 📋 Governorates Table */}
+        <div className="hidden sm:block p-4 bg-white rounded-t-3xl shadow">
+          <table className="w-full">
             <thead>
               <tr className="text-[#6B7280] text-sm sm:text-base">
                 <th className="pb-4">المحافظة</th>
@@ -256,83 +279,59 @@ const Offers = () => {
                 <th className="pb-4">الإجراءات</th>
               </tr>
             </thead>
-            <tbody className="text-[.9rem]">
-              {paginatedGovernorates?.map((gov) => (
-                <tr className="border-t border-[#E5E7EB]" key={gov._id}>
-                  <td className="text-center py-2">{gov.name}</td>
-                  <td className="text-center py-2">
-                    {gov.cities.length > 5
-                      ? gov.cities.slice(0, 4).join(" - ") + " ......"
-                      : gov.cities.join(" - ")}
-                  </td>
-                  <td className="text-center py-2">
-                    <div className="flex items-center justify-center gap-2">
-                      <img
-                        src={updateIcon}
-                        alt="تعديل"
-                        width={25}
-                        className="cursor-pointer"
-                        onClick={() => openUpdateModal(gov)}
-                      />
-                      <img
-                        src={deleteIcon}
-                        alt="حذف"
-                        width={25}
-                        className="cursor-pointer"
-                        onClick={() => alert("هنا تعمل دالة الحذف لاحقًا")}
-                      />
-                    </div>
+            <tbody>
+              {paginatedGovernorates?.length > 0 ? (
+                paginatedGovernorates.map((gov) => (
+                  <tr key={gov._id} className="border-t border-gray-300">
+                    <td className="text-center py-2">{gov.name}</td>
+                    <td className="text-center py-2">
+                      {gov.cities.length > 5
+                        ? gov.cities.slice(0, 4).join(" - ") + " ..."
+                        : gov.cities.join(" - ")}
+                    </td>
+                    <td className="text-center py-2">
+                      <div className="flex justify-center gap-2">
+                        <img
+                          src={updateIcon}
+                          alt="تعديل المحافظة"
+                          width={25}
+                          className="cursor-pointer"
+                          onClick={() => openUpdateModal(gov)}
+                        />
+                        <img
+                          src={deleteIcon}
+                          alt="حذف المحافظة"
+                          width={25}
+                          className="cursor-pointer"
+                          onClick={() => alert("هنا دالة الحذف لاحقاً")}
+                        />
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td
+                    colSpan="3"
+                    className="text-center py-6 text-gray-500 font-medium"
+                  >
+                    لا توجد نتائج مطابقة للبحث
                   </td>
                 </tr>
-              ))}
+              )}
             </tbody>
           </table>
 
+          {/* 📄 Pagination */}
           {totalPages > 1 && (
             <Pagination
               currentPage={page}
               totalPages={totalPages}
-              totalItems={governorates.length}
+              totalItems={filteredGovernorates.length}
               itemsPerPage={limit}
               onPageChange={(p) => setPage(p)}
             />
           )}
-        </div>
-
-        {/* Cards for small screens */}
-        <div className="sm:hidden flex flex-col gap-3">
-          {paginatedGovernorates?.map((gov) => (
-            <div
-              key={gov._id}
-              className="bg-white p-4 rounded-xl shadow-md flex flex-col gap-2"
-            >
-              <div className="flex justify-between items-center">
-                <h2 className="font-bold text-lg text-[#111827]">{gov.name}</h2>
-                <div className="flex gap-2">
-                  <img
-                    src={updateIcon}
-                    alt="تعديل"
-                    width={25}
-                    className="cursor-pointer"
-                    onClick={() => openUpdateModal(gov)}
-                  />
-                  <img
-                    src={deleteIcon}
-                    alt="حذف"
-                    width={25}
-                    className="cursor-pointer"
-                    onClick={() => alert("هنا تعمل دالة الحذف لاحقًا")}
-                  />
-                </div>
-              </div>
-              <p className="text-gray-600 text-sm">
-                المدن:
-                {gov.cities.length > 5
-                  ? gov.cities.slice(0, 4).join(" - ") + " ..."
-                  : gov.cities.join(" - ")}
-              </p>
-            </div>
-          ))}
         </div>
       </div>
     </div>

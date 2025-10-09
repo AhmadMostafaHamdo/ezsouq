@@ -13,7 +13,6 @@ import close from "../../assets/images/close.svg";
 import deleteOffer from "../../assets/images/dashboard/deleteOffer.svg";
 import banUserImg from "../../assets/images/dashboard/banUserImg.svg";
 import iconSettingUser from "../../assets/images/dashboard/iconSettingUser.svg";
-import menuTable from "../../assets/images/dashboard/menuTable.svg";
 import menuTable2 from "../../assets/images/dashboard/menuTable2.svg";
 import arrowLeft from "../../assets/images/dashboard/arrowLeftTable.svg";
 
@@ -86,7 +85,7 @@ const UsersTable = ({ title = "المستخدمين", extraActions = null }) => 
     if (!id) return;
     dispatch(deleteUser(id))
       .then(() =>
-        dispatch(getAllUsers({ page, limit: 6, search: debouncedSearch }))
+        dispatch(getAllUsers({ page, limit: 4, search: debouncedSearch }))
       )
       .finally(() => {
         setShowDeleteUser(false);
@@ -99,7 +98,7 @@ const UsersTable = ({ title = "المستخدمين", extraActions = null }) => 
     if (!id) return;
     dispatch(banUser({ id, action }))
       .then(() =>
-        dispatch(getAllUsers({ page, limit: 6, search: debouncedSearch }))
+        dispatch(getAllUsers({ page, limit: 4, search: debouncedSearch }))
       )
       .finally(() => {
         setShowBanUser(false);
@@ -169,7 +168,6 @@ const UsersTable = ({ title = "المستخدمين", extraActions = null }) => 
               />
             </div>
             <div className="flex justify-end gap-2 relative" ref={menuRef}>
-              <img src={menuTable} alt="" className="w-8" />
               <img
                 src={menuTable2}
                 className="cursor-pointer w-8"

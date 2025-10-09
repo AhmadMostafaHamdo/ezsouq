@@ -10,8 +10,8 @@ const initialState = {
   users: [],
   user: [],
   loading: false,
-  loadingUpdateUser: false,
-  loadingDelete: false,
+  loading: false,
+  loading: false,
   error: null,
 };
 const usersSlice = createSlice({
@@ -47,26 +47,26 @@ const usersSlice = createSlice({
       state.error = action.payload;
     });
     builder.addCase(updateUser.pending, (state) => {
-      state.loadingUpdateUser = true;
+      state.loading = true;
       state.error = null;
     });
     builder.addCase(updateUser.fulfilled, (state, action) => {
-      state.loadingUpdateUser = false;
+      state.loading = false;
       state.users = action.payload;
     });
     builder.addCase(updateUser.rejected, (state, action) => {
-      state.loadingUpdateUser = false;
+      state.loading = false;
       state.error = action.payload;
     });
     builder.addCase(deleteUser.pending, (state) => {
-      state.loadingDelete = true;
+      state.loading = true;
       state.error = null;
     });
     builder.addCase(deleteUser.fulfilled, (state, action) => {
-      state.loadingDelete = false;
+      state.loading = false;
     });
     builder.addCase(deleteUser.rejected, (state, action) => {
-      state.loadingDelete = false;
+      state.loading = false;
       state.error = action.payload;
     });
     builder.addCase(updateUserPhoto.pending, (state) => {

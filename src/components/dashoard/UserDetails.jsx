@@ -49,14 +49,14 @@ const UserDetails = () => {
 
   // Fetch all users (for refresh after delete)
   useEffect(() => {
-    dispatch(getAllUsers({ page, limit: 6 }));
+    dispatch(getAllUsers({ page, limit: 3 }));
   }, [dispatch, page]);
 
   // Handle delete user
   const handleDeleteUser = (userId) => {
     if (!userId) return;
     dispatch(deleteUser(userId))
-      .then(() => dispatch(getAllUsers({ page, limit: 6 })))
+      .then(() => dispatch(getAllUsers({ page, limit: 3 })))
       .finally(() => {
         setShowDeleteUser(false);
         setSelectedUserId(null);
@@ -228,6 +228,7 @@ const UserDetails = () => {
       {/* Delete modal */}
       {showDeleteUser && selectedUserId && (
         <DeleteOrBanModal
+          loading={loading}
           type="delete"
           onConfirm={() => handleDeleteUser(selectedUserId)}
           onCancel={() => setShowDeleteUser(false)}
@@ -237,6 +238,7 @@ const UserDetails = () => {
       {/* Ban modal */}
       {showBanUser && selectedUserId && (
         <DeleteOrBanModal
+          loading={loading}
           type="ban"
           action="ban"
           onConfirm={() => handleBanUser(selectedUserId)}

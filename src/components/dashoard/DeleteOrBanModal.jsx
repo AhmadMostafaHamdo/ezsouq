@@ -4,6 +4,8 @@ import React from "react";
 import close from "../../assets/images/close.svg";
 import deleteOffer from "../../assets/images/dashboard/deleteOffer.svg";
 import banUserImg from "../../assets/images/dashboard/block.svg";
+import Spinner from "../../feedback/loading/Spinner";
+import { useSelector } from "react-redux";
 
 /**
  * General component to display Delete or Ban modal
@@ -18,7 +20,7 @@ const DeleteOrBanModal = ({ type, action, onConfirm, onCancel }) => {
   const isDelete = type === "delete"; // Is modal for delete
   const isBan = type === "ban"; // Is modal for ban
   const isUnban = action === "unban"; // Is action unban
-
+  const { loading } = useSelector((state) => state.users);
   // Modal title based on state
   const title = isDelete
     ? "حذف مستخدم"
@@ -48,41 +50,45 @@ const DeleteOrBanModal = ({ type, action, onConfirm, onCancel }) => {
 
   return (
     <div className="fixed inset-0 bg-[#67676780] z-40 flex items-center justify-center">
-      <div className="w-96 p-5 rounded-lg bg-white relative shadow-lg">
-        {/* Close button */}
-        <button onClick={onCancel}>
-          <img src={close} alt="إغلاق" className="mr-auto cursor-pointer" />
-        </button>
-
-        {/* Main icon */}
-        <img
-          src={icon}
-          alt={isDelete ? "صورة حذف" : "صورة حظر"}
-          className="m-auto my-4 w-24 h-24"
-        />
-
-        {/* Title and description */}
-        <p className="text-center my-2 font-bold text-lg">{title}</p>
-        <p className="text-[#444444] text-center leading-6 text-sm px-2">
-          {description}
-        </p>
-
-        {/* Action buttons */}
-        <div className="flex justify-between mt-5 font-normal">
-          <button
-            className="px-5 py-1 rounded-md text-[#818181] border border-[#818181]"
-            onClick={onCancel}
-          >
-            إلغاء
+      {loading ? (
+        <Spinner />
+      ) : (
+        <div className="w-96 p-5 rounded-lg bg-white relative shadow-lg">
+          {/* Close button */}
+          <button onClick={onCancel}>
+            <img src={close} alt="إغلاق" className="mr-auto cursor-pointer" />
           </button>
-          <button
-            className={`px-5 py-1 rounded-md text-white ${confirmColor}`}
-            onClick={onConfirm}
-          >
-            {confirmLabel}
-          </button>
+
+          {/* Main icon */}
+          <img
+            src={icon}
+            alt={isDelete ? "صورة حذف" : "صورة حظر"}
+            className="m-auto my-4 w-24 h-24"
+          />
+
+          {/* Title and description */}
+          <p className="text-center my-2 font-bold text-lg">{title}</p>
+          <p className="text-[#444444] text-center leading-6 text-sm px-2">
+            {description}
+          </p>
+
+          {/* Action buttons */}
+          <div className="flex justify-between mt-5 font-normal">
+            <button
+              className="px-5 py-1 rounded-md text-[#818181] border border-[#818181]"
+              onClick={onCancel}
+            >
+              إلغاء
+            </button>
+            <button
+              className={`px-5 py-1 rounded-md text-white ${confirmColor}`}
+              onClick={onConfirm}
+            >
+              {confirmLabel}
+            </button>
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };
