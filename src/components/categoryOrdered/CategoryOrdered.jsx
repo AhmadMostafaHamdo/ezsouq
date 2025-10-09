@@ -24,9 +24,11 @@ const CategoryOrdered = ({ category }) => {
           Array.from({ length: 6 }).map((_, i) => <CardSkeleton key={i} />)
         ) : (
           <>
-            {products?.map((product) => (
-              <Card key={product._id} {...product} />
-            ))}
+            {Array.isArray(products) &&
+              products.length > 0 &&
+              products?.map((product) => (
+                <Card key={product._id} {...product} />
+              ))}
 
             {/* Show skeletons while loading additional pages */}
             {loading &&

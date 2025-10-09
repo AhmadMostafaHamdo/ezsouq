@@ -8,7 +8,7 @@ import Spinner from "../../feedback/loading/Spinner";
 import { useSelector } from "react-redux";
 
 /**
- * General component to display Delete or Ban modal
+ * General componen t to display Delete or Ban modal
  *
  * Props:
  * - type: operation type ("delete" or "ban")
@@ -26,6 +26,8 @@ const DeleteOrBanModal = ({ type, action, onConfirm, onCancel }) => {
     ? "حذف مستخدم"
     : isUnban
     ? "إلغاء حظر المستخدم"
+    : "message"
+    ? "حذف الرسالة"
     : "حظر مستخدم";
 
   // Description text based on state
@@ -33,10 +35,18 @@ const DeleteOrBanModal = ({ type, action, onConfirm, onCancel }) => {
     ? "هل أنت متأكد من أنك تريد حذف هذا المستخدم؟ لا يمكن التراجع عن هذا الإجراء."
     : isUnban
     ? "هل أنت متأكد من أنك تريد إلغاء الحظر عن هذا المستخدم؟"
+    : "message"
+    ? "هل أنت متأكد من أنك تريد حذف هذه الرسالة"
     : "هل أنت متأكد من أنك تريد حظر هذا المستخدم؟ يمكنك التراجع لاحقًا بإلغاء الحظر.";
 
   // Confirm button label based on state
-  const confirmLabel = isDelete ? "حذف" : isUnban ? "إلغاء الحظر" : "حظر";
+  const confirmLabel = isDelete
+    ? "حذف"
+    : isUnban
+    ? "إلغاء الحظر"
+    : "message"
+    ? "حذف الرسالة"
+    : "حظر";
 
   // Confirm button color based on state
   const confirmColor = isDelete

@@ -17,6 +17,7 @@ import category from "./category/sliceCategory";
 import statistic from "./statistic/statisticSlice";
 import filter from "./filter/filterSlice";
 import sidebar from "./sidebar/sidebarSlice";
+import messages from "./messages/messageSlice";
 import {
   FLUSH,
   PAUSE,
@@ -83,6 +84,10 @@ const persistFilter = {
   key: "filter",
   storage,
 };
+const persistMessages = {
+  key: "messages",
+  storage,
+};
 const rootReducer = combineReducers({
   auth: persistReducer(persistAuth, auth),
   products: persistReducer(persistProducts, products),
@@ -99,6 +104,7 @@ const rootReducer = combineReducers({
   category: persistReducer(persistCategory, category),
   statistic: persistReducer(persistStatistic, statistic),
   filters: persistReducer(persistFilter, filter),
+  messages: persistReducer(persistMessages, messages),
   search,
   sidebar,
 });

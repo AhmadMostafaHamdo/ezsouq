@@ -6,7 +6,6 @@ import search from "../../assets/images/search.svg";
 import views from "../../assets/images/views.svg";
 import deleteIcon from "../../assets/images/dashboard/deleteIcon.svg";
 import arrowLeft from "../../assets/images/dashboard/arrowLeftTable.svg";
-import menuTable from "../../assets/images/dashboard/menuTable.svg";
 import menuTable2 from "../../assets/images/dashboard/menuTable2.svg";
 import deleteOffer from "../../assets/images/dashboard/deleteOffer.svg";
 import close from "../../assets/images/close.svg";
@@ -137,7 +136,6 @@ const Offers = () => {
             />
           </div>
           <div className="flex justify-end gap-2 relative" ref={menuRef}>
-            <img src={menuTable} alt="" className="w-8" />
             <img
               src={menuTable2}
               className="cursor-pointer w-8"

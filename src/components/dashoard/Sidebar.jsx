@@ -14,7 +14,7 @@ const Sidebar = () => {
   const { sidebarIsOpen } = useSelector((state) => state.sidebar);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
 
-  // ✅ Logout handler  
+  // ✅ Logout handler
   const handleLogout = () => {
     dispatch(logout());
     Cookies.remove("token");
@@ -33,8 +33,8 @@ const Sidebar = () => {
             onClick={() => dispatch(closeSidebar())}
             className={({ isActive }) =>
               isActive
-                ? "px-7 py-2 rounded-[10px] bg-[#E0E0FF] text-[#2F2E41] text-[.79rem]"
-                : "px-4 py-2 rounded-[10px] text-[#2F2E41] text-[.79rem]"
+                ? "px-7 py-2 rounded-[10px] bg-[#E0E0FF] text-[#2F2E41] text-[.79rem] outline-none"
+                : "px-4 py-2 rounded-[10px] text-[#2F2E41] text-[.79rem] outline-none hover:text-[.88rem] hover:text-main"
             }
           >
             {link.name}
@@ -98,7 +98,7 @@ const Sidebar = () => {
 
           {/* Logout button */}
           <button
-            className="text-[#2F2E41] flex items-center gap-2 text-[.9rem] mt-3 rounded-md p-2 hover:text-red"
+            className="text-[#2F2E41] flex items-center gap-2 text-[.9rem] mt-3 rounded-md p-2 hover:text-red bg-red"
             onClick={() => setShowLogoutModal(true)}
           >
             <img src={logoutImg} alt="زر تسجيل الخروج" />

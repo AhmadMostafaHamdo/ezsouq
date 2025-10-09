@@ -41,7 +41,7 @@ export const ulLinks = [
     img: report,
   },
   {
-    name: "الإشعارات",
+    name: "الرسائل",
     link: "/dashboard/notification",
     img: notification,
   },
@@ -81,5 +81,20 @@ export const columnsReports = [
   {
     key: "status",
     label: "الحالة",
+  },
+];
+export const columnsMessages = [
+  {
+    key: "name",
+    label: "اسم المرسل",
+    visible: true,
+  },
+  { key: "email", label: "البريد الالكتروني", visible: true },
+  { key: "message", label: "محتوى الرسالة", visible: true },
+  {
+    key: "adsCount",
+    label: "الإجراءات",
+    visible: true,
+    render: (user) => user.adsCount || 0,
   },
 ];

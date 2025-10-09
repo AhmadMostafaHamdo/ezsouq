@@ -68,10 +68,10 @@ const Offers = () => {
 
   // 📑 Pagination logic
   const totalPages = Math.ceil((filteredGovernorates?.length || 0) / limit);
-  const paginatedGovernorates = filteredGovernorates?.slice(
-    (page - 1) * limit,
-    page * limit
-  );
+  const paginatedGovernorates =
+    Array.isArray(filteredGovernorates) &&
+    filteredGovernorates.length > 0 &&
+    filteredGovernorates?.slice((page - 1) * limit, page * limit);
 
   // 🏙️ Handle city change
   const handleCityChange = (index, value) => {

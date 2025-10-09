@@ -8,7 +8,7 @@ export const updateGovernorate = createAsyncThunk(
   "governorates/updateGovernorate",
   async ({ gov_id, data }, { rejectWithValue }) => {
     try {
-      const token = Cookies.get("token");
+      const token = Cookies.get("token"); 
       const res = await axios.put(
         `/admin/update_governorate/${gov_id}`,
         {

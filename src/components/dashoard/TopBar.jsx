@@ -45,7 +45,8 @@ const TopBar = () => {
           onClick={() => dispatch(toggleSidebar())}
           className="cursor-pointer lg:hidden bg-primary"
         >
-          {/* أيقونة القائمة */}
+          x
+       {/* <img src={} alt='قائمة'/> */}
         </div>
 
         <div className="flex items-center gap-4">
