@@ -1,34 +1,35 @@
+import { useState } from "react";
 import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { ToastContainer } from "react-toastify";
-import { useState } from "react";
-import { Eye, EyeOff } from "lucide-react";
-import { jwtDecode } from "jwt-decode";
+import { useNavigate, Link } from "react-router-dom";
 import Cookies from "js-cookie";
+import { jwtDecode } from "jwt-decode";
+import { ToastContainer } from "react-toastify";
 
+import Spinner from "../../feedback/loading/Spinner";
+import Input from "../inputs/Input";
+import DividerWithText from "../dividerWithText/DividerWithText";
+import ImageSlider from "../slider/Swiper";
+import { thunkAuth } from "../../store/auth/thunk/authThunk";
+
+// 🖼️ Icons & Images
+import { Eye, EyeOff } from "lucide-react";
 import logo from "../../assets/images/logoWithTitle.svg";
 import loginImage from "../../assets/images/loginImage.svg";
 import googleIcon from "../../assets/images/googleLogo.svg";
-import ImageSlider from "../slider/Swiper";
-import Input from "../inputs/Input";
-import DividerWithText from "../dividerWithText/DividerWithText";
-import Spinner from "../../feedback/loading/Spinner";
-
-import { thunkAuth } from "../../store/auth/thunk/authThunk";
 
 const AuthForm = ({ fields, schema, btnAuth }) => {
   const isLogin = btnAuth !== "إنشاء حساب";
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { error } = useSelector((state) => state.auth);
+  const { error, loading } = useSelector((state) => state.auth);
 
   const [loadingGoogle, setLoadingGoogle] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  // Initialize React Hook Form with Zod validation
+  // ⚙️ Setup form validation
   const form = useForm({
     mode: "onChange",
     resolver: zodResolver(schema),
@@ -42,17 +43,19 @@ const AuthForm = ({ fields, schema, btnAuth }) => {
     formState: { errors, isSubmitting },
   } = form;
 
-  // Handle normal form submission (email/password)
+  // 🔑 Handle login/register
   const onSubmit = async (data) => {
     try {
       const { name, email, password } = data;
       const info = isLogin ? { email, password } : { name, email, password };
+
       const res = await dispatch(thunkAuth({ info, isLogin })).unwrap();
 
       if (res?.token) {
         Cookies.set("token", res.token, { expires: 7 });
-        const { Role } = jwtDecode(res.token);
-        navigate(Role === "OWNER" ? "/dashboard" : "/");
+        const decoded = jwtDecode(res.token);
+        const role = decoded.Role || decoded.role;
+        navigate(role === "OWNER" ? "/dashboard" : "/", { replace: true });
       }
 
       reset();
@@ -61,7 +64,7 @@ const AuthForm = ({ fields, schema, btnAuth }) => {
     }
   };
 
-  // Handle Google authentication redirect
+  // 🔁 Handle Google OAuth login
   const handleAuthGoogle = (e) => {
     e.preventDefault();
     setLoadingGoogle(true);
@@ -70,7 +73,7 @@ const AuthForm = ({ fields, schema, btnAuth }) => {
     )}`;
   };
 
-  // Password visibility toggle component
+  // 👁️ Password toggle button
   const PasswordToggle = ({ visible, onClick }) => (
     <button
       type="button"
@@ -82,21 +85,29 @@ const AuthForm = ({ fields, schema, btnAuth }) => {
   );
 
   return (
-    <div className="flex-center h-screen overflow-hidden">
+    <div className="relative flex-center h-screen overflow-hidden bg-white">
+      {/* 🌀 Global overlay spinner for both Google and Auth loading */}
+      {(loadingGoogle || loading) && (
+        <div className="absolute inset-0 bg-white/70 flex-center z-50">
+          <Spinner />
+        </div>
+      )}
+
       <FormProvider {...form}>
         <ToastContainer />
+
         <form
           onSubmit={handleSubmit(onSubmit)}
           className="w-screen h-screen flex-center shadow-custom"
         >
-          {/* Right Section (Slider or Welcome Image) */}
+          {/* 🟣 Right Section (Image or Welcome Message) */}
           <div className="hidden md:block w-[40vw] h-full">
             {!isLogin ? (
               <ImageSlider />
             ) : (
               <div className="w-full h-full bg-secondary flex flex-col items-center justify-evenly p-3">
                 <h1 className="text-primary text-[1.56rem] font-bold">
-                  أهلا بعودتك !
+                  أهلا بعودتك!
                 </h1>
                 <p className="text-[#282828] text-center text-[1.25rem] mb-5 w-full lg:w-[23.56rem]">
                   سجّل الدخول للوصول إلى حسابك ومتابعة نشاطك.
@@ -105,17 +116,17 @@ const AuthForm = ({ fields, schema, btnAuth }) => {
                   src={loginImage}
                   className="max-w-full h-full"
                   loading="lazy"
-                  alt="login illustration"
+                  alt="صورة تسجيل الدخول"
                 />
               </div>
             )}
           </div>
 
-          {/* Left Section (Form Fields) */}
-          <div className="w-full md:w-[60vw] h-full bg-white">
+          {/* 🟢 Left Section (Form) */}
+          <div className="w-full md:w-[60vw] h-full bg-white relative z-10">
             {isLogin && (
               <div className="w-full flex justify-center h-[20vh]">
-                <img src={logo} alt="logo" loading="lazy" />
+                <img src={logo} alt="شعار الموقع" loading="lazy" />
               </div>
             )}
 
@@ -124,7 +135,7 @@ const AuthForm = ({ fields, schema, btnAuth }) => {
                 {isLogin ? "تسجيل الدخول" : "إنشاء حساب"}
               </h1>
 
-              {/* Dynamic input fields */}
+              {/* 🔡 Dynamic Input Fields */}
               {fields.map((input, index) => (
                 <div key={index} className="relative">
                   <Input
@@ -142,12 +153,14 @@ const AuthForm = ({ fields, schema, btnAuth }) => {
                     name={input.name}
                     placeholder={input.placeholder}
                   />
+
                   {input.name === "password" && (
                     <PasswordToggle
                       visible={showPassword}
                       onClick={() => setShowPassword(!showPassword)}
                     />
                   )}
+
                   {input.name === "confirm_password" && (
                     <PasswordToggle
                       visible={showConfirmPassword}
@@ -156,6 +169,7 @@ const AuthForm = ({ fields, schema, btnAuth }) => {
                       }
                     />
                   )}
+
                   <p className="text-red my-1 h-[18px] text-[12px]">
                     {errors[input.name]?.message ||
                       (input.name === "email" && error && !isLogin)}
@@ -163,7 +177,7 @@ const AuthForm = ({ fields, schema, btnAuth }) => {
                 </div>
               ))}
 
-              {/* Privacy policy checkbox for registration */}
+              {/* ✅ Privacy Policy */}
               {!isLogin && (
                 <>
                   <div className="flex items-center">
@@ -187,22 +201,22 @@ const AuthForm = ({ fields, schema, btnAuth }) => {
                 </>
               )}
 
-              {/* Forgot password link */}
+              {/* 🔑 Forgot Password */}
               {isLogin && (
                 <Link to="/forgot-password" className="mb-3 block text-[.9rem]">
                   هل نسيت كلمة المرور؟
                 </Link>
               )}
 
-              {/* Submit button */}
+              {/* 🚀 Submit Button */}
               <button
                 disabled={isSubmitting}
                 className="w-full h-[2.9rem] text-white bg-primary rounded-xl"
               >
-                {isSubmitting ? "جارٍ الإرسال" : btnAuth}
+                {isSubmitting ? "جارٍ الإرسال..." : btnAuth}
               </button>
 
-              {/* Link to switch between login/register */}
+              {/* 🔄 Switch Login/Register */}
               <p
                 className={`${
                   isLogin ? "my-5" : "my-6 md:my-3"
@@ -217,29 +231,24 @@ const AuthForm = ({ fields, schema, btnAuth }) => {
                 </Link>
               </p>
 
-              {/* Divider and Google button */}
+              {/* Divider */}
               <DividerWithText text="أو" />
+
+              {/* 🔵 Google Login */}
               <button
                 type="button"
                 onClick={handleAuthGoogle}
                 disabled={loadingGoogle}
                 className={`flex-center hover:scale-105 ${
-                  loadingGoogle ? "bg-black bg-opacity-10" : ""
-                } ${
                   isLogin ? "my-6" : "my-10 md:my-3"
-                } p-3 font-medium text-[.9rem] gap-2 shadow-[0px_2px_13.7px_0px_#0000001A] rounded-xl w-full`}
+                } p-3 font-medium text-[.9rem] gap-2 shadow-[0px_2px_13.7px_0px_#0000001A] rounded-xl w-full ${
+                  loadingGoogle ? "bg-black bg-opacity-10" : ""
+                }`}
               >
                 {!loadingGoogle && (
-                  <img src={googleIcon} alt="googleLogo" loading="lazy" />
+                  <img src={googleIcon} alt="شعار Google" loading="lazy" />
                 )}
-                {loadingGoogle ? (
-                  <>
-                    <span className="text-primary">جارٍ الإرسال</span>
-                    <Spinner />
-                  </>
-                ) : (
-                  "تسجيل دخول بواسطة Google"
-                )}
+                تسجيل دخول بواسطة Google
               </button>
             </div>
           </div>

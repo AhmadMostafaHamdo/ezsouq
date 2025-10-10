@@ -10,8 +10,6 @@ const initialState = {
   users: [],
   user: [],
   loading: false,
-  loading: false,
-  loading: false,
   error: null,
 };
 const usersSlice = createSlice({

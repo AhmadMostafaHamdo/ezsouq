@@ -3,9 +3,11 @@ import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useParams } from "react-router";
 import { ToastContainer } from "react-toastify";
 
+// 🧩 Components
 import ImgProfileWithButtons from "./ImgProfileWithButtons";
 import Spinner from "../../feedback/loading/Spinner";
 
+// 🖼️ Icons
 import homeInfo from "../../assets/images/homeInfo.svg";
 import infoWork from "../../assets/images/infoWork.svg";
 import infoSite from "../../assets/images/infoSite.svg";
@@ -14,19 +16,23 @@ import infoMobile from "../../assets/images/infoMobile.svg";
 import infoEmail from "../../assets/images/infoEmail.svg";
 import updatedIcon from "../../assets/images/updatedIcon.svg";
 
+// ⚙️ Thunks & Hooks
 import { updateUser } from "../../store/users/thunk/updateUser";
 import { userThunkById } from "../../store/users/thunk/userThunkById";
 import useUserId from "../../hooks/useUserId";
 
 const ContactInfo = () => {
   const dispatch = useDispatch();
-  const myId = useUserId(); // ID of current logged-in user
+  const location = useLocation();
   const { id: paramId } = useParams();
+  const myId = useUserId();
 
+  // Redux state
   const { user, loadingUpdateUser, loading } = useSelector(
     (state) => state.users
   );
 
+  // 📝 Form state
   const [formData, setFormData] = useState({
     name: "",
     workplace: "",
@@ -38,12 +44,12 @@ const ContactInfo = () => {
   const [editableField, setEditableField] = useState(null);
   const [isChanged, setIsChanged] = useState(false);
 
-  // Fetch user data
+  // 🔁 Fetch user data whenever the route changes or user ID changes
   useEffect(() => {
-    dispatch(userThunkById(myId));
-  }, [dispatch, myId]);
+    dispatch(userThunkById(paramId || myId));
+  }, [dispatch, paramId, myId, location.pathname]);
 
-  // Update form data when user changes
+  // 🧠 Sync form data with fetched user info
   useEffect(() => {
     if (user) {
       setFormData({
@@ -58,19 +64,23 @@ const ContactInfo = () => {
     }
   }, [user]);
 
+  // 🧩 Handle input changes
   const handleChange = (field, value) => {
     const updatedData = { ...formData, [field]: value };
     setFormData(updatedData);
 
+    // Detect if any field changed
     const changed = Object.keys(updatedData).some(
       (key) => updatedData[key] !== (user?.[key] || "")
     );
     setIsChanged(changed);
   };
 
+  // ✏️ Handle edit / blur
   const handleEditClick = (field) => setEditableField(field);
   const handleBlur = () => setEditableField(null);
 
+  // 💾 Submit updated info
   const handleSubmit = (e) => {
     e.preventDefault();
     if (isChanged) {
@@ -79,7 +89,7 @@ const ContactInfo = () => {
     }
   };
 
-  // Data to display for other users
+  // 👤 Info displayed for other users
   const contactInfo = [
     {
       img: homeInfo,
@@ -110,19 +120,22 @@ const ContactInfo = () => {
       desc: user?.phone || "لم يتم تحديده",
     },
   ];
-  const location = useLocation();
-  const showContactInfo = location.pathname.includes("contact-us"); // check contact tab
+
+  // 🧭 Check if we are on contact tab
+  const showContactInfo = location.pathname.includes("contact-us");
 
   return (
     <div className="container mb-10">
       <ToastContainer />
+
       {showContactInfo && <ImgProfileWithButtons />}
+
       {loading ? (
         <Spinner />
       ) : (
         <>
           {myId == paramId ? (
-            // Current user's profile
+            // 🧍‍♂️ Current user's editable profile
             <div className="flex flex-col mt-3 gap-3 items-center font-normal">
               <form onSubmit={handleSubmit}>
                 {[
@@ -163,6 +176,7 @@ const ContactInfo = () => {
                       onChange={(e) => handleChange(item.field, e.target.value)}
                       onBlur={handleBlur}
                     />
+
                     {item.icon && (
                       <img
                         src={item.icon}
@@ -171,6 +185,7 @@ const ContactInfo = () => {
                         className="absolute top-1/2 -translate-y-1/2 right-2"
                       />
                     )}
+
                     <img
                       src={updatedIcon}
                       alt="تعديل"
@@ -194,7 +209,7 @@ const ContactInfo = () => {
               </form>
             </div>
           ) : (
-            // Other user's profile view
+            // 👥 Other user's public contact info
             <div className="flex-center md:justify-between flex-wrap gap-7 w-[80vw] md:w-[66vw] m-auto pt-3">
               {contactInfo.map((info, idx) => (
                 <div

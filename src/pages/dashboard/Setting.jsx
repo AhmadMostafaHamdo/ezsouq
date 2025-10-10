@@ -1,62 +1,62 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { ToastContainer } from "react-toastify";
+import { ToastContainer, toast } from "react-toastify";
 
-// 🧩 Components
+// Components
 import Pagination from "../../components/dashoard/Pagination";
 import Spinner from "../../feedback/loading/Spinner";
+import DeleteOrBanModal from "../../components/dashoard/DeleteOrBanModal";
 
-// 🖼️ Images
+// Images
 import search from "../../assets/images/search.svg";
-import menuTable2 from "../../assets/images/dashboard/menuTable2.svg";
 import addIcon from "../../assets/images/add.svg";
 import closeIcon from "../../assets/images/close.svg";
 import updateIcon from "../../assets/images/updateIcon.svg";
 import deleteIcon from "../../assets/images/dashboard/deleteUser.svg";
 
-// ⚙️ Redux Thunks
+// Redux Thunks
 import { addGovernorate } from "../../store/governorates/thunk/addGovernorate";
 import { updateGovernorate } from "../../store/governorates/thunk/handleUpdateGovernorate";
 import { thunkGovernorates } from "../../store/governorates/thunk/thunkGovernorates";
+import { deleteGovernorate } from "../../store/governorates/thunk/deleteGovernorate";
 
 const Offers = () => {
   const dispatch = useDispatch();
   const { governorates, loading } = useSelector((state) => state.governorates);
 
-  // 🧠 Search states (input vs actual filter term)
-  const [inputValue, setInputValue] = useState(""); // user typing
-  const [searchTerm, setSearchTerm] = useState(""); // debounced term
-
-  // 📄 Pagination
+  // Search & Pagination state
+  const [inputValue, setInputValue] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
   const [page, setPage] = useState(1);
   const limit = 3;
 
-  // 🪟 Modal state
-  const [modal, setModal] = useState({ show: false, type: "add" }); // type: add / update
+  // Modal states
+  const [modal, setModal] = useState({ show: false, type: "add" });
   const [currentGov, setCurrentGov] = useState({
     name: "",
     cities: [""],
     id: null,
   });
   const [error, setError] = useState("");
+  const [deleteModal, setDeleteModal] = useState({ show: false, id: null });
 
-  // 🚀 Fetch governorates on mount
+  // Load governorates on mount
   useEffect(() => {
     dispatch(thunkGovernorates());
   }, [dispatch]);
 
-  // 🕒 Debounce search input (wait 300ms after typing stops)
+  // Debounce search input
   useEffect(() => {
     const timeout = setTimeout(() => {
       setSearchTerm(inputValue);
       setPage(1);
     }, 300);
-
     return () => clearTimeout(timeout);
   }, [inputValue]);
 
-  // 🔍 Filter governorates by name or city
+  // Filter governorates based on search term
   const filteredGovernorates = useMemo(() => {
+    if (!Array.isArray(governorates)) return [];
     if (!searchTerm.trim()) return governorates;
     const term = searchTerm.toLowerCase();
     return governorates.filter(
@@ -66,21 +66,19 @@ const Offers = () => {
     );
   }, [searchTerm, governorates]);
 
-  // 📑 Pagination logic
+  // Pagination logic
   const totalPages = Math.ceil((filteredGovernorates?.length || 0) / limit);
-  const paginatedGovernorates =
-    Array.isArray(filteredGovernorates) &&
-    filteredGovernorates.length > 0 &&
-    filteredGovernorates?.slice((page - 1) * limit, page * limit);
+  const paginatedGovernorates = filteredGovernorates?.slice(
+    (page - 1) * limit,
+    page * limit
+  );
 
-  // 🏙️ Handle city change
+  // City handlers
   const handleCityChange = (index, value) => {
     const newCities = [...currentGov.cities];
     newCities[index] = value;
     setCurrentGov((prev) => ({ ...prev, cities: newCities }));
   };
-
-  // ➕ Add / Remove city
   const addCity = () =>
     setCurrentGov((prev) => ({ ...prev, cities: [...prev.cities, ""] }));
   const removeCity = (index) =>
@@ -89,14 +87,14 @@ const Offers = () => {
       cities: prev.cities.filter((_, i) => i !== index),
     }));
 
-  // 🟢 Add Modal
+  // Open Add Modal
   const openAddModal = () => {
     setCurrentGov({ name: "", cities: [""] });
     setError("");
     setModal({ show: true, type: "add" });
   };
 
-  // 🟡 Update Modal
+  // Open Update Modal
   const openUpdateModal = (gov) => {
     setCurrentGov({
       name: gov.name,
@@ -107,12 +105,32 @@ const Offers = () => {
     setModal({ show: true, type: "update" });
   };
 
-  // 💾 Save governorate (add/update)
-  const saveGovernorate = () => {
+  // Open Delete Modal
+  const openDeleteModal = (id) => setDeleteModal({ show: true, id });
+
+  // Confirm Delete
+  const handleDelete = async () => {
+    try {
+      await dispatch(deleteGovernorate(deleteModal.id)).unwrap();
+      toast.success("تم حذف المحافظة بنجاح", {
+        position: "top-center",
+        autoClose: 1500,
+      });
+      await dispatch(thunkGovernorates());
+      setDeleteModal({ show: false, id: null });
+      if (paginatedGovernorates.length === 1 && page > 1) setPage(page - 1);
+    } catch (error) {
+      console.error("Error deleting governorate:", error);
+      toast.error("حدث خطأ أثناء الحذف");
+    }
+  };
+
+  // Save Governorate (Add / Update)
+  const saveGovernorate = async () => {
     const trimmedName = currentGov.name.trim();
     const filteredCities = currentGov.cities
       .map((c) => c.trim())
-      .filter((c) => c);
+      .filter(Boolean);
 
     if (!trimmedName) return setError("يرجى إدخال اسم المحافظة");
     if (filteredCities.length === 0)
@@ -120,27 +138,45 @@ const Offers = () => {
 
     const data = { name: trimmedName, cities: filteredCities };
 
-    if (modal.type === "add") dispatch(addGovernorate({ data }));
-    else if (modal.type === "update")
-      dispatch(updateGovernorate({ gov_id: currentGov.id, data }));
+    try {
+      if (modal.type === "add") {
+        await dispatch(addGovernorate({ data })).unwrap();
+        toast.success("تمت إضافة المحافظة بنجاح", {
+          position: "top-center",
+          autoClose: 1500,
+        });
+      } else {
+        await dispatch(
+          updateGovernorate({ gov_id: currentGov.id, data })
+        ).unwrap();
+        toast.success("تم تحديث المحافظة بنجاح", {
+          position: "top-center",
+          autoClose: 1500,
+        });
+      }
 
-    setModal({ show: false, type: "add" });
-    setError("");
+      setModal({ show: false, type: "add" });
+      setError("");
+      await dispatch(thunkGovernorates()); // reload after add/update
+    } catch (err) {
+      console.error("Error saving governorate:", err);
+      toast.error("حدث خطأ أثناء الحفظ");
+    }
   };
 
-  if (loading) return <Spinner />;
+  if (loading) return (
+    <div className="mt-48">
+      <Spinner />
+    </div>
+  );
 
   return (
     <div className="overflow-hidden font-sans bg-[#F5F5F5] min-h-screen">
       <ToastContainer />
-
-      {/* 🪟 Modal for Add / Update Governorate */}
+      {/* Add / Update Modal */}
       {modal.show && (
         <div className="fixed inset-0 bg-[#67676780] z-30 flex justify-center items-center p-2">
-          <div
-            className="w-full max-w-md bg-[#FFFFFF] rounded-2xl p-6 shadow-2xl relative overflow-auto max-h-[90vh]"
-            alt="نافذة تعديل أو إضافة محافظة"
-          >
+          <div className="w-full max-w-md bg-white rounded-2xl p-6 shadow-2xl relative overflow-auto max-h-[90vh]">
             <button
               onClick={() => setModal({ show: false, type: "add" })}
               className="absolute top-4 right-4"
@@ -153,12 +189,10 @@ const Offers = () => {
             </h2>
 
             {error && (
-              <p className="text-red-600 text-sm mb-2 text-center font-medium">
-                {error}
-              </p>
+              <p className="text-[#ff0000bb] text-sm mb-2 text-center">{error}</p>
             )}
 
-            {/* 🏙️ Governorate name */}
+            {/* Governorate Name */}
             <div className="mb-4">
               <label className="block text-sm font-medium mb-2">
                 اسم المحافظة
@@ -170,12 +204,11 @@ const Offers = () => {
                   setCurrentGov((prev) => ({ ...prev, name: e.target.value }))
                 }
                 placeholder="أدخل اسم المحافظة"
-                alt="إدخال اسم المحافظة"
                 className="w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-[#4F46E5]"
               />
             </div>
 
-            {/* 🏘️ Cities list */}
+            {/* Cities List */}
             <div className="mb-4">
               <label className="block text-sm font-medium mb-2">
                 المدن التابعة لها
@@ -191,7 +224,6 @@ const Offers = () => {
                       value={city}
                       onChange={(e) => handleCityChange(idx, e.target.value)}
                       placeholder={`أدخل اسم المدينة ${idx + 1}`}
-                      alt={`إدخال اسم المدينة رقم ${idx + 1}`}
                       className="flex-1 border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-[#4F46E5]"
                     />
                     {currentGov.cities.length > 1 && (
@@ -213,7 +245,7 @@ const Offers = () => {
               </button>
             </div>
 
-            {/* 🧭 Modal actions */}
+            {/* Modal Actions */}
             <div className="flex flex-col sm:flex-row justify-between gap-2 mt-4">
               <button
                 onClick={() => setModal({ show: false, type: "add" })}
@@ -232,7 +264,16 @@ const Offers = () => {
         </div>
       )}
 
-      {/* 🔍 Header + Search + Add button */}
+      {/* Delete Modal */}
+      {deleteModal.show && (
+        <DeleteOrBanModal
+          type="governorate"
+          onConfirm={handleDelete}
+          onCancel={() => setDeleteModal({ show: false, id: null })}
+        />
+      )}
+
+      {/* Header + Search + Add */}
       <div className="container mx-auto px-2 sm:px-4">
         <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center my-5 gap-2">
           <h1 className="text-xl font-bold text-center sm:text-left text-[#1F2937]">
@@ -245,31 +286,27 @@ const Offers = () => {
                 type="text"
                 className="p-2 pr-8 rounded-md w-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#4F46E5]"
                 placeholder="ابحث عن مدينة أو محافظة..."
-                alt="حقل البحث عن المحافظات والمدن"
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
               />
               <img
                 src={search}
                 className="absolute top-1/2 -translate-y-1/2 right-2"
-                alt="رمز البحث"
+                alt="بحث"
               />
             </div>
 
-            <div className="flex items-center gap-2">
-              <img src={menuTable2} alt="عرض القائمة" width={35} />
-              <button
-                className="bg-[#4F46E5] text-white p-2 rounded-md flex items-center hover:bg-[#4338CA]"
-                onClick={openAddModal}
-              >
-                إضافة محافظة
-                <img src={addIcon} className="mx-2" alt="رمز الإضافة" />
-              </button>
-            </div>
+            <button
+              className="bg-[#4F46E5] text-white p-2 rounded-md flex items-center hover:bg-[#4338CA]"
+              onClick={openAddModal}
+            >
+              إضافة محافظة
+              <img src={addIcon} className="mx-2" alt="إضافة" />
+            </button>
           </div>
         </div>
 
-        {/* 📋 Governorates Table */}
+        {/* Governorates Table */}
         <div className="hidden sm:block p-4 bg-white rounded-t-3xl shadow">
           <table className="w-full">
             <thead>
@@ -293,17 +330,17 @@ const Offers = () => {
                       <div className="flex justify-center gap-2">
                         <img
                           src={updateIcon}
-                          alt="تعديل المحافظة"
+                          alt="تعديل"
                           width={25}
                           className="cursor-pointer"
                           onClick={() => openUpdateModal(gov)}
                         />
                         <img
                           src={deleteIcon}
-                          alt="حذف المحافظة"
+                          alt="حذف"
                           width={25}
                           className="cursor-pointer"
-                          onClick={() => alert("هنا دالة الحذف لاحقاً")}
+                          onClick={() => openDeleteModal(gov._id)}
                         />
                       </div>
                     </td>
@@ -322,7 +359,7 @@ const Offers = () => {
             </tbody>
           </table>
 
-          {/* 📄 Pagination */}
+          {/* Pagination */}
           {totalPages > 1 && (
             <Pagination
               currentPage={page}

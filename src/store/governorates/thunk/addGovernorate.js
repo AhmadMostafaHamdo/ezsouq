@@ -8,7 +8,7 @@ export const addGovernorate = createAsyncThunk(
   async ({ data }, { rejectWithValue }) => {
     console.log(data);
     try {
-      const token = Cookies.get("token");
+      const token = Cookies.get("token"); 
       const res = await axios.post(
         "/admin/add_governorates",
         {
