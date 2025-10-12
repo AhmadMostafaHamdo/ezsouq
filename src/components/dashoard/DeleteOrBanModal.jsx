@@ -30,6 +30,7 @@ const DeleteOrBanModal = ({ type, action, onConfirm, onCancel }) => {
   const isBan = type === "ban";
   const isUnban = action === "unban";
   const isGovernorate = type === "governorate";
+  const msg = "message";
 
   // Modal title
   const title = isGovernorate
@@ -38,7 +39,11 @@ const DeleteOrBanModal = ({ type, action, onConfirm, onCancel }) => {
     ? "حذف مستخدم"
     : isUnban
     ? "إلغاء حظر المستخدم"
-    : "حظر مستخدم";
+    : msg
+    ? "حذف رسالة "
+    : isBan
+    ? "حظر مستخدم"
+    : "";
 
   // Modal description
   const description = isGovernorate
@@ -47,7 +52,11 @@ const DeleteOrBanModal = ({ type, action, onConfirm, onCancel }) => {
     ? "هل أنت متأكد من أنك تريد حذف هذا المستخدم؟ لا يمكن التراجع عن هذا الإجراء."
     : isUnban
     ? "هل أنت متأكد من أنك تريد إلغاء الحظر عن هذا المستخدم؟"
-    : "هل أنت متأكد من أنك تريد حظر هذا المستخدم؟ يمكنك التراجع لاحقًا بإلغاء الحظر.";
+    : msg
+    ? "هل أنت متأكد من أنك تريد حذف هذه الرسالة؟"
+    : isBan
+    ? "هل أنت متأكد من أنك تريد حظر هذا المستخدم؟ يمكنك التراجع لاحقًا بإلغاء الحظر."
+    : "";
 
   // Confirm button label
   const confirmLabel = isGovernorate
@@ -56,6 +65,8 @@ const DeleteOrBanModal = ({ type, action, onConfirm, onCancel }) => {
     ? "حذف"
     : isUnban
     ? "إلغاء الحظر"
+    : msg
+    ? "حذف"
     : "حظر";
 
   // Confirm button color
@@ -93,13 +104,13 @@ const DeleteOrBanModal = ({ type, action, onConfirm, onCancel }) => {
           {/* Action Buttons */}
           <div className="flex justify-between mt-5 font-normal">
             <button
-              className="px-5 py-1 rounded-md text-[#818181] border border-[#818181]"
+              className="px-5 py-1 rounded-md duration-150 hover:bg-[#ddddddb0] text-[#818181] border border-[#818181a1]"
               onClick={onCancel}
             >
               إلغاء
             </button>
             <button
-              className={`px-5 py-1 rounded-md text-white ${confirmColor}`}
+              className={`px-5 py-1 rounded-md text-white duration-150 hover:bg-[#ec1f4bcc] ${confirmColor}`}
               onClick={onConfirm}
             >
               {confirmLabel}

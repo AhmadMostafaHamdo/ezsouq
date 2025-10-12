@@ -24,13 +24,13 @@ const Offers = () => {
   const dispatch = useDispatch();
   const { governorates, loading } = useSelector((state) => state.governorates);
 
-  // Search & Pagination state
+  // Search & Pagination
   const [inputValue, setInputValue] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const [page, setPage] = useState(1);
   const limit = 3;
 
-  // Modal states
+  // Modal state
   const [modal, setModal] = useState({ show: false, type: "add" });
   const [currentGov, setCurrentGov] = useState({
     name: "",
@@ -45,7 +45,7 @@ const Offers = () => {
     dispatch(thunkGovernorates());
   }, [dispatch]);
 
-  // Debounce search input
+  //  Debounce search input
   useEffect(() => {
     const timeout = setTimeout(() => {
       setSearchTerm(inputValue);
@@ -54,7 +54,7 @@ const Offers = () => {
     return () => clearTimeout(timeout);
   }, [inputValue]);
 
-  // Filter governorates based on search term
+  // Filter logic
   const filteredGovernorates = useMemo(() => {
     if (!Array.isArray(governorates)) return [];
     if (!searchTerm.trim()) return governorates;
@@ -73,7 +73,7 @@ const Offers = () => {
     page * limit
   );
 
-  // City handlers
+  // City Handlers
   const handleCityChange = (index, value) => {
     const newCities = [...currentGov.cities];
     newCities[index] = value;
@@ -87,14 +87,14 @@ const Offers = () => {
       cities: prev.cities.filter((_, i) => i !== index),
     }));
 
-  // Open Add Modal
+  // Add Modal
   const openAddModal = () => {
     setCurrentGov({ name: "", cities: [""] });
     setError("");
     setModal({ show: true, type: "add" });
   };
 
-  // Open Update Modal
+  // Update Modal
   const openUpdateModal = (gov) => {
     setCurrentGov({
       name: gov.name,
@@ -105,7 +105,7 @@ const Offers = () => {
     setModal({ show: true, type: "update" });
   };
 
-  // Open Delete Modal
+  // Delete Modal
   const openDeleteModal = (id) => setDeleteModal({ show: true, id });
 
   // Confirm Delete
@@ -125,7 +125,7 @@ const Offers = () => {
     }
   };
 
-  // Save Governorate (Add / Update)
+  // Save (Add / Update)
   const saveGovernorate = async () => {
     const trimmedName = currentGov.name.trim();
     const filteredCities = currentGov.cities
@@ -157,22 +157,24 @@ const Offers = () => {
 
       setModal({ show: false, type: "add" });
       setError("");
-      await dispatch(thunkGovernorates()); // reload after add/update
+      await dispatch(thunkGovernorates());
     } catch (err) {
       console.error("Error saving governorate:", err);
       toast.error("حدث خطأ أثناء الحفظ");
     }
   };
 
-  if (loading) return (
-    <div className="mt-48">
-      <Spinner />
-    </div>
-  );
+  if (loading)
+    return (
+      <div className="mt-48">
+        <Spinner />
+      </div>
+    );
 
   return (
     <div className="overflow-hidden font-sans bg-[#F5F5F5] min-h-screen">
       <ToastContainer />
+
       {/* Add / Update Modal */}
       {modal.show && (
         <div className="fixed inset-0 bg-[#67676780] z-30 flex justify-center items-center p-2">
@@ -181,7 +183,12 @@ const Offers = () => {
               onClick={() => setModal({ show: false, type: "add" })}
               className="absolute top-4 right-4"
             >
-              <img src={closeIcon} alt="إغلاق النافذة" width={20} />
+              <img
+                src={closeIcon}
+                alt="إغلاق النافذة"
+                width={20}
+                loading="lazy"
+              />
             </button>
 
             <h2 className="text-lg font-bold text-center mb-4">
@@ -189,7 +196,9 @@ const Offers = () => {
             </h2>
 
             {error && (
-              <p className="text-[#ff0000bb] text-sm mb-2 text-center">{error}</p>
+              <p className="text-[#ff0000bb] text-sm mb-2 text-center">
+                {error}
+              </p>
             )}
 
             {/* Governorate Name */}
@@ -208,7 +217,7 @@ const Offers = () => {
               />
             </div>
 
-            {/* Cities List */}
+            {/* Cities */}
             <div className="mb-4">
               <label className="block text-sm font-medium mb-2">
                 المدن التابعة لها
@@ -217,7 +226,7 @@ const Offers = () => {
                 {currentGov.cities.map((city, idx) => (
                   <div
                     key={idx}
-                    className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2"
+                    className="flex flex-col sm:flex-row items-stretch gap-2"
                   >
                     <input
                       type="text"
@@ -273,7 +282,7 @@ const Offers = () => {
         />
       )}
 
-      {/* Header + Search + Add */}
+      {/* Header & Search */}
       <div className="container mx-auto px-2 sm:px-4">
         <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center my-5 gap-2">
           <h1 className="text-xl font-bold text-center sm:text-left text-[#1F2937]">
@@ -293,6 +302,7 @@ const Offers = () => {
                 src={search}
                 className="absolute top-1/2 -translate-y-1/2 right-2"
                 alt="بحث"
+                loading="lazy"
               />
             </div>
 
@@ -301,12 +311,12 @@ const Offers = () => {
               onClick={openAddModal}
             >
               إضافة محافظة
-              <img src={addIcon} className="mx-2" alt="إضافة" />
+              <img src={addIcon} className="mx-2" alt="إضافة" loading="lazy" />
             </button>
           </div>
         </div>
 
-        {/* Governorates Table */}
+        {/* Desktop Table */}
         <div className="hidden sm:block p-4 bg-white rounded-t-3xl shadow">
           <table className="w-full">
             <thead>
@@ -319,7 +329,10 @@ const Offers = () => {
             <tbody>
               {paginatedGovernorates?.length > 0 ? (
                 paginatedGovernorates.map((gov) => (
-                  <tr key={gov._id} className="border-t border-gray-300">
+                  <tr
+                    key={gov._id}
+                    className="border-t hover:bg-[#adadad2c] border-gray-300"
+                  >
                     <td className="text-center py-2">{gov.name}</td>
                     <td className="text-center py-2">
                       {gov.cities.length > 5
@@ -333,6 +346,7 @@ const Offers = () => {
                           alt="تعديل"
                           width={25}
                           className="cursor-pointer"
+                          loading="lazy"
                           onClick={() => openUpdateModal(gov)}
                         />
                         <img
@@ -340,6 +354,7 @@ const Offers = () => {
                           alt="حذف"
                           width={25}
                           className="cursor-pointer"
+                          loading="lazy"
                           onClick={() => openDeleteModal(gov._id)}
                         />
                       </div>
@@ -368,6 +383,57 @@ const Offers = () => {
               itemsPerPage={limit}
               onPageChange={(p) => setPage(p)}
             />
+          )}
+        </div>
+
+        {/* Mobile Cards */}
+        <div className="sm:hidden grid grid-cols-1 gap-4 mt-4">
+          {paginatedGovernorates?.length > 0 ? (
+            paginatedGovernorates.map((gov) => (
+              <div
+                key={gov._id}
+                className="bg-white p-4 rounded-xl shadow flex flex-col gap-2"
+              >
+                <h2 className="font-bold text-lg text-[#111827]">{gov.name}</h2>
+                <p className="text-sm text-gray-600">
+                  المدن:{" "}
+                  {gov.cities.length > 5
+                    ? gov.cities.slice(0, 4).join(" - ") + " ..."
+                    : gov.cities.join(" - ")}
+                </p>
+
+                <div className="flex justify-end gap-3 mt-2">
+                  <button
+                    onClick={() => openUpdateModal(gov)}
+                    className="text-[#4F46E5] underline text-sm"
+                  >
+                    تعديل
+                  </button>
+                  <button
+                    onClick={() => openDeleteModal(gov._id)}
+                    className="text-[#EF4444] underline text-sm"
+                  >
+                    حذف
+                  </button>
+                </div>
+              </div>
+            ))
+          ) : (
+            <p className="text-center text-gray-500 font-medium">
+              لا توجد نتائج مطابقة للبحث
+            </p>
+          )}
+
+          {totalPages > 1 && (
+            <div className="mt-4">
+              <Pagination
+                currentPage={page}
+                totalPages={totalPages}
+                totalItems={filteredGovernorates.length}
+                itemsPerPage={limit}
+                onPageChange={(p) => setPage(p)}
+              />
+            </div>
           )}
         </div>
       </div>

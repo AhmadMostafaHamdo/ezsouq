@@ -112,7 +112,10 @@ const StepOne = ({ onSubmit }) => {
           <Error error={errors.description?.message} />
 
           {/* Price */}
-          <InputCreateOffer placeholder="السعر" {...register("price")} />
+          <InputCreateOffer
+            placeholder="السعر بالليرة السورية مثال (1000)  "
+            {...register("price")}
+          />
           <Error error={errors.price?.message} />
 
           {/* Main Photos Upload */}

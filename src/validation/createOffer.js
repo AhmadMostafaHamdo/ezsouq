@@ -49,7 +49,7 @@ export const stepOneSchema = z.object({
 
 /* الخطوة ٢ – سيارات */
 export const stepTwoCarsSchema = z.object({
-  name: z.string().nonempty("يجب إدخال اسم السيارة"),
+  name: z.string().nonempty("يجب إدخال اسم السيارة").max(24,"يجب ان يكون الاسم اقل من 24 حرف"),
   color: z.string().nonempty("يجب إدخال اللون"),
   for_sale: z.enum(["rent", "sale"], {
     errorMap: () => ({ message: "اختر نوع العملية" }),

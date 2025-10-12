@@ -43,11 +43,24 @@ const HeaderLogin = () => {
     Cookies.remove("token");
     window.location.href = "/";
   };
+  // Prevent page scroll when sidebar is open
+  useEffect(() => {
+    if (isSidebarOpen) {
+      document.body.style.overflow = "hidden"; // disable scroll
+    } else {
+      document.body.style.overflow = "auto"; // enable scroll
+    }
+
+    // Cleanup on unmount
+    return () => {
+      document.body.style.overflow = "auto";
+    };
+  }, [isSidebarOpen]);
 
   return (
     <div
-      className={`fixed w-full z-10 py-[1.5px] font-bold text-[.87rem] text-white transition-all duration-300 ${
-        isScrolled ? "bg-[#0F00FF80] backdrop-blur-[20px]" : "bg-primary"
+      className={`fixed w-full z-10 py-[1.5px] font-bold text-[.87rem] bg-primary text-white transition-all duration-300 ${
+        isScrolled ? "opacity-90 shadow-custom" : "bg-primary"
       }`}
     >
       {/* ================= Header Container ================= */}

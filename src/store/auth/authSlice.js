@@ -35,11 +35,19 @@ const authSlice = createSlice({
       state.loading = false;
       state.error = action.payload; // Save error message
     });
+    builder.addCase(logout.pending, (state) => {
+      state.token = null;
+      state.loading = true;
+    });
     builder.addCase(logout.fulfilled, (state) => {
       state.token = null;
+      state.loading = false;
+
       state.user = {}; // Clear user data on logout
     });
     builder.addCase(logout.rejected, (state) => {
+      state.loading = false;
+
       state.token = null;
       state.user = {}; // Clear user data even if logout fails
     });

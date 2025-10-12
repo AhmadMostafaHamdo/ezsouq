@@ -7,10 +7,10 @@ import { handleThunkError } from "../../../utils/utils";
 
 export const getAllUsers = createAsyncThunk(
   "/getAllUsers",
-  async ({ page, limit = 4, search = "" }, { rejectWithValue }) => {
+  async ({ page, search = "" }, { rejectWithValue }) => {
     try {
       const res = await axios.get(
-        `/admin/search_user?page=${page}&limit=${limit}&search=${encodeURIComponent(
+        `/admin/search_user?page=${page}&limit=3&search=${encodeURIComponent(
           search
         )}`,
         {

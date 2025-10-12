@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
-import { Link, useParams } from "react-router-dom";
+import { Link, useLocation, useParams } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import Cookies from "js-cookie";
 import { jwtDecode } from "jwt-decode";
@@ -13,16 +13,15 @@ import useUserId from "../../hooks/useUserId";
 import ProfileSkeleton from "../../assets/sketlon/ProfileSkeleton";
 import ContactInfo from "./ContactInfo";
 
-const ImgProfileWithButtons = () => {
+const ImgProfileWithButtons = ({ setActiveTab, activeTab }) => {
   const [previewImg, setPreviewImg] = useState(null);
   const [profileData, setProfileData] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState("posts"); // 👈 هنا المتغير الأساسي
 
   const dispatch = useDispatch();
   const { id } = useParams();
   const myId = useUserId();
-
+  const location = useLocation();
   const token = Cookies.get("token");
   const { Role } = jwtDecode(token);
 
@@ -111,44 +110,86 @@ const ImgProfileWithButtons = () => {
           </div>
 
           {/* Tabs as Buttons */}
-          <nav className="flex justify-center text-[1rem] font-bold gap-3 my-3">
-            <Link
-              to={`/profile/${id}`}
-              onClick={() => setActiveTab("posts")}
-              className={`rounded-[3rem] py-1 px-8 transition relative ${
-                activeTab === "posts"
-                  ? "bg-[#7770E9] text-white"
-                  : "border border-[#C2BFFF] text-[#C2BFFF]"
-              }`}
-            >
-              المنشورات
-              <p
-                className={`transition duration-300 absolute -bottom-[5px] ${
+          {!location.pathname.includes("dashboard") && (
+            <nav className="flex justify-center text-[1rem] font-bold gap-3 my-3">
+              <Link
+                to={`/profile/${id}`}
+                onClick={() => setActiveTab("posts")}
+                className={`rounded-[3rem] py-1 px-8 transition relative ${
+                  !window.location.href.includes("contact")
+                    ? "bg-[#7770E9] text-white"
+                    : "border border-[#C2BFFF] text-[#C2BFFF]"
+                }`}
+              >
+                المنشورات
+                <p
+                  className={`transition duration-300 absolute -bottom-[5px] ${
+                    !window.location.href.includes("contact")
+                      ? "w-10 -translate-x-1/2 opacity-100 "
+                      : "w-0 opacity-0"
+                  } -translate-x-[50%] left-[50%] h-[2px] rounded-md bg-primary `}
+                ></p>
+              </Link>
+              <Link
+                to={`/profile/${id}/contact-info`}
+                onClick={() => setActiveTab("contact")}
+                className={`rounded-[3rem] py-1 px-8 transition relative ${
+                  window.location.href.includes("contact")
+                    ? "bg-[#7770E9] text-white"
+                    : "border border-[#C2BFFF] text-[#C2BFFF]"
+                }`}
+              >
+                معلومات التواصل
+                <p
+                  className={`transition duration-300 absolute -bottom-[5px] ${
+                    window.location.href.includes("contact")
+                      ? "w-10 -translate-x-1/2 opacity-100 "
+                      : "w-0 opacity-0"
+                  } -translate-x-[50%] left-[50%] h-[2px] rounded-md bg-primary `}
+                ></p>
+              </Link>
+            </nav>
+          )}
+
+          {/* Tabs as Buttons */}
+          {location.pathname.includes("dashboard") && (
+            <nav className="flex justify-center text-[1rem] font-bold gap-3 my-3">
+              <button
+                onClick={() => setActiveTab("posts")}
+                className={`rounded-[3rem] py-1 px-8 transition relative ${
                   activeTab === "posts"
-                    ? "w-10 -translate-x-1/2 opacity-100"
-                    : "w-0 opacity-0"
-                } -translate-x-[50%] left-[50%] h-[2px] rounded-md bg-primary `}
-              ></p>{" "}
-            </Link>
-            <Link
-              to={`/profile/${id}/contact-info`}
-              onClick={() => setActiveTab("contact")}
-              className={`rounded-[3rem] py-1 px-8 transition relative ${
-                activeTab === "contact"
-                  ? "bg-[#7770E9] text-white"
-                  : "border border-[#C2BFFF] text-[#C2BFFF]"
-              }`}
-            >
-              معلومات التواصل
-              <p
-                className={`transition duration-300 absolute -bottom-[5px] ${
+                    ? "bg-[#7770E9] text-white"
+                    : "border border-[#C2BFFF] text-[#C2BFFF]"
+                }`}
+              >
+                المنشورات
+                <p
+                  className={`transition duration-300 absolute -bottom-[5px] ${
+                    activeTab === "posts"
+                      ? "w-10 -translate-x-1/2 opacity-100"
+                      : "w-0 opacity-0"
+                  } -translate-x-[50%] left-[50%] h-[2px] rounded-md bg-primary `}
+                ></p>
+              </button>
+              <button
+                onClick={() => setActiveTab("contact")}
+                className={`rounded-[3rem] py-1 px-8 transition relative ${
                   activeTab === "contact"
-                    ? "w-10 -translate-x-1/2 opacity-100"
-                    : "w-0 opacity-0"
-                } -translate-x-[50%] left-[50%] h-[2px] rounded-md bg-primary `}
-              ></p>
-            </Link>
-          </nav>
+                    ? "bg-[#7770E9] text-white"
+                    : "border border-[#C2BFFF] text-[#C2BFFF]"
+                }`}
+              >
+                معلومات التواصل
+                <p
+                  className={`transition duration-300 absolute -bottom-[5px] ${
+                    activeTab === "contact"
+                      ? "w-10 -translate-x-1/2 opacity-100"
+                      : "w-0 opacity-0"
+                  } -translate-x-[50%] left-[50%] h-[2px] rounded-md bg-primary `}
+                ></p>
+              </button>
+            </nav>
+          )}
         </>
       )}
     </div>

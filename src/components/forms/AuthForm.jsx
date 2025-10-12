@@ -13,7 +13,7 @@ import DividerWithText from "../dividerWithText/DividerWithText";
 import ImageSlider from "../slider/Swiper";
 import { thunkAuth } from "../../store/auth/thunk/authThunk";
 
-// 🖼️ Icons & Images
+// Icons & Images
 import { Eye, EyeOff } from "lucide-react";
 import logo from "../../assets/images/logoWithTitle.svg";
 import loginImage from "../../assets/images/loginImage.svg";
@@ -29,7 +29,7 @@ const AuthForm = ({ fields, schema, btnAuth }) => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  // ⚙️ Setup form validation
+  // Setup form validation
   const form = useForm({
     mode: "onChange",
     resolver: zodResolver(schema),
@@ -43,7 +43,7 @@ const AuthForm = ({ fields, schema, btnAuth }) => {
     formState: { errors, isSubmitting },
   } = form;
 
-  // 🔑 Handle login/register
+  // Handle login/register
   const onSubmit = async (data) => {
     try {
       const { name, email, password } = data;
@@ -64,7 +64,7 @@ const AuthForm = ({ fields, schema, btnAuth }) => {
     }
   };
 
-  // 🔁 Handle Google OAuth login
+  // Handle Google OAuth login
   const handleAuthGoogle = (e) => {
     e.preventDefault();
     setLoadingGoogle(true);
@@ -73,20 +73,20 @@ const AuthForm = ({ fields, schema, btnAuth }) => {
     )}`;
   };
 
-  // 👁️ Password toggle button
+  // Password toggle button
   const PasswordToggle = ({ visible, onClick }) => (
     <button
       type="button"
       onClick={onClick}
       className="absolute top-6 left-2 -translate-y-1/2 text-xs text-primary"
     >
-      {visible ? <EyeOff /> : <Eye />}
+      {!visible ? <EyeOff /> : <Eye />}
     </button>
   );
 
   return (
     <div className="relative flex-center h-screen overflow-hidden bg-white">
-      {/* 🌀 Global overlay spinner for both Google and Auth loading */}
+      {/* Global overlay spinner for both Google and Auth loading */}
       {(loadingGoogle || loading) && (
         <div className="absolute inset-0 bg-white/70 flex-center z-50">
           <Spinner />
@@ -100,7 +100,7 @@ const AuthForm = ({ fields, schema, btnAuth }) => {
           onSubmit={handleSubmit(onSubmit)}
           className="w-screen h-screen flex-center shadow-custom"
         >
-          {/* 🟣 Right Section (Image or Welcome Message) */}
+          {/* Right Section (Image or Welcome Message) */}
           <div className="hidden md:block w-[40vw] h-full">
             {!isLogin ? (
               <ImageSlider />
@@ -122,7 +122,7 @@ const AuthForm = ({ fields, schema, btnAuth }) => {
             )}
           </div>
 
-          {/* 🟢 Left Section (Form) */}
+          {/*  Left Section (Form) */}
           <div className="w-full md:w-[60vw] h-full bg-white relative z-10">
             {isLogin && (
               <div className="w-full flex justify-center h-[20vh]">
@@ -135,7 +135,7 @@ const AuthForm = ({ fields, schema, btnAuth }) => {
                 {isLogin ? "تسجيل الدخول" : "إنشاء حساب"}
               </h1>
 
-              {/* 🔡 Dynamic Input Fields */}
+              {/* Dynamic Input Fields */}
               {fields.map((input, index) => (
                 <div key={index} className="relative">
                   <Input
@@ -177,7 +177,7 @@ const AuthForm = ({ fields, schema, btnAuth }) => {
                 </div>
               ))}
 
-              {/* ✅ Privacy Policy */}
+              {/*  Privacy Policy */}
               {!isLogin && (
                 <>
                   <div className="flex items-center">
@@ -201,14 +201,14 @@ const AuthForm = ({ fields, schema, btnAuth }) => {
                 </>
               )}
 
-              {/* 🔑 Forgot Password */}
+              {/*  Forgot Password */}
               {isLogin && (
                 <Link to="/forgot-password" className="mb-3 block text-[.9rem]">
                   هل نسيت كلمة المرور؟
                 </Link>
               )}
 
-              {/* 🚀 Submit Button */}
+              {/*  Submit Button */}
               <button
                 disabled={isSubmitting}
                 className="w-full h-[2.9rem] text-white bg-primary rounded-xl"
@@ -216,7 +216,7 @@ const AuthForm = ({ fields, schema, btnAuth }) => {
                 {isSubmitting ? "جارٍ الإرسال..." : btnAuth}
               </button>
 
-              {/* 🔄 Switch Login/Register */}
+              {/* Switch Login/Register */}
               <p
                 className={`${
                   isLogin ? "my-5" : "my-6 md:my-3"
@@ -234,7 +234,7 @@ const AuthForm = ({ fields, schema, btnAuth }) => {
               {/* Divider */}
               <DividerWithText text="أو" />
 
-              {/* 🔵 Google Login */}
+              {/* Google Login */}
               <button
                 type="button"
                 onClick={handleAuthGoogle}

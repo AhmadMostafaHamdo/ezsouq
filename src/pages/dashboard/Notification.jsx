@@ -8,21 +8,15 @@ import "react-toastify/dist/ReactToastify.css";
 import Spinner from "../../feedback/loading/Spinner";
 import Pagination from "../../components/dashoard/Pagination";
 import DeleteOrBanModal from "../../components/dashoard/DeleteOrBanModal";
-
-// 🖼️ Icons
-import eye from "../../assets/images/dashboard/viewsBlue.svg";
-import deleteIcon from "../../assets/images/dashboard/deleteIcon.svg";
-import searchIcon from "../../assets/images/search.svg";
-
 import { getAllMessages } from "../../store/messages/thunk/getAllMessages";
 
 // ✅ Modal component to show message details
 const MessageDetailsModal = ({ message, onClose }) => (
   <div className="fixed inset-0 bg-[#00000080] z-50 flex items-center justify-center">
-    <div className="bg-[#FFFFFF] rounded-xl shadow-lg w-96 p-5 relative">
+    <div className="bg-[#FFFFFF] rounded-xl shadow-lg w-11/12 sm:w-96 p-5 relative">
       <button
         onClick={onClose}
-        className="absolute top-2 right-2 text-[#ca4646] hover:text-[#000000] text-xl"
+        className="absolute top-2 right-2 text-[#CA4646] hover:text-[#000000] text-xl"
       >
         ✖
       </button>
@@ -41,7 +35,7 @@ const MessageDetailsModal = ({ message, onClose }) => (
       <div className="flex justify-center mt-4">
         <button
           onClick={onClose}
-          className="px-4 py-1 rounded-md bg-[#2563EB] text-[#FFFFFF] hover:bg-[#1D4ED8]"
+          className="px-4 py-1 rounded-md bg-[#2563EB] text-[#FFFFFF] hover:bg-[#1D4ED8] transition"
         >
           إغلاق
         </button>
@@ -108,35 +102,62 @@ const Notification = () => {
     }
   };
 
+  // === Render mobile card ===
+  const renderMobileCard = (msg) => (
+    <div
+      key={msg._id}
+      className="bg-[#FFFFFF] p-4 rounded-xl shadow-md border border-[#E5E7EB] w-full"
+    >
+      <p className="font-semibold text-[#1F2937]">{msg?.name || "-"}</p>
+      <p className="text-[#6B7280] truncate">{msg?.subject || "-"}</p>
+      <p className="text-[#374151] mt-1 truncate">{msg?.message || "-"}</p>
+      <p className="text-[#6B7280] text-xs mt-1">
+        {new Date(msg?.createdAt).toLocaleDateString("ar-EG")}
+      </p>
+      <div className="flex justify-end gap-2 mt-3">
+        <button
+          onClick={() => {
+            setDetailsMessage(msg);
+            setShowDetailsModal(true);
+          }}
+          className="px-2 py-1 bg-[#DBEAFE] text-[#1E40AF] rounded-md hover:bg-[#BFDBFE] transition text-xs"
+        >
+          عرض
+        </button>
+        <button
+          onClick={() => {
+            setSelectedMessage(msg);
+            setShowDeleteModal(true);
+          }}
+          className="px-2 py-1 bg-[#FEE2E2] text-[#B91C1C] rounded-md hover:bg-[#FCA5A5] transition text-xs"
+        >
+          حذف
+        </button>
+      </div>
+    </div>
+  );
+
   return (
     <div className="container mx-auto px-3">
       <ToastContainer />
 
       {/* Header with search */}
-      <div className="flex flex-col lg:flex-row items-center justify-between my-6 w-full lg:w-[60vw] gap-3">
+      <div className="flex flex-col sm:flex-row items-center justify-between my-6 gap-3 w-full">
         <h1 className="text-xl font-bold text-[#1F2937]">📩 الرسائل</h1>
-
-        <div className="relative w-full lg:w-[40vw]">
-          <input
-            type="text"
-            placeholder="بحث عن رسالة..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="w-full p-2 pr-8 rounded-md border border-[#D1D5DB] text-sm outline-none focus:ring-1 focus:ring-[#3B82F6]"
-          />
-          <img
-            src={searchIcon}
-            alt="أيقونة البحث"
-            className="absolute top-1/2 -translate-y-1/2 right-2 w-4 h-4 opacity-60"
-          />
-        </div>
+        <input
+          type="text"
+          placeholder="بحث عن رسالة..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="w-full sm:w-[40%] p-2 rounded-md border border-[#D1D5DB] text-sm focus:ring-1 focus:ring-[#3B82F6]"
+        />
       </div>
 
-      {/* Messages Table */}
-      <div className="hidden sm:block p-3 bg-[#FFFFFF] rounded-3xl shadow-md">
-        <table className="w-full text-sm font-medium bg-[#FFFFFF]">
+      {/* Desktop table */}
+      <div className="hidden sm:block bg-[#FFFFFF] rounded-3xl shadow-md p-3 overflow-x-auto">
+        <table className="w-full text-sm text-[#374151]">
           <thead>
-            <tr className="text-[#6B7280] border-b text-center">
+            <tr className="border-b border-[#E5E7EB] text-center text-[#6B7280]">
               <th className="py-3 px-2">الاسم</th>
               <th className="py-3 px-2">الموضوع</th>
               <th className="py-3 px-2">الرسالة</th>
@@ -151,52 +172,39 @@ const Notification = () => {
                   <Spinner />
                 </td>
               </tr>
-            ) : error ? (
-              <tr>
-                <td colSpan={5} className="py-6 text-center text-[#DC2626]">
-                  {error}
-                </td>
-              </tr>
             ) : filtered.length > 0 ? (
-              filtered.map((msg, i) => (
+              filtered.map((msg) => (
                 <tr
-                  key={msg._id || i}
-                  className="border-t border-[#E5E7EB] hover:bg-[#F9FAFB] transition"
+                  key={msg._id}
+                  className="border-t border-[#E5E7EB] hover:bg-[#F9FAFB] transition text-center"
                 >
-                  <td className="py-3 text-center">{msg?.name || "-"}</td>
-                  <td className="py-3 text-center">{msg?.subject || "-"}</td>
-                  <td className="py-3 text-center truncate max-w-[150px]">
+                  <td className="py-3">{msg?.name || "-"}</td>
+                  <td className="py-3">{msg?.subject || "-"}</td>
+                  <td className="py-3 truncate max-w-[150px]">
                     {msg?.message || "-"}
                   </td>
-                  <td className="py-3 text-center">
+                  <td className="py-3">
                     {new Date(msg?.createdAt).toLocaleDateString("ar-EG")}
                   </td>
-                  <td className="py-3 text-center">
-                    <div className="flex items-center justify-center gap-3">
-                      {/* View message details */}
-                      <button
-                        onClick={() => {
-                          setDetailsMessage(msg);
-                          setShowDetailsModal(true);
-                        }}
-                        title="عرض التفاصيل"
-                        className="p-1.5 bg-[#DBEAFE] hover:bg-[#BFDBFE] rounded-full transition"
-                      >
-                        <img src={eye} alt="عرض الرسالة" width={18} />
-                      </button>
-
-                      {/* Delete message */}
-                      <button
-                        onClick={() => {
-                          setSelectedMessage(msg);
-                          setShowDeleteModal(true);
-                        }}
-                        title="حذف الرسالة"
-                        className="p-1.5 bg-[#FEE2E2] hover:bg-[#FCA5A5] rounded-full transition"
-                      >
-                        <img src={deleteIcon} alt="حذف الرسالة" width={18} />
-                      </button>
-                    </div>
+                  <td className="py-3 flex justify-center gap-2">
+                    <button
+                      onClick={() => {
+                        setDetailsMessage(msg);
+                        setShowDetailsModal(true);
+                      }}
+                      className="px-2 py-1 bg-[#DBEAFE] text-[#1E40AF] rounded-md hover:bg-[#BFDBFE] transition text-xs"
+                    >
+                      عرض
+                    </button>
+                    <button
+                      onClick={() => {
+                        setSelectedMessage(msg);
+                        setShowDeleteModal(true);
+                      }}
+                      className="px-2 py-1 bg-[#FEE2E2] text-[#B91C1C] rounded-md hover:bg-[#FCA5A5] transition text-xs"
+                    >
+                      حذف
+                    </button>
                   </td>
                 </tr>
               ))
@@ -209,7 +217,6 @@ const Notification = () => {
             )}
           </tbody>
         </table>
-
         {/* Pagination */}
         <div className="flex justify-center mt-6">
           <Pagination
@@ -222,10 +229,25 @@ const Notification = () => {
         </div>
       </div>
 
+      {/* Mobile cards */}
+      <div className="sm:hidden grid grid-cols-1 gap-4">
+        {loading ? (
+          <div className="flex justify-center py-10">
+            <Spinner />
+          </div>
+        ) : filtered.length > 0 ? (
+          filtered.map(renderMobileCard)
+        ) : (
+          <p className="text-center py-6 text-[#6B7280]">
+            لا توجد رسائل حالياً
+          </p>
+        )}
+      </div>
+
       {/* Delete Modal */}
       {showDeleteModal && (
         <DeleteOrBanModal
-          type="delete"
+          type="msg"
           loading={deleting}
           onCancel={() => setShowDeleteModal(false)}
           onConfirm={handleDelete}

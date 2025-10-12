@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
+import { Link, useLocation, useParams } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 
 import Heading from "../common/Heading";
@@ -29,7 +29,6 @@ const UserDetails = () => {
   const [selectedUserId, setSelectedUserId] = useState(null);
   const [page, setPage] = useState(1);
   const [activeTab, setActiveTab] = useState("posts"); // "posts" or "contact"
-
   const dispatch = useDispatch();
   const { id } = useParams();
 
@@ -49,14 +48,14 @@ const UserDetails = () => {
 
   // Fetch all users (for refresh after delete)
   useEffect(() => {
-    dispatch(getAllUsers({ page, limit: 3 }));
+    dispatch(getAllUsers({ page }));
   }, [dispatch, page]);
 
   // Handle delete user
   const handleDeleteUser = (userId) => {
     if (!userId) return;
     dispatch(deleteUser(userId))
-      .then(() => dispatch(getAllUsers({ page, limit: 3 })))
+      .then(() => dispatch(getAllUsers({ page })))
       .finally(() => {
         setShowDeleteUser(false);
         setSelectedUserId(null);
@@ -67,7 +66,7 @@ const UserDetails = () => {
   const handleBanUser = (userId) => {
     if (!userId) return;
     dispatch(banUser({ id: userId, action: "ban" }))
-      .then(() => dispatch(getAllUsers({ page, limit: 6 })))
+      .then(() => dispatch(getAllUsers({ page, limit: 3 })))
       .finally(() => {
         setShowBanUser(false);
         setSelectedUserId(null);
@@ -121,7 +120,7 @@ const UserDetails = () => {
     },
     { key: "actions", label: "الإجراءات" },
   ];
-
+console.log(activeTab)
   return (
     <div>
       {/* Header */}
@@ -147,16 +146,22 @@ const UserDetails = () => {
               </p>
 
               {/* View ratings */}
-              <p className="flex items-center gap-2 text-[#FDBF18] cursor-pointer px-3 py-2 rounded-lg transition-all duration-200 hover:bg-[#FDBF18]/10 hover:text-[#D99A00]">
+              <Link
+                to={`/dashboard/rating/${id}`}
+                className="flex items-center gap-2 text-[#FDBF18] cursor-pointer px-3 py-2 rounded-lg transition-all duration-200 hover:bg-[#FDBF18]/10 hover:text-[#D99A00]"
+              >
                 <img src={start} alt="عرض التقييمات" className="w-5 h-5" />
                 <span>عرض التقييمات</span>
-              </p>
+              </Link>
 
               {/* View reports */}
-              <p className="flex items-center gap-2 text-[#5A5A5A] cursor-pointer px-3 py-2 rounded-lg transition-all duration-200 hover:bg-[#5A5A5A]/10 hover:text-[#3D3D3D]">
+              <Link
+                to={`/dashboard/reports/${id}`}
+                className="flex items-center gap-2 text-[#5A5A5A] cursor-pointer px-3 py-2 rounded-lg transition-all duration-200 hover:bg-[#5A5A5A]/10 hover:text-[#3D3D3D]"
+              >
                 <img src={report} alt="عرض الإبلاغات" className="w-5 h-5" />
                 <span>عرض الإبلاغات</span>
-              </p>
+              </Link>
 
               {/* Delete user */}
               <p

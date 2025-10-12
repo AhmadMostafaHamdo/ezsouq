@@ -220,7 +220,10 @@ const Offers = () => {
                 products
                   ?.slice((page - 1) * limit, page * limit)
                   ?.map((product, index) => (
-                    <tr className="border-t border-[#eee]" key={index}>
+                    <tr
+                      className="border-t  hover:bg-[#adadad2c] border-[#eee]"
+                      key={index}
+                    >
                       {visibleColumns.image && (
                         <td className="py-3">
                           <img

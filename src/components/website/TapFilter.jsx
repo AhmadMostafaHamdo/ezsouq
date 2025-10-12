@@ -14,7 +14,7 @@ const TabFilter = ({
         <CitiesSketlon />
       ) : (
         <div
-          className={`flex font-normal text-[14px] md:text-[1.2rem] text-[#3F3D56] ${className}`}
+          className={`flex font-normal overflow-auto scrollbar-hide text-[14px] md:text-[1.2rem] text-[#3F3D56] ${className}`}
         >
           {Array.isArray(items) &&
             items.length > 0 &&

@@ -3,6 +3,7 @@ import personalImg from "../../assets/images/personal.svg";
 import { useDispatch, useSelector } from "react-redux";
 import { toggleSidebar } from "../../store/sidebar/sidebarSlice";
 import { userThunkById } from "../../store/users/thunk/userThunkById";
+import { Menu } from "lucide-react";
 
 const TopBar = () => {
   const dispatch = useDispatch();
@@ -43,10 +44,9 @@ const TopBar = () => {
 
         <div
           onClick={() => dispatch(toggleSidebar())}
-          className="cursor-pointer lg:hidden bg-primary"
+          className="cursor-pointer lg:hidden"
         >
-          x
-       {/* <img src={} alt='قائمة'/> */}
+          <Menu />
         </div>
 
         <div className="flex items-center gap-4">
