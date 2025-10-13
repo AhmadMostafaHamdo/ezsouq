@@ -42,7 +42,7 @@ const Sidebar = ({ toggleSidebar, isSidebarOpen, logo }) => {
             {(token ? ulLinksLogin : ulLinks).map(({ link, name }) => (
               <li className="text-center" key={link}>
                 <Link
-                  to={link}
+                  to={link == "/create-offer" ? "/login" : link}
                   onClick={toggleSidebar}
                   className="
           block py-[6px] text-white  duration-300 

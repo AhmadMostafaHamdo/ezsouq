@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link, useLocation, useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 
 import Heading from "../common/Heading";
@@ -24,11 +24,11 @@ import { banUser } from "../../store/users/thunk/banUser";
 import DeleteOrBanModal from "./DeleteOrBanModal";
 
 const UserDetails = () => {
-  const [showDeleteUser, setShowDeleteUser] = useState(false); // Delete modal state
-  const [showBanUser, setShowBanUser] = useState(false); // Ban modal state
+  const [showDeleteUser, setShowDeleteUser] = useState(false);
+  const [showBanUser, setShowBanUser] = useState(false);
   const [selectedUserId, setSelectedUserId] = useState(null);
   const [page, setPage] = useState(1);
-  const [activeTab, setActiveTab] = useState("posts"); // "posts" or "contact"
+  const [activeTab, setActiveTab] = useState("posts");
   const dispatch = useDispatch();
   const { id } = useParams();
 
@@ -46,12 +46,12 @@ const UserDetails = () => {
     if (id) dispatch(productsThunkForMe(id));
   }, [dispatch, id]);
 
-  // Fetch all users (for refresh after delete)
+  // Fetch all users
   useEffect(() => {
     dispatch(getAllUsers({ page }));
   }, [dispatch, page]);
 
-  // Handle delete user
+  // Delete user
   const handleDeleteUser = (userId) => {
     if (!userId) return;
     dispatch(deleteUser(userId))
@@ -62,7 +62,7 @@ const UserDetails = () => {
       });
   };
 
-  // Handle ban user
+  // Ban user
   const handleBanUser = (userId) => {
     if (!userId) return;
     dispatch(banUser({ id: userId, action: "ban" }))
@@ -73,7 +73,6 @@ const UserDetails = () => {
       });
   };
 
-  // Table columns
   const columns = [
     {
       key: "image",
@@ -120,20 +119,19 @@ const UserDetails = () => {
     },
     { key: "actions", label: "الإجراءات" },
   ];
-console.log(activeTab)
+
   return (
-    <div>
-      {/* Header */}
-      <div className="flex flex-row items-start gap-8">
-        <div>
+    <div className="p-2 md:p-6">
+      {/* Header section */}
+      <div className="flex flex-col md:flex-row md:items-start  gap-6 md:gap-0 ">
+        {/* Sidebar actions */}
+        <div className="w-full md:w-1/3 lg:w-1/4">
           <Heading title="حساب المستخدم" url="/dashboard/users" />
 
-          {/* Loading */}
           {loading ? (
             <Spinner />
           ) : (
-            <div className="space-y-2">
-              {/* Ban user */}
+            <div className="space-y-2 mt-2">
               <p
                 onClick={() => {
                   setShowBanUser(true);
@@ -145,7 +143,6 @@ console.log(activeTab)
                 <span>حظر المستخدم</span>
               </p>
 
-              {/* View ratings */}
               <Link
                 to={`/dashboard/rating/${id}`}
                 className="flex items-center gap-2 text-[#FDBF18] cursor-pointer px-3 py-2 rounded-lg transition-all duration-200 hover:bg-[#FDBF18]/10 hover:text-[#D99A00]"
@@ -154,7 +151,6 @@ console.log(activeTab)
                 <span>عرض التقييمات</span>
               </Link>
 
-              {/* View reports */}
               <Link
                 to={`/dashboard/reports/${id}`}
                 className="flex items-center gap-2 text-[#5A5A5A] cursor-pointer px-3 py-2 rounded-lg transition-all duration-200 hover:bg-[#5A5A5A]/10 hover:text-[#3D3D3D]"
@@ -163,7 +159,6 @@ console.log(activeTab)
                 <span>عرض الإبلاغات</span>
               </Link>
 
-              {/* Delete user */}
               <p
                 onClick={() => {
                   setShowDeleteUser(true);
@@ -178,14 +173,16 @@ console.log(activeTab)
           )}
         </div>
 
-        {/* User profile */}
-        <ImgProfileWithButtons
-          activeTab={activeTab}
-          setActiveTab={setActiveTab}
-        />
+        {/* Profile image and buttons */}
+        <div className="flex-1 w-full md:w-2/3">
+          <ImgProfileWithButtons
+            activeTab={activeTab}
+            setActiveTab={setActiveTab}
+          />
+        </div>
       </div>
 
-      {/* Loading during delete */}
+      {/* Loading overlay */}
       {loadingDelete ? (
         <div className="mt-64 flex justify-center">
           <Spinner size={80} />
@@ -200,7 +197,7 @@ console.log(activeTab)
           ) : (
             <>
               {/* Desktop table */}
-              <div className="hidden md:block p-4 bg-white rounded-tr-3xl rounded-tl-3xl overflow-x-auto">
+              <div className="hidden md:block p-4 bg-white rounded-tr-3xl rounded-tl-3xl overflow-x-auto mt-6">
                 <DataTable
                   data={productsById}
                   columns={columns}
@@ -209,7 +206,7 @@ console.log(activeTab)
               </div>
 
               {/* Mobile view */}
-              <div className="md:hidden">
+              <div className="md:hidden mt-4">
                 <MobileCards
                   data={productsById}
                   loading={loading}
@@ -218,19 +215,21 @@ console.log(activeTab)
               </div>
 
               {/* Pagination */}
-              <Pagination
-                currentPage={page}
-                totalPages={totalPages}
-                totalItems={totalItems}
-                itemsPerPage={6}
-                onPageChange={(p) => setPage(p)}
-              />
+              <div className="mt-6">
+                <Pagination
+                  currentPage={page}
+                  totalPages={totalPages}
+                  totalItems={totalItems}
+                  itemsPerPage={6}
+                  onPageChange={(p) => setPage(p)}
+                />
+              </div>
             </>
           )}
         </>
       )}
 
-      {/* Delete modal */}
+      {/* Modals */}
       {showDeleteUser && selectedUserId && (
         <DeleteOrBanModal
           loading={loading}
@@ -240,7 +239,6 @@ console.log(activeTab)
         />
       )}
 
-      {/* Ban modal */}
       {showBanUser && selectedUserId && (
         <DeleteOrBanModal
           loading={loading}

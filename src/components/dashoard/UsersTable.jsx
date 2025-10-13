@@ -345,6 +345,12 @@ const UsersTable = ({ title = "المستخدمين", extraActions = null }) => 
                       >
                         حذف
                       </button>
+                      <Link
+                        to={user._id}
+                        className="bg-[#6C63FF] text-white duration-200 hover:bg-[#c7bbbb41] p-1 rounded-md flex gap-2 cursor-pointer"
+                      >
+                        عرض التفاصيل
+                      </Link>
                     </div>
                   </div>
                 ))}

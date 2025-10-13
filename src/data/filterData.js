@@ -20,11 +20,10 @@ export const ulLinksLogin = [
   { name: "نشر إعلان", link: "/create-offer" }, 
 ];
 export const ulLinks = [
-  { name: "الرئيسية", link: "" },
-  { name: "عنا", link: "" },
-  { name: "نشر إعلان", link: "" },
-  { name: "إعلاناتي", link: "" },
-  { name: "اتصل بنا", link: "" },
+  { name: "الرئيسية", link: "/" },
+  { name: "عنا", link: "/about-us" },
+  { name: "نشر إعلان", link: "/create-offer" },
+  { name: "اتصل بنا", link: "/contact-us" },
   { name: "سياسة الخصوصية", link: "/privacy-policy" },
 ];
 export const ulLinksFooter = [
