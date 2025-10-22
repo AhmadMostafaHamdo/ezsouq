@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { MainLayout } from "./components/layout/MainLayout";
 import { useSelector } from "react-redux";
+import { ToastContainer } from "react-toastify";
 function App() {
   const { user } = useSelector((state) => state.auth);
   useEffect(() => {
@@ -12,7 +13,12 @@ function App() {
       window.location.href = `/google-callback?token=${token}`;
     }
   }, [user]);
-  return <MainLayout />;
+  return (
+    <>
+      <ToastContainer />
+      <MainLayout />
+    </>
+  );
 }
 
 export default App;

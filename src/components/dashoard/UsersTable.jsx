@@ -1,7 +1,12 @@
 // components/dashboard/UsersTable.jsx
+import { motion, AnimatePresence } from "framer-motion";
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+import Cookies from "js-cookie";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 import Spinner from "../../feedback/loading/Spinner";
 import profile from "../../assets/images/profileIcon.svg";
 import searchIcon from "../../assets/images/search.svg";
@@ -13,15 +18,15 @@ import { getAllUsers } from "../../store/users/thunk/getAllUsers";
 import { deleteUser } from "../../store/users/thunk/deleteUser";
 import { banUser } from "../../store/users/thunk/banUser";
 import Pagination from "./Pagination";
-import { ToastContainer } from "react-toastify";
 import DeleteOrBanModal from "./DeleteOrBanModal";
+import { UserMinus, UserPlus } from "lucide-react";
 
 const UsersTable = ({ title = "المستخدمين", extraActions = null }) => {
-  const [infoTable, setInfoTable] = useState(false);
-  const [showDetails, setShowDetails] = useState(false);
   const [openMenuId, setOpenMenuId] = useState(null);
   const [showDeleteUser, setShowDeleteUser] = useState(false);
   const [showBanUser, setShowBanUser] = useState(false);
+  const [showGrantUser, setShowGrantUser] = useState(false);
+  const [showWithdrawUser, setShowWithdrawUser] = useState(false);
   const [selectedUserId, setSelectedUserId] = useState(null);
   const [banAction, setBanAction] = useState("ban");
   const [searchQuery, setSearchQuery] = useState("");
@@ -61,29 +66,64 @@ const UsersTable = ({ title = "المستخدمين", extraActions = null }) => 
   }, [dispatch, page, debouncedSearch]);
 
   // Delete user
-  const handleDeleteUser = (id) => {
+  const handleDeleteUser = async (id) => {
     if (!id) return;
-    dispatch(deleteUser(id))
-      .then(() => dispatch(getAllUsers({ page, search: debouncedSearch })))
-      .finally(() => {
-        setShowDeleteUser(false);
-        setSelectedUserId(null);
-      });
+    try {
+      await dispatch(deleteUser(id));
+      toast.success("تم حذف المستخدم بنجاح");
+      dispatch(getAllUsers({ page, search: debouncedSearch }));
+    } catch (err) {
+      toast.error("حدث خطأ أثناء حذف المستخدم");
+    } finally {
+      setShowDeleteUser(false);
+      setSelectedUserId(null);
+    }
   };
 
-  // Ban / unban user
-  const handleBanUser = (id, action) => {
+  // Ban / Unban user
+  const handleBanUser = async (id, action) => {
     if (!id) return;
-    dispatch(banUser({ id, action }))
-      .then(() => dispatch(getAllUsers({ page, search: debouncedSearch })))
-      .finally(() => {
-        setShowBanUser(false);
-        setSelectedUserId(null);
-      });
+    try {
+      await dispatch(banUser({ id, action }));
+      toast.success(action === "ban" ? "تم حظر المستخدم" : "تم إلغاء الحظر");
+      dispatch(getAllUsers({ page, search: debouncedSearch }));
+    } catch (err) {
+      toast.error("حدث خطأ أثناء تغيير حالة الحظر");
+    } finally {
+      setShowBanUser(false);
+      setSelectedUserId(null);
+      setOpenMenuId(null);
+    }
   };
 
-  // Toggle column menu
-  const handleColumnToggle = (column) => {};
+  // Grant / Withdraw Permissions
+  const handleChangeRole = async (userId, type) => {
+    const token = Cookies.get("token");
+    if (!token) return toast.error("لم يتم العثور على التوكن!");
+    try {
+      const url =
+        type === "grant"
+          ? "/admin/Granting_permissions"
+          : "/admin/Withdraw_permissions";
+      await fetch(url, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ user_id: userId }),
+      });
+      toast.success(type === "grant" ? "تم منح الصلاحيات" : "تم سحب الصلاحيات");
+      dispatch(getAllUsers({ page, search: debouncedSearch }));
+    } catch (err) {
+      toast.error("حدث خطأ أثناء تغيير الصلاحيات");
+    } finally {
+      setOpenMenuId(null);
+      setShowGrantUser(false);
+      setShowWithdrawUser(false);
+      setSelectedUserId(null);
+    }
+  };
 
   const handleSettingUser = (userId, e) => {
     e.stopPropagation();
@@ -100,7 +140,7 @@ const UsersTable = ({ title = "المستخدمين", extraActions = null }) => 
         <>
           <ToastContainer />
 
-          {/* ✅ Ban / Unban Modal */}
+          {/* Modals */}
           {showBanUser && selectedUserId && (
             <DeleteOrBanModal
               type="ban"
@@ -109,8 +149,6 @@ const UsersTable = ({ title = "المستخدمين", extraActions = null }) => 
               onCancel={() => setShowBanUser(false)}
             />
           )}
-
-          {/* 🗑 Delete Modal */}
           {showDeleteUser && selectedUserId && (
             <DeleteOrBanModal
               type="delete"
@@ -118,8 +156,22 @@ const UsersTable = ({ title = "المستخدمين", extraActions = null }) => 
               onCancel={() => setShowDeleteUser(false)}
             />
           )}
+          {showGrantUser && selectedUserId && (
+            <DeleteOrBanModal
+              type="grant"
+              onConfirm={() => handleChangeRole(selectedUserId, "grant")}
+              onCancel={() => setShowGrantUser(false)}
+            />
+          )}
+          {showWithdrawUser && selectedUserId && (
+            <DeleteOrBanModal
+              type="withdraw"
+              onConfirm={() => handleChangeRole(selectedUserId, "withdraw")}
+              onCancel={() => setShowWithdrawUser(false)}
+            />
+          )}
 
-          {/* ---------- Header ---------- */}
+          {/* Header */}
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 my-5">
             <h1 className="text-lg md:text-xl font-bold">{title}</h1>
             <div className="relative md:w-[40vw]">
@@ -141,8 +193,8 @@ const UsersTable = ({ title = "المستخدمين", extraActions = null }) => 
 
           {extraActions && <div className="mb-4">{extraActions}</div>}
 
-          {/* ---------- Desktop Table ---------- */}
-          <div className="hidden md:block p-4 bg-white rounded-tr-3xl rounded-tl-3xl ">
+          {/* Desktop Table */}
+          <div className="hidden md:block p-4 bg-white rounded-tr-3xl rounded-tl-3xl">
             <table className="min-w-[600px] w-full text-sm font-medium">
               <thead>
                 <tr className="text-[#959595] text-sm py-1">
@@ -200,60 +252,92 @@ const UsersTable = ({ title = "المستخدمين", extraActions = null }) => 
                             alt=""
                             width={25}
                           />
-                          {openMenuId === user._id && (
-                            <div className="w-36 leading-7 absolute  left-[4.2rem] top-3 rounded-lg bg-white p-3 shadow-md z-20">
-                              <Link
-                                to={user._id}
-                                className="text-[#6C63FF] duration-200 hover:bg-[#c7bbbb41] p-1 rounded-sm flex gap-2 cursor-pointer"
+                          <AnimatePresence>
+                            {openMenuId === user._id && (
+                              <motion.div
+                                initial={{ opacity: 0, y: -8, scale: 0.95 }}
+                                animate={{ opacity: 1, y: 0, scale: 1 }}
+                                exit={{ opacity: 0, y: -8, scale: 0.95 }}
+                                transition={{ duration: 0.25, ease: "easeOut" }}
+                                className="w-44 leading-5 absolute left-[4.2rem]  rounded-lg bg-white p-3 shadow-md "
                               >
-                                <img loading="lazy" src={viewsBlue} alt="" />{" "}
-                                عرض التفاصيل
-                              </Link>
+                                <Link
+                                  to={user._id}
+                                  className="text-[#6C63FF] duration-200 hover:bg-[#c7bbbb41] p-1 rounded-sm flex gap-2 cursor-pointer"
+                                >
+                                  <img src={viewsBlue} alt="عرض التفاصيل" />
+                                  عرض التفاصيل
+                                </Link>
 
-                              {user.Role === "BANNED" ? (
-                                <p className="flex gap-2 duration-200 hover:bg-[#c7bbbb41] p-1 rounded-sm  cursor-pointer mt-2">
-                                  <img loading="lazy" src={block} alt="" />
-                                  <span
-                                    className="text-[#30C795]"
-                                    onClick={() => {
-                                      setSelectedUserId(user._id);
-                                      setBanUser("unban");
-                                      setShowBanUser(true);
-                                    }}
-                                  >
-                                    إلغاء الحظر
+                                {/* Ban / Unban */}
+                                <p
+                                  className={`flex ${
+                                    user.Role === "BANNED"
+                                      ? "text-[#30C795] hover:text-[#1E9F7C]"
+                                      : "text-[#BD4749] hover:text-[#9B383A]"
+                                  } gap-2 duration-200 hover:bg-[#c7bbbb41] p-1 rounded-sm cursor-pointer mt-2`}
+                                  onClick={() => {
+                                    setSelectedUserId(user._id);
+                                    setBanAction(
+                                      user.Role === "BANNED" ? "unban" : "ban"
+                                    );
+                                    setShowBanUser(true);
+                                  }}
+                                >
+                                  <img src={block} alt="حظر / إلغاء الحظر" />
+                                  {user.Role === "BANNED"
+                                    ? "إلغاء الحظر"
+                                    : "حظر"}
+                                </p>
+
+                                {/* Grant */}
+                                <p
+                                  className="flex gap-2 duration-200 hover:bg-[#c7bbbb41] p-1 rounded-sm cursor-pointer mt-2"
+                                  onClick={() => {
+                                    setSelectedUserId(user._id);
+                                    setShowGrantUser(true);
+                                  }}
+                                >
+                                  <UserPlus
+                                    size={18}
+                                    className="text-green-600"
+                                  />
+                                  <span className="text-[#4CAF50]">
+                                    منح الصلاحيات
                                   </span>
                                 </p>
-                              ) : (
-                                <p className="flex gap-2 duration-200 hover:bg-[#c7bbbb41] p-1 rounded-sm  cursor-pointer mt-2">
-                                  <img loading="lazy" src={block} alt="" />
-                                  <span
-                                    className="text-[#BD4749]"
-                                    onClick={() => {
-                                      setSelectedUserId(user._id);
-                                      setBanUser("ban");
-                                      setShowBanUser(true);
-                                    }}
-                                  >
-                                    حظر
+
+                                {/* Withdraw */}
+                                <p
+                                  className="flex gap-2 duration-200 hover:bg-[#c7bbbb41] p-1 rounded-sm cursor-pointer mt-2"
+                                  onClick={() => {
+                                    setSelectedUserId(user._id);
+                                    setShowWithdrawUser(true);
+                                  }}
+                                >
+                                  <UserMinus
+                                    size={18}
+                                    className="text-yellow-600"
+                                  />
+                                  <span className="text-[#FFC107]">
+                                    سحب الصلاحيات
                                   </span>
                                 </p>
-                              )}
 
-                              <p className="flex gap-2 duration-200 hover:bg-[#c7bbbb41] p-1 rounded-sm cursor-pointer mt-2">
-                                <img loading="lazy" src={deleteIcon} alt="" />
-                                <span
-                                  className="text-[#BD4749]"
+                                {/* Delete */}
+                                <p
+                                  className="flex gap-2 duration-200 hover:bg-[#c7bbbb41] p-1 rounded-sm cursor-pointer mt-2"
                                   onClick={() => {
                                     setSelectedUserId(user._id);
                                     setShowDeleteUser(true);
                                   }}
                                 >
-                                  حذف
-                                </span>
-                              </p>
-                            </div>
-                          )}
+                                  <img src={deleteIcon} alt="حذف" />
+                                  <span className="text-[#C73030]">حذف</span>
+                                </p>
+                              </motion.div>
+                            )}
+                          </AnimatePresence>
                         </div>
                       </td>
                     </tr>
@@ -272,7 +356,7 @@ const UsersTable = ({ title = "المستخدمين", extraActions = null }) => 
             </table>
           </div>
 
-          {/* ---------- Mobile Cards ---------- */}
+          {/* Mobile Cards */}
           <div className="md:hidden grid grid-cols-1 sm:grid-cols-2 gap-3">
             {loading
               ? Array(3)
@@ -311,33 +395,50 @@ const UsersTable = ({ title = "المستخدمين", extraActions = null }) => 
                         {user.Role === "BANNED" ? "محظور" : "نشط"}
                       </span>
                     </div>
-                    <div className="flex justify-end gap-2">
-                      {user.Role !== "BANNED" && (
-                        <button
-                          className="px-3 py-1 bg-[#BD4749] text-white text-xs rounded-md duration-200 hover:bg-[#9B383A] transition"
-                          onClick={() => {
-                            setSelectedUserId(user._id);
-                            setBanAction("ban");
-                            setShowBanUser(true);
-                          }}
-                        >
-                          حظر
-                        </button>
-                      )}
-                      {user.Role === "BANNED" && (
-                        <button
-                          className="px-3 py-1 bg-[#30C795] text-white text-xs rounded-md duration-200 hover:bg-[#1E9F7C] transition"
-                          onClick={() => {
-                            setSelectedUserId(user._id);
-                            setBanAction("unban");
-                            setShowBanUser(true);
-                          }}
-                        >
-                          إلغاء الحظر
-                        </button>
-                      )}
+                    <div className="flex flex-wrap justify-end gap-2">
+                      {/* Ban / Unban */}
                       <button
-                        className="px-3 py-1 bg-[#30C795] text-white text-xs rounded-md duration-200 hover:bg-[#1E9F7C] transition"
+                        className={`px-3 py-1 text-white text-xs rounded-md duration-200 transition ${
+                          user.Role === "BANNED"
+                            ? "bg-[#30C795] hover:bg-[#1E9F7C]"
+                            : "bg-[#BD4749] hover:bg-[#9B383A]"
+                        }`}
+                        onClick={() => {
+                          setSelectedUserId(user._id);
+                          setBanAction(
+                            user.Role === "BANNED" ? "unban" : "ban"
+                          );
+                          setShowBanUser(true);
+                        }}
+                      >
+                        {user.Role === "BANNED" ? "إلغاء الحظر" : "حظر"}
+                      </button>
+
+                      {/* Grant */}
+                      <button
+                        className="px-3 py-1 bg-[#4CAF50] text-white text-xs rounded-md duration-200 hover:bg-[#3E8E41] transition"
+                        onClick={() => {
+                          setSelectedUserId(user._id);
+                          setShowGrantUser(true);
+                        }}
+                      >
+                        منح الصلاحيات
+                      </button>
+
+                      {/* Withdraw */}
+                      <button
+                        className="px-3 py-1 bg-[#FFC107] text-white text-xs rounded-md duration-200 hover:bg-[#E0A800] transition"
+                        onClick={() => {
+                          setSelectedUserId(user._id);
+                          setShowWithdrawUser(true);
+                        }}
+                      >
+                        سحب الصلاحيات
+                      </button>
+
+                      {/* Delete */}
+                      <button
+                        className="px-3 py-1 bg-[#C73030] text-white text-xs rounded-md duration-200 hover:bg-[#9B383A] transition"
                         onClick={() => {
                           setSelectedUserId(user._id);
                           setShowDeleteUser(true);
@@ -345,9 +446,11 @@ const UsersTable = ({ title = "المستخدمين", extraActions = null }) => 
                       >
                         حذف
                       </button>
+
+                      {/* View Details */}
                       <Link
                         to={user._id}
-                        className="bg-[#6C63FF] text-white duration-200 hover:bg-[#c7bbbb41] p-1 rounded-md flex gap-2 cursor-pointer"
+                        className="px-3 py-1 bg-[#6C63FF] text-white text-xs rounded-md duration-200 hover:bg-[#534CF2] transition"
                       >
                         عرض التفاصيل
                       </Link>
@@ -356,7 +459,7 @@ const UsersTable = ({ title = "المستخدمين", extraActions = null }) => 
                 ))}
           </div>
 
-          {/* ---------- Pagination ---------- */}
+          {/* Pagination */}
           <Pagination
             currentPage={page}
             totalPages={totalPages}

@@ -7,6 +7,7 @@ import Spinner from "../../feedback/loading/Spinner";
 // Lazy load Lottie animation for performance
 const Lottie = lazy(() => import("lottie-react"));
 import animationData from "../../assets/lottifiles/web home animation.json";
+import { useRequireAuth } from "../../hooks/UseRequireAuth";
 
 /**
  * Main Landing Section
@@ -16,7 +17,7 @@ import animationData from "../../assets/lottifiles/web home animation.json";
  */
 const Main = () => {
   const token = Cookies.get("token");
-
+  const { requireAuth } = useRequireAuth();
   return (
     <div className="flex w-screen overflow-hidden pt-24 md:pt-44 flex-col-reverse bg-primary pb-24 text-white md:h-[636px] md:flex-row md:px-20">
       {/* Text Content Section */}
@@ -30,15 +31,16 @@ const Main = () => {
           في منصة سورية موثوقة.
         </p>
 
-        <Link
-          to={token ? "/create-offer" : "/login"}
-          className="mt-8 block h-[8vh] w-[70vw] flex-center rounded-xl bg-white text-[1rem] font-bold text-primary md:h-[60px] md:w-[262px]"
+        <button
+          onClick={() =>
+            requireAuth(() => (window.location.href = "/create-offer"))
+          }
+          className="mt-8 block h-[8vh] hover:scale-105 w-[70vw] flex-center rounded-xl bg-white text-[1rem] font-bold text-primary md:h-[60px] md:w-[262px]"
           aria-label="Publish Offer"
         >
           نشر إعلان
-        </Link>
+        </button>
       </div>
-
       {/* Animation Section */}
       <div className="flex w-full items-center justify-center md:justify-end">
         <div className="md:mt-0 ml-[-2rem] w-[70%] transform md:ml-20 md:-translate-x-[2rem] translate-y-4 md:-translate-y-[5vh] scale-[1.4] md:scale-[2.5] lg:-translate-y-[.2rem] lg:translate-x-[0px] lg:scale-[1.4]">

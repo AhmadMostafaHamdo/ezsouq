@@ -18,7 +18,15 @@ const CarStatsDashboard = () => {
       value: statisticCategories[2]?.count,
       color: "#5f3dc4",
     },
-    { id: "منوعات", label: "إعلانات المنوعات", value: 87, color: "#748ffc" },
+    {
+      id: "منوعات",
+      label: "إعلانات المنوعات",
+      value:
+        statisticCategories[1]?.count +
+        statisticCategories[1]?.count +
+        statisticCategories[2]?.count,
+      color: "#748ffc",
+    },
     {
       id: "إلكترونيات",
       label: "إعلانات الالكترونيات",
@@ -27,7 +35,10 @@ const CarStatsDashboard = () => {
     },
   ];
 
-  const total = pieData.reduce((sum, item) => sum + item.value, 0);
+  const total =
+    statisticCategories[1]?.count +
+    statisticCategories[1]?.count +
+    statisticCategories[2]?.count;
 
   const CenteredMetric = ({ centerX, centerY }) => (
     <>

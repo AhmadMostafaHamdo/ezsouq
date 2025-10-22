@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useDispatch, useSelector } from "react-redux";
@@ -7,6 +7,7 @@ import Cookies from "js-cookie";
 import { jwtDecode } from "jwt-decode";
 import { ToastContainer } from "react-toastify";
 
+import { motion } from "framer-motion"; // <-- Framer Motion
 import Spinner from "../../feedback/loading/Spinner";
 import Input from "../inputs/Input";
 import DividerWithText from "../dividerWithText/DividerWithText";
@@ -18,6 +19,7 @@ import { Eye, EyeOff } from "lucide-react";
 import logo from "../../assets/images/logoWithTitle.svg";
 import loginImage from "../../assets/images/loginImage.svg";
 import googleIcon from "../../assets/images/googleLogo.svg";
+import { resetLoading } from "../../store/auth/authSlice";
 
 const AuthForm = ({ fields, schema, btnAuth }) => {
   const isLogin = btnAuth !== "إنشاء حساب";
@@ -29,7 +31,6 @@ const AuthForm = ({ fields, schema, btnAuth }) => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  // Setup form validation
   const form = useForm({
     mode: "onChange",
     resolver: zodResolver(schema),
@@ -43,7 +44,6 @@ const AuthForm = ({ fields, schema, btnAuth }) => {
     formState: { errors, isSubmitting },
   } = form;
 
-  // Handle login/register
   const onSubmit = async (data) => {
     try {
       const { name, email, password } = data;
@@ -64,7 +64,6 @@ const AuthForm = ({ fields, schema, btnAuth }) => {
     }
   };
 
-  // Handle Google OAuth login
   const handleAuthGoogle = (e) => {
     e.preventDefault();
     setLoadingGoogle(true);
@@ -73,7 +72,6 @@ const AuthForm = ({ fields, schema, btnAuth }) => {
     )}`;
   };
 
-  // Password toggle button
   const PasswordToggle = ({ visible, onClick }) => (
     <button
       type="button"
@@ -83,10 +81,10 @@ const AuthForm = ({ fields, schema, btnAuth }) => {
       {!visible ? <EyeOff /> : <Eye />}
     </button>
   );
-
-  return (
+useEffect(() => {
+  dispatch(resetLoading());
+}, [dispatch]);  return (
     <div className="relative flex-center h-screen overflow-hidden bg-white">
-      {/* Global overlay spinner for both Google and Auth loading */}
       {(loadingGoogle || loading) && (
         <div className="absolute inset-0 bg-white/70 flex-center z-50">
           <Spinner />
@@ -101,7 +99,12 @@ const AuthForm = ({ fields, schema, btnAuth }) => {
           className="w-screen h-screen flex-center shadow-custom"
         >
           {/* Right Section (Image or Welcome Message) */}
-          <div className="hidden md:block w-[40vw] h-full">
+          <motion.div
+            className="hidden md:block w-[40vw] h-full"
+            initial={{ opacity: 0, x: 50 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8 }}
+          >
             {!isLogin ? (
               <ImageSlider />
             ) : (
@@ -120,10 +123,15 @@ const AuthForm = ({ fields, schema, btnAuth }) => {
                 />
               </div>
             )}
-          </div>
+          </motion.div>
 
-          {/*  Left Section (Form) */}
-          <div className="w-full md:w-[60vw] h-full bg-white relative z-10">
+          {/* Left Section (Form) */}
+          <motion.div
+            className="w-full md:w-[60vw] h-full bg-white relative z-10"
+            initial={{ opacity: 0, x: -50 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+          >
             {isLogin && (
               <div className="w-full flex justify-center h-[20vh]">
                 <img src={logo} alt="شعار الموقع" loading="lazy" />
@@ -135,7 +143,6 @@ const AuthForm = ({ fields, schema, btnAuth }) => {
                 {isLogin ? "تسجيل الدخول" : "إنشاء حساب"}
               </h1>
 
-              {/* Dynamic Input Fields */}
               {fields.map((input, index) => (
                 <div key={index} className="relative">
                   <Input
@@ -177,13 +184,12 @@ const AuthForm = ({ fields, schema, btnAuth }) => {
                 </div>
               ))}
 
-              {/*  Privacy Policy */}
               {!isLogin && (
                 <>
                   <div className="flex items-center">
                     <input
                       type="checkbox"
-                      className="ml-2"
+                      className="ml-2 cursor-pointer"
                       {...register("checkbox")}
                       id="accept"
                     />
@@ -201,14 +207,12 @@ const AuthForm = ({ fields, schema, btnAuth }) => {
                 </>
               )}
 
-              {/*  Forgot Password */}
               {isLogin && (
                 <Link to="/forgot-password" className="mb-3 block text-[.9rem]">
                   هل نسيت كلمة المرور؟
                 </Link>
               )}
 
-              {/*  Submit Button */}
               <button
                 disabled={isSubmitting}
                 className="w-full h-[2.9rem] text-white bg-primary rounded-xl"
@@ -216,7 +220,6 @@ const AuthForm = ({ fields, schema, btnAuth }) => {
                 {isSubmitting ? "جارٍ الإرسال..." : btnAuth}
               </button>
 
-              {/* Switch Login/Register */}
               <p
                 className={`${
                   isLogin ? "my-5" : "my-6 md:my-3"
@@ -231,27 +234,28 @@ const AuthForm = ({ fields, schema, btnAuth }) => {
                 </Link>
               </p>
 
-              {/* Divider */}
               <DividerWithText text="أو" />
 
-              {/* Google Login */}
-              <button
+              {/* Google Login with animation */}
+              <motion.button
                 type="button"
                 onClick={handleAuthGoogle}
                 disabled={loadingGoogle}
-                className={`flex-center hover:scale-105 ${
+                className={`flex-center p-3 font-medium text-[.9rem] gap-2 shadow-[0px_2px_13.7px_0px_#0000001A] rounded-xl w-full ${
                   isLogin ? "my-6" : "my-10 md:my-3"
-                } p-3 font-medium text-[.9rem] gap-2 shadow-[0px_2px_13.7px_0px_#0000001A] rounded-xl w-full ${
-                  loadingGoogle ? "bg-black bg-opacity-10" : ""
-                }`}
+                } ${loadingGoogle ? "bg-black bg-opacity-10" : ""}`}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.4 }}
+                whileHover={{ scale: 1.05 }}
               >
                 {!loadingGoogle && (
                   <img src={googleIcon} alt="شعار Google" loading="lazy" />
                 )}
                 تسجيل دخول بواسطة Google
-              </button>
+              </motion.button>
             </div>
-          </div>
+          </motion.div>
         </form>
       </FormProvider>
     </div>

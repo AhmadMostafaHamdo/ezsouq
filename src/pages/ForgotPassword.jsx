@@ -3,6 +3,7 @@ import forgotPassword from "../assets/images/undraw_forgot-password_odai 1.svg";
 import { useState } from "react";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
+import { motion } from "framer-motion";
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState("");
@@ -10,28 +11,30 @@ const ForgotPassword = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (email.trim().length === 0) {
+      toast.error("يجب إدخال الإيميل");
+      return;
+    }
+
     try {
-      if (email.trim().length === 0) {
-        toast.error("يجب إدخال الإيميل");
-        return;
-      }
       setLoading(true);
-
       const res = await axios.post("/send_reset_link", { email });
-
       toast.success(res.data?.message || "تم إرسال رابط إعادة التعيين");
     } catch (error) {
-      toast.error(error.response?.data?.message || "حدث خطأ ما");
+      const message =
+        error.response?.data?.message || error.message || "حدث خطأ ما";
+      toast.error(message);
     } finally {
-      setLoading(false); // يوقف التحميل بأي حالة
+      setLoading(false);
     }
   };
 
   return (
-    <div className="h-[100vh] flex-center">
+    <div className="h-[100vh] flex-center bg-gray-50">
       <ToastContainer />
       <div className="w-[100vw] h-[100vh] flex-center shadow-custom">
-        {/* القسم الأيمن */}
+        {/* Right Section */}
         <div className="hidden md:block w-[40vw] bg-secondary h-[100vh]">
           <Logo />
           <div>
@@ -43,14 +46,24 @@ const ForgotPassword = () => {
           </div>
         </div>
 
-        {/* القسم الأيسر */}
-        <div className="sm:w-full md:w-[60vw] bg-white">
+        {/* Left Section */}
+        <div className="sm:w-full md:w-[60vw] bg-white overflow-y-auto">
           <div className="md:hidden">
             <Logo />
           </div>
-          <form
+
+          <motion.form
             onSubmit={handleSubmit}
             className="w-[90vw] p-3 sm:w-[357px] md:w-[357px] lg:w-[487px] m-auto"
+            initial={{ opacity: 0, y: 50, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 50, scale: 0.95 }}
+            transition={{
+              duration: 0.4,
+              type: "spring",
+              stiffness: 100,
+              damping: 12,
+            }}
           >
             <div className="h-[157px]">
               <h1 className="text-primary font-bold text-[1.25rem] sm:text-[2rem] h-[67px]">
@@ -73,12 +86,40 @@ const ForgotPassword = () => {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full h-[56px] bg-primary text-white font-bold rounded-xl py-4 px-2"
+                className={`w-full h-[56px] bg-primary text-white font-bold rounded-xl py-4 px-2 ${
+                  loading ? "opacity-70 cursor-not-allowed" : ""
+                }`}
               >
-                {loading ? "جارٍ إرسال رمز التحقق ..." : "إرسال رمز التحقق"}
+                {loading ? (
+                  <span className="flex items-center justify-center gap-2">
+                    <svg
+                      className="animate-spin h-5 w-5 text-white"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                    >
+                      <circle
+                        className="opacity-25"
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        strokeWidth="4"
+                      ></circle>
+                      <path
+                        className="opacity-75"
+                        fill="currentColor"
+                        d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+                      ></path>
+                    </svg>
+                    جارٍ إرسال رمز التحقق ...
+                  </span>
+                ) : (
+                  "إرسال رمز التحقق"
+                )}
               </button>
             </div>
-          </form>
+          </motion.form>
         </div>
       </div>
     </div>

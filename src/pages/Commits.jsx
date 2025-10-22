@@ -25,7 +25,7 @@ const Commits = () => {
   const [comment, setComment] = useState("");
   const [page, setPage] = useState(1);
   const observerRef = useRef();
-
+  const topPage = useRef(null);
   const { id } = useParams();
   const dispatch = useDispatch();
 
@@ -45,7 +45,9 @@ const Commits = () => {
     commentsByProductId?.[product?._id]?.total || productComments.length;
   const totalPages = commentsByProductId?.[product?._id]?.pages || 1;
   const currentPage = commentsByProductId?.[product?._id]?.page || 1;
-
+  useEffect(() => {
+    topPage.current?.scrollIntoView();
+  }, []);
   // Fetch product
   useEffect(() => {
     if (!id) return;
@@ -114,7 +116,7 @@ const Commits = () => {
   };
 
   return (
-    <div className="container pt-20">
+    <div className="container pt-20" ref={topPage}>
       <ToastContainer position="top-right" autoClose={3000} />
       <div className="flex flex-col md:flex-row gap-8">
         <div>

@@ -7,7 +7,7 @@ import iconProfile from "../../../assets/images/profileIcon.svg";
 import phoneIcon from "../../../assets/images/phoneIcon.svg";
 import whatsIcon from "../../../assets/images/whatsIcon.svg";
 import heartDetails from "../../../assets/images/heartDeatails.svg";
-import personalImg from "../../../assets/images/personal.svg";
+import personalImg from "../../../assets/images/pesonal.png";
 import start from "../../../assets/images/start.svg";
 import leftArrow from "../../../assets/images/leftArrow.svg";
 import rightArrow from "../../../assets/images/rightArrow.svg";
@@ -26,14 +26,16 @@ import { viewsThunk } from "../../../store/views/thunk/thunkViews";
 
 const Main = () => {
   const { product, loading } = useSelector((state) => state.products);
-  const { user } = useSelector((state) => state.users);
+  const dispatch = useDispatch();
+  const { id } = useParams();
+
+  const [publisher, setPublisher] = useState(null);
+  const [loadingPublisher, setLoadingPublisher] = useState(false);
   const [selectedImage, setSelectedImage] = useState("");
   const [isImageLoaded, setIsImageLoaded] = useState(false);
-  const { id } = useParams();
-  const dispatch = useDispatch();
   const imgRef = useRef(null);
-  console.log(product);
-  // Fetch product by ID
+
+  // Get product by ID
   useEffect(() => {
     if (id) dispatch(productThunkById(id));
   }, [dispatch, id]);
@@ -43,14 +45,24 @@ const Main = () => {
     if (id) dispatch(viewsThunk(id));
   }, [dispatch, id]);
 
-  // Fetch publisher info when product is loaded
+  // Fetch publisher info (local state)
   useEffect(() => {
-    if (product?.Owner?._id) {
-      dispatch(userThunkById(product.Owner._id));
-    }
+    const fetchPublisher = async () => {
+      if (!product?.Owner?._id) return;
+      setLoadingPublisher(true);
+      try {
+        const res = await dispatch(userThunkById(product.Owner._id)).unwrap();
+        setPublisher(res);
+      } catch (err) {
+        console.error("Failed to fetch publisher:", err);
+      } finally {
+        setLoadingPublisher(false);
+      }
+    };
+    fetchPublisher();
   }, [dispatch, product?.Owner?._id]);
 
-  // Set first main image as selected image
+  // Handle main image
   useEffect(() => {
     if (product?.main_photos?.length) {
       setSelectedImage(product.main_photos[0]);
@@ -58,28 +70,16 @@ const Main = () => {
     }
   }, [product]);
 
-  // Reset image loaded state when selected image changes
   useEffect(() => {
     setIsImageLoaded(false);
-    if (imgRef.current?.complete) {
-      setIsImageLoaded(true);
-    }
+    if (imgRef.current?.complete) setIsImageLoaded(true);
   }, [selectedImage]);
-
-  // Cleanup selected image on unmount
-  useEffect(() => {
-    return () => setSelectedImage("");
-  }, []);
 
   const mainPhotos = useMemo(() => product?.main_photos || [], [product]);
 
-  // Handle image selection from thumbnails
   const handleSelectImage = (img) => setSelectedImage(img);
-
-  // Handle main image load
   const handleImageLoad = () => setIsImageLoaded(true);
 
-  // Navigate to previous image
   const previousImg = () => {
     if (!mainPhotos.length) return;
     const currentIndex = mainPhotos.indexOf(selectedImage);
@@ -88,7 +88,6 @@ const Main = () => {
     setSelectedImage(mainPhotos[previousIndex]);
   };
 
-  // Navigate to next image
   const nextImg = () => {
     if (!mainPhotos.length) return;
     const currentIndex = mainPhotos.indexOf(selectedImage);
@@ -104,6 +103,10 @@ const Main = () => {
     );
   }
 
+  const myImg = publisher?.avatar
+    ? publisher.avatar.replace(/^http/, "https")
+    : personalImg;
+
   return (
     <div>
       {loading ? (
@@ -114,7 +117,7 @@ const Main = () => {
         <div className="bg-[#F7F7FF] md:pt-2 overflow-x-hidden h-fit">
           {/* Heading */}
           <div className="mt-[4rem]">
-            <Heading title="الرجوع" />
+            <Heading title="الرجوع" url={"/"} />
           </div>
 
           {/* Main Content */}
@@ -129,8 +132,6 @@ const Main = () => {
                         <Spinner className="w-12 h-12" />
                       </div>
                     )}
-
-                    {/* Main Image */}
                     <img
                       ref={imgRef}
                       src={`https://api.ezsouq.store/uploads/images/${selectedImage}`}
@@ -145,7 +146,6 @@ const Main = () => {
                   </>
                 )}
 
-                {/* Navigation Arrows */}
                 {mainPhotos.length > 1 && (
                   <div className="absolute flex justify-between w-[92%] left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2">
                     <button
@@ -215,146 +215,80 @@ const Main = () => {
                     <TimeAgo postDate={product?.createdAt} />
                   </span>
                 </li>
-
-                {/* Mobile Thumbnails */}
-                {mainPhotos.length > 1 && (
-                  <div className="md:hidden flex my-4 gap-2 overflow-x-auto">
-                    {mainPhotos.map((img, index) => (
-                      <ThumbnailImage
-                        key={index}
-                        src={img}
-                        isSelected={selectedImage === img}
-                        onClick={() => handleSelectImage(img)}
-                      />
-                    ))}
-                  </div>
-                )}
               </ul>
 
-              {/* Product Description */}
+              {/* Description */}
               <p className="text-[#827FB2] text-[.9rem]">
-                {/* Conditional Attributes */}
-                {product.Category_name === "موبايلات" && (
-                  <div className="flex">
-                    {product?.processor && (
-                      <div>
-                        المعالج :
-                        <span className="text-primary font-bold mx-1">
-                          {product.processor}
-                        </span>
-                      </div>
-                    )}
-                    {product?.color && (
-                      <div>
-                        , اللون :
-                        <span className="text-primary font-bold mx-1">
-                          {product.color}
-                        </span>
-                      </div>
-                    )}
-                  </div>
-                )}
-                {product.Category_name === "عقارات" && (
-                  <div className="flex">
-                    {product?.real_estate_type && (
-                      <div>
-                        نوع العقار :
-                        <span className="text-primary font-bold mx-1">
-                          {product.real_estate_type}
-                        </span>
-                      </div>
-                    )}
-                    {product?.for_sale !== undefined && (
-                      <div>
-                        , العقار :
-                        <span className="text-primary font-bold mx-1">
-                          {product.for_sale ? "للبيع" : "للأجار"}
-                        </span>
-                      </div>
-                    )}
-                  </div>
-                )}
-                {product.Category_name === "سيارات" && (
-                  <div className="flex">
-                    {product?.shape && (
-                      <div>
-                        النوع :
-                        <span className="text-primary font-bold mx-1">
-                          {product.shape}
-                        </span>
-                      </div>
-                    )}
-                    {product?.color && (
-                      <div>
-                        , اللون :
-                        <span className="text-primary font-bold mx-1">
-                          {product.color}
-                        </span>
-                      </div>
-                    )}
-                  </div>
-                )}
-                <br />
-                <div className="break-words md:ml-44 lg:ml-32">{product.description}</div>
+                <div className="break-words md:ml-44 lg:ml-32">
+                  {product.description}
+                </div>
               </p>
 
               <hr className="text-[#D9D9D9] mt-3" />
 
               {/* Publisher Info */}
-              <div className="md:w-[45vw] lg:w-3/4">
-                <h3 className="text-[#3F3D56] text-[1.1rem] my-2 font-normal">
-                  معلومات الناشر
-                </h3>
-                <div className="flex justify-between bg-white p-3 rounded-lg">
-                  <div>
-                    <img
-                      src={personalImg}
-                      alt="صورة الناشر"
-                      className="w-16 h-16 lg:w-24 lg:h-24"
-                    />
-                  </div>
-                  <div>
-                    <li className="flex items-center gap-2 mb-2">
-                      <img src={iconProfile} alt="رمز الملف الشخصي" />
-                      <span className="font-normal text-[.7rem] lg:text-[.88rem] text-[#716D97]">
-                        {user?.name}
-                      </span>
-                    </li>
-                    <li className="flex items-center gap-2 mb-2">
-                      <img src={phoneIcon} alt="رمز البريد الإلكتروني" />
-                      <span className="font-normal text-[.7rem] lg:text-[.88rem] text-[#716D97]">
-                        {user?.email}
-                      </span>
-                    </li>
-                    <li className="flex items-center gap-2 mb-2">
-                      <img src={whatsIcon} alt="رمز الواتس آب" />
-                      <span className="font-normal text-[.7rem] lg:text-[.88rem] text-[#716D97]">
-                        {user?.whats_app}
-                      </span>
-                    </li>
-                  </div>
-                  <div className="flex flex-col items-end gap-4">
-                    <p className="flex items-center justify-end mb-6">
-                      <img src={start} alt="تقييم" className="w-4 h-4" />
-                      <span className="mr-1 font-normal text-[.9rem] text-[#1D2232]">
-                        {user?.averageRating
-                          ? user.averageRating.toFixed(1)
-                          : "0.0"}
-                      </span>
-                    </p>
-                    <Link
-                      to={`/profile/${product?.Owner?._id}`}
-                      className="bg-primary p-2 w-fit md:w-[120px] lg:w-fit  text-white rounded-md font-bold text-[.75rem]"
-                    >
-                      عرض الملف الشخصي
-                    </Link>
-                  </div>
+              {loadingPublisher ? (
+                <Spinner />
+              ) : (
+                <div className="md:w-[45vw] lg:w-3/4">
+                  <h3 className="text-[#3F3D56] text-[1.1rem] my-2 font-normal">
+                    معلومات الناشر
+                  </h3>
+                  {publisher && (
+                    <div className="flex justify-between bg-white p-3 rounded-lg">
+                      <div>
+                        <img
+                          key={publisher.avatar}
+                          src={`${myImg}?t=${Date.now()}`}
+                          loading="lazy"
+                          alt="صورة الناشر"
+                          className="w-16 h-16 rounded-[50%] lg:w-24 lg:h-24"
+                        />
+                      </div>
+                      <div>
+                        <li className="flex items-center gap-2 mb-2">
+                          <img src={iconProfile} alt="رمز الملف الشخصي" />
+                          <span className="font-normal text-[.7rem] lg:text-[.88rem] text-[#716D97]">
+                            {publisher?.name}
+                          </span>
+                        </li>
+                        <li className="flex items-center gap-2 mb-2">
+                          <img src={phoneIcon} alt="رمز البريد الإلكتروني" />
+                          <span className="font-normal text-[.7rem] lg:text-[.88rem] text-[#716D97]">
+                            {publisher?.email}
+                          </span>
+                        </li>
+                        <li className="flex items-center gap-2 mb-2">
+                          <img src={whatsIcon} alt="رمز الواتس آب" />
+                          <span className="font-normal text-[.7rem] lg:text-[.88rem] text-[#716D97]">
+                            {publisher?.whats_app}
+                          </span>
+                        </li>
+                      </div>
+                      <div className="flex flex-col items-end gap-4">
+                        <p className="flex items-center justify-end mb-6">
+                          <img src={start} alt="تقييم" className="w-4 h-4" />
+                          <span className="mr-1 font-normal text-[.9rem] text-[#1D2232]">
+                            {publisher?.averageRating
+                              ? publisher.averageRating.toFixed(1)
+                              : "0.0"}
+                          </span>
+                        </p>
+                        <Link
+                          to={`/profile/${product?.Owner?._id}`}
+                          className="bg-primary p-2 w-fit md:w-[120px] lg:w-fit text-white rounded-md font-bold text-[.75rem]"
+                        >
+                          عرض الملف الشخصي
+                        </Link>
+                      </div>
+                    </div>
+                  )}
                 </div>
-              </div>
+              )}
             </div>
           </div>
 
-          {/* Report Link */}
+          {/* Report */}
           <Link to={`/offer-details/${id}/report/${product?.Owner?._id}`}>
             <p className="text-center text-[12px] font-normal text-[#7E7E7E] pt-5 pb-10 underline cursor-pointer">
               ابلاغ عن هذا المستخدم

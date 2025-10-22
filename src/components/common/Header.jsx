@@ -30,7 +30,7 @@ const Header = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isSearchVisible, setIsSearchVisible] = useState(false);
   const [searchValue, setSearchValue] = useState("");
-  const [category, setCategory] = useState(""); 
+  const [category, setCategory] = useState("");
 
   const isScrolled = useScrolled(10);
   const dispatch = useDispatch();
@@ -76,9 +76,7 @@ const Header = () => {
     <div className="relative">
       {/* ================== HEADER ================== */}
       <header
-        className={`text-white py-1 font-bold text-[.87rem] fixed w-full z-20 transition-all duration-300 ${
-          isScrolled ? "backdrop-blur-[20px] bg-[#0F00FF80]" : "bg-primary"
-        }`}
+        className={`text-white bg-primary py-1 font-bold text-[.87rem] fixed w-full z-20 transition-all duration-300`}
       >
         <div className="container flex items-center justify-between">
           {/* Mobile Menu Button */}

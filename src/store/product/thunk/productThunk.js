@@ -17,8 +17,9 @@ export const productThunk = createAsyncThunk(
       const url =
         filters.category != "منوعات"
           ? `/user/fliteredProducts?${queryParams.toString()}`
-          : `/user/fliteredProducts?page=${filters.page}&city=${filters.city}&governorate=${filters.governorate}&limit=4`;
+          : `/user/fliteredProducts?page=${filters.page}&city=${filters.city}&governorate=${filters.governorate}&limit=3`;
       const res = await axios.get(url);
+      console.log(res.data)
       console.log(res.data);
       console.log("first");
       return {

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useParams } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
+import { motion, AnimatePresence } from "framer-motion";
 
 import Heading from "../common/Heading";
 import Spinner from "../../feedback/loading/Spinner";
@@ -78,7 +79,10 @@ const UserDetails = () => {
       key: "image",
       label: "الصورة",
       render: (user) => (
-        <img
+        <motion.img
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.4 }}
           src={
             user?.avatar
               ? `https://api.ezsouq.store/uploads/images/${user?.avatar}`
@@ -121,17 +125,29 @@ const UserDetails = () => {
   ];
 
   return (
-    <div className="p-2 md:p-6">
+    <motion.div
+      className="p-2 md:p-6"
+      initial={{ opacity: 0, y: 30 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -30 }}
+      transition={{ duration: 0.6 }}
+    >
       {/* Header section */}
       <div className="flex flex-col md:flex-row md:items-start  gap-6 md:gap-0 ">
         {/* Sidebar actions */}
-        <div className="w-full md:w-1/3 lg:w-1/4">
+        <motion.div
+          className="w-full md:w-1/3 lg:w-1/4"
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.2, duration: 0.6 }}
+        >
           <Heading title="حساب المستخدم" url="/dashboard/users" />
 
           {loading ? (
             <Spinner />
           ) : (
             <div className="space-y-2 mt-2">
+              {/* Ban user */}
               <p
                 onClick={() => {
                   setShowBanUser(true);
@@ -143,6 +159,7 @@ const UserDetails = () => {
                 <span>حظر المستخدم</span>
               </p>
 
+              {/* View ratings */}
               <Link
                 to={`/dashboard/rating/${id}`}
                 className="flex items-center gap-2 text-[#FDBF18] cursor-pointer px-3 py-2 rounded-lg transition-all duration-200 hover:bg-[#FDBF18]/10 hover:text-[#D99A00]"
@@ -151,6 +168,7 @@ const UserDetails = () => {
                 <span>عرض التقييمات</span>
               </Link>
 
+              {/* View reports */}
               <Link
                 to={`/dashboard/reports/${id}`}
                 className="flex items-center gap-2 text-[#5A5A5A] cursor-pointer px-3 py-2 rounded-lg transition-all duration-200 hover:bg-[#5A5A5A]/10 hover:text-[#3D3D3D]"
@@ -159,6 +177,7 @@ const UserDetails = () => {
                 <span>عرض الإبلاغات</span>
               </Link>
 
+              {/* Delete user */}
               <p
                 onClick={() => {
                   setShowDeleteUser(true);
@@ -171,15 +190,20 @@ const UserDetails = () => {
               </p>
             </div>
           )}
-        </div>
+        </motion.div>
 
         {/* Profile image and buttons */}
-        <div className="flex-1 w-full md:w-2/3">
+        <motion.div
+          className="flex-1 w-full md:w-2/3"
+          initial={{ opacity: 0, x: 30 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.3, duration: 0.6 }}
+        >
           <ImgProfileWithButtons
             activeTab={activeTab}
             setActiveTab={setActiveTab}
           />
-        </div>
+        </motion.div>
       </div>
 
       {/* Loading overlay */}
@@ -192,63 +216,97 @@ const UserDetails = () => {
           <ToastContainer />
 
           {/* Tabs switching */}
-          {activeTab === "contact" ? (
-            <ContactInfo />
-          ) : (
-            <>
-              {/* Desktop table */}
-              <div className="hidden md:block p-4 bg-white rounded-tr-3xl rounded-tl-3xl overflow-x-auto mt-6">
-                <DataTable
-                  data={productsById}
-                  columns={columns}
-                  loading={loading}
-                />
-              </div>
+          <AnimatePresence mode="wait">
+            {activeTab === "contact" ? (
+              <motion.div
+                key="contact"
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -15 }}
+                transition={{ duration: 0.4 }}
+              >
+                <ContactInfo />
+              </motion.div>
+            ) : (
+              <motion.div
+                key="posts"
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -15 }}
+                transition={{ duration: 0.4 }}
+              >
+                {/* Desktop table */}
+                <div className="hidden md:block p-4 bg-white rounded-tr-3xl rounded-tl-3xl overflow-x-auto mt-6">
+                  <DataTable
+                    data={productsById}
+                    columns={columns}
+                    loading={loading}
+                  />
+                </div>
 
-              {/* Mobile view */}
-              <div className="md:hidden mt-4">
-                <MobileCards
-                  data={productsById}
-                  loading={loading}
-                  renderCard={() => {}}
-                />
-              </div>
+                {/* Mobile view */}
+                <div className="md:hidden mt-4">
+                  <MobileCards
+                    data={productsById}
+                    loading={loading}
+                    renderCard={() => {}}
+                  />
+                </div>
 
-              {/* Pagination */}
-              <div className="mt-6">
-                <Pagination
-                  currentPage={page}
-                  totalPages={totalPages}
-                  totalItems={totalItems}
-                  itemsPerPage={6}
-                  onPageChange={(p) => setPage(p)}
-                />
-              </div>
-            </>
-          )}
+                {/* Pagination */}
+                <div className="mt-6">
+                  <Pagination
+                    currentPage={page}
+                    totalPages={totalPages}
+                    totalItems={totalItems}
+                    itemsPerPage={6}
+                    onPageChange={(p) => setPage(p)}
+                  />
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </>
       )}
 
-      {/* Modals */}
-      {showDeleteUser && selectedUserId && (
-        <DeleteOrBanModal
-          loading={loading}
-          type="delete"
-          onConfirm={() => handleDeleteUser(selectedUserId)}
-          onCancel={() => setShowDeleteUser(false)}
-        />
-      )}
+      {/* Modals with smooth motion */}
+      <AnimatePresence>
+        {showDeleteUser && selectedUserId && (
+          <motion.div
+            key="deleteModal"
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.9 }}
+            transition={{ duration: 0.3 }}
+          >
+            <DeleteOrBanModal
+              loading={loading}
+              type="delete"
+              onConfirm={() => handleDeleteUser(selectedUserId)}
+              onCancel={() => setShowDeleteUser(false)}
+            />
+          </motion.div>
+        )}
 
-      {showBanUser && selectedUserId && (
-        <DeleteOrBanModal
-          loading={loading}
-          type="ban"
-          action="ban"
-          onConfirm={() => handleBanUser(selectedUserId)}
-          onCancel={() => setShowBanUser(false)}
-        />
-      )}
-    </div>
+        {showBanUser && selectedUserId && (
+          <motion.div
+            key="banModal"
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.9 }}
+            transition={{ duration: 0.3 }}
+          >
+            <DeleteOrBanModal
+              loading={loading}
+              type="ban"
+              action="ban"
+              onConfirm={() => handleBanUser(selectedUserId)}
+              onCancel={() => setShowBanUser(false)}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.div>
   );
 };
 

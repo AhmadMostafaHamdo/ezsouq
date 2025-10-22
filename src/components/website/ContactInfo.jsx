@@ -3,11 +3,11 @@ import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useParams } from "react-router";
 import { ToastContainer } from "react-toastify";
 
-// 🧩 Components
+// Components
 import ImgProfileWithButtons from "./ImgProfileWithButtons";
 import Spinner from "../../feedback/loading/Spinner";
 
-// 🖼️ Icons
+// Icons
 import homeInfo from "../../assets/images/homeInfo.svg";
 import infoWork from "../../assets/images/infoWork.svg";
 import infoSite from "../../assets/images/infoSite.svg";
@@ -16,7 +16,7 @@ import infoMobile from "../../assets/images/infoMobile.svg";
 import infoEmail from "../../assets/images/infoEmail.svg";
 import updatedIcon from "../../assets/images/updatedIcon.svg";
 
-// ⚙️ Thunks & Hooks
+// Thunks & Hooks
 import { updateUser } from "../../store/users/thunk/updateUser";
 import { userThunkById } from "../../store/users/thunk/userThunkById";
 import useUserId from "../../hooks/useUserId";
@@ -28,11 +28,11 @@ const ContactInfo = () => {
   const myId = useUserId();
 
   // Redux state
-  const { user, loadingUpdateUser, loading } = useSelector(
+  const { user,    loadingUpdateUser, loading } = useSelector(
     (state) => state.users
   );
 
-  // 📝 Form state
+  // Form state
   const [formData, setFormData] = useState({
     name: "",
     workplace: "",
@@ -44,12 +44,12 @@ const ContactInfo = () => {
   const [editableField, setEditableField] = useState(null);
   const [isChanged, setIsChanged] = useState(false);
 
-  // 🔁 Fetch user data whenever the route changes or user ID changes
+  // Fetch user data whenever the route changes or user ID changes
   useEffect(() => {
     dispatch(userThunkById(paramId || myId));
   }, [dispatch, paramId, myId, location.pathname]);
 
-  // 🧠 Sync form data with fetched user info
+  // Sync form data with fetched user info
   useEffect(() => {
     if (user) {
       setFormData({
@@ -64,7 +64,7 @@ const ContactInfo = () => {
     }
   }, [user]);
 
-  // 🧩 Handle input changes
+  // Handle input changes
   const handleChange = (field, value) => {
     const updatedData = { ...formData, [field]: value };
     setFormData(updatedData);
@@ -76,11 +76,11 @@ const ContactInfo = () => {
     setIsChanged(changed);
   };
 
-  // ✏️ Handle edit / blur
+  // Handle edit / blur
   const handleEditClick = (field) => setEditableField(field);
   const handleBlur = () => setEditableField(null);
 
-  // 💾 Submit updated info
+  // Submit updated info
   const handleSubmit = (e) => {
     e.preventDefault();
     if (isChanged) {
@@ -89,7 +89,7 @@ const ContactInfo = () => {
     }
   };
 
-  // 👤 Info displayed for other users
+  // Info displayed for other users
   const contactInfo = [
     {
       img: homeInfo,
@@ -209,7 +209,7 @@ const ContactInfo = () => {
               </form>
             </div>
           ) : (
-            // 👥 Other user's public contact info
+            // Other user's public contact info
             <div className="flex-center md:justify-between flex-wrap gap-7 w-[80vw] md:w-[66vw] m-auto pt-3">
               {contactInfo.map((info, idx) => (
                 <div

@@ -1,5 +1,6 @@
 import { useEffect, useRef, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { motion } from "framer-motion"; // ✅ أضفنا هذا
 import { allCategory, sortOptions } from "../../data/filterData";
 import scrollPostsIcon from "../../assets/images/Group 6.svg";
 import Card from "./Card";
@@ -16,7 +17,6 @@ import { setFilter } from "../../store/filter/filterSlice";
 const Filters = () => {
   const dispatch = useDispatch();
 
-  // Redux state
   const filters = useSelector((state) => state.filters);
   const {
     products = [],
@@ -25,31 +25,21 @@ const Filters = () => {
   } = useSelector((state) => state.products);
   const { governorates = [] } = useSelector((state) => state.governorates);
   const { cities = [], loadingCity } = useSelector((state) => state.cities);
-console.log(governorates, filters.governorate);
-  const observerRef = useRef(null); // Ref for IntersectionObserver
 
-  /* =========================================
-     Fetch products with debounce
-  ======================================== */
+  const observerRef = useRef(null);
+
   useEffect(() => {
     const debouncedFetch = debounce(() => {
       dispatch(productThunk(filters));
     }, 500);
-
     debouncedFetch();
     return () => debouncedFetch.cancel();
   }, [dispatch, filters]);
 
-  /* =========================================
-     Load governorates on mount
-  ======================================== */
   useEffect(() => {
     dispatch(thunkGovernorates());
   }, [dispatch]);
 
-  /* =========================================
-     Load cities when governorate changes
-  ======================================== */
   useEffect(() => {
     if (filters.governorate) {
       dispatch(thunkCities(filters.governorate));
@@ -58,9 +48,6 @@ console.log(governorates, filters.governorate);
     }
   }, [dispatch, filters.governorate]);
 
-  /* =========================================
-     Set default city when cities load
-  ======================================== */
   useEffect(() => {
     if (filters.governorate && cities.length > 0) {
       if (!filters.city || !cities.includes(filters.city)) {
@@ -69,11 +56,6 @@ console.log(governorates, filters.governorate);
     }
   }, [dispatch, cities, filters.governorate, filters.city]);
 
-  /* =========================================
-     Handle filter change
-     - Updates Redux state
-     - Reset page if not paginating
-  ======================================== */
   const handleFilterChange = useCallback(
     (name, value) => {
       dispatch(
@@ -86,18 +68,12 @@ console.log(governorates, filters.governorate);
     [dispatch]
   );
 
-  /* =========================================
-     Load more products for infinite scroll
-  ======================================== */
   const loadMore = useCallback(() => {
     if (filters.page < totalPages && !loading) {
       handleFilterChange("page", filters.page + 1);
     }
   }, [filters.page, totalPages, loading, handleFilterChange]);
 
-  /* =========================================
-     Infinite scroll with IntersectionObserver
-  ======================================== */
   useEffect(() => {
     if (observerRef.current) observerRef.current.disconnect();
 
@@ -165,19 +141,46 @@ console.log(governorates, filters.governorate);
       <div className="w-full flex flex-wrap gap-9 pl-4 md:pl-12 justify-start">
         {loading && filters.page === 1 ? (
           Array.from({ length: filters.limit }).map((_, i) => (
-            <CardSkeleton key={`skeleton-${i}`} />
+            <motion.div
+              key={`skeleton-${i}`}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.6, delay: i * 0.05 }}
+              className="relative overflow-hidden rounded-2xl"
+            >
+              {/* shimmer overlay */}
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent animate-[shimmer_1.5s_infinite]" />
+              <CardSkeleton />
+            </motion.div>
           ))
         ) : (
           <>
             {products.length > 0 &&
               Array.isArray(products) &&
-              products.map((product) => (
-                <Card key={product._id} {...product} />
+              products.map((product, i) => (
+                <motion.div
+                  key={product._id}
+                  initial={{ opacity: 0, y: 40 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.4, delay: i * 0.05 }}
+                >
+                  <Card {...product} />
+                </motion.div>
               ))}
+
             {loading &&
               filters.page > 1 &&
-              Array.from({ length: 4 }).map((_, i) => (
-                <CardSkeleton key={`pagination-skeleton-${i}`} />
+              Array.from({ length: filters.limit || 4 }).map((_, i) => (
+                <motion.div
+                  key={`pagination-skeleton-${i}`}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.5, delay: i * 0.05 }}
+                  className="relative overflow-hidden rounded-2xl"
+                >
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent animate-[shimmer_1.5s_infinite]" />
+                  <CardSkeleton />
+                </motion.div>
               ))}
           </>
         )}

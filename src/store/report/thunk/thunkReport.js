@@ -1,12 +1,14 @@
+// thunkReport.js
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 import Cookies from "js-cookie";
 import { toast } from "react-toastify";
 import { handleThunkError } from "../../../utils/utils";
+
 export const thunkReport = createAsyncThunk(
-  "/report",
+  "user/report",
   async (
-    { reported_user, details, reason, productId },
+    { reported_user, details, reason, productId, navigate },
     { rejectWithValue }
   ) => {
     try {
@@ -19,13 +21,17 @@ export const thunkReport = createAsyncThunk(
           },
         }
       );
+
       toast.success(res.data?.message);
+
+      // Smooth redirect after success
       setTimeout(() => {
-        window.location.href = `/offer-details/${productId}`;
+        navigate(`/offer-details/${productId}`);
       }, 700);
+
       return res.data;
     } catch (error) {
-      console.log(error);
+      console.error(error);
       return handleThunkError(error, rejectWithValue);
     }
   }

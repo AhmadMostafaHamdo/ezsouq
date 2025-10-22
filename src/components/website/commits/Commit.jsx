@@ -1,11 +1,10 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 
 import cat from "../../../assets/images/cat.svg";
 import arrowTopCommit from "../../../assets/images/arrowTopCommit.svg";
 import arrowBottomCommit from "../../../assets/images/arrowBottomCommit.svg";
-import replayCommit from "../../../assets/images/replayCommit.svg";
 import iconSettingUser from "../../../assets/images/dashboard/iconSettingUser.svg";
 import deleteIcon from "../../../assets/images/dashboard/deleteIcon.svg";
 import updatedIcon from "../../../assets/images/updatedIcon.svg";
@@ -16,6 +15,9 @@ import { updateComment } from "../../../store/commits/thunk/updateComment";
 import { getAllCommentsByIdThunk } from "../../../store/commits/thunk/getAllCommentsById";
 import { thunkReplayCommit } from "../../../store/commits/thunk/replayComment";
 import { getRepliesByCommentId } from "../../../store/commits/thunk/getRepliesByCommentId";
+import { AnimatePresence, motion } from "framer-motion";
+import useUserId from "../../../hooks/useUserId";
+import { useParams } from "react-router";
 
 const Commit = ({
   comment,
@@ -32,13 +34,26 @@ const Commit = ({
   const [replyText, setReplyText] = useState("");
   const [updateCommentMode, setUpdateCommentMode] = useState(false);
   const [commentText, setCommentText] = useState(comment);
-
-  const inputRef = useRef(null);
+  const userId = useUserId();
+    const inputRef = useRef(null);
+  const menu = useRef(null);
   const dispatch = useDispatch();
 
   const { replies } = useSelector((state) => state.comments);
   const commentReplies = replies[id] || [];
 
+  // Close menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (menu.current && !menu.current.contains(e.target)) {
+        setShowOption(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  // focus input on edit
   useEffect(() => {
     if (updateCommentMode && inputRef.current) {
       inputRef.current.focus();
@@ -59,8 +74,8 @@ const Commit = ({
     )
       .unwrap()
       .then(() => {
-        toast.success("Reply sent!");
-        dispatch(getRepliesByCommentId(id)); // refresh replies
+        toast.success("تم إرسال الرد!");
+        dispatch(getRepliesByCommentId(id));
       })
       .catch((err) => toast.error(err));
     setReplyText("");
@@ -73,6 +88,7 @@ const Commit = ({
     dispatch(updateComment({ comment_id: id, comments: commentText }))
       .unwrap()
       .then(() => {
+        toast.success("تم تعديل التعليق!");
         setUpdateCommentMode(false);
         dispatch(getAllCommentsByIdThunk(productId));
       })
@@ -83,6 +99,9 @@ const Commit = ({
   const handleDeleteComment = (commentId) => {
     dispatch(deleteComment({ comment_id: commentId, productId }))
       .unwrap()
+      .then(() => {
+        dispatch(getAllCommentsByIdThunk(productId));
+      })
       .catch((err) =>
         err === "لم يتم العثور على التعليق"
           ? toast.error("هذا التعليق ليس لك")
@@ -92,16 +111,14 @@ const Commit = ({
 
   // toggle replies
   const toggleReplies = () => {
-    if (!arrowCommit) {
-      dispatch(getRepliesByCommentId(id));
-    }
+    if (!arrowCommit) dispatch(getRepliesByCommentId(id));
     setArrowCommit(!arrowCommit);
     setArrow(!arrowCommit);
   };
 
   return (
     <div className={`flex gap-2 mt-4 pb-2 relative ${depth > 0 ? "ml-8" : ""}`}>
-      {/* connecting line like Facebook */}
+      {/* connecting line */}
       {depth > 0 && (
         <div
           className="absolute right-[-18px] top-2 bottom-0 border-r"
@@ -109,7 +126,6 @@ const Commit = ({
         ></div>
       )}
 
-      <ToastContainer />
       <img
         src={user?.avatar || cat}
         alt="صورة المستخدم"
@@ -129,7 +145,7 @@ const Commit = ({
           </div>
 
           {/* comment text */}
-          <div className="flex items-center gap-2 bg-[#F0F2F5] px-3 py-2 rounded-2xl">
+          <div className="flex items-center w-36 gap-2 bg-[#F0F2F5] px-3 py-2 rounded-2xl">
             <input
               type="text"
               disabled={!updateCommentMode}
@@ -143,19 +159,19 @@ const Commit = ({
                 onClick={handleConfirmUpdate}
                 className="bg-[#1877F2] text-white px-3 py-1 rounded-2xl text-sm hover:bg-[#166FE5]"
               >
-                Save
+                حفظ
               </button>
             )}
           </div>
 
-          {/* reply +إظهار الردود */}
+          {/* reply + show replies */}
           <div className="relative mt-2">
             <div className="flex items-center gap-3 text-[#65676B] text-sm">
               <span
                 onClick={() => setShowReplyInput(!showReplyInput)}
                 className="cursor-pointer hover:text-[#1877F2]"
               >
-                Reply
+                الرد
               </span>
               <span
                 onClick={toggleReplies}
@@ -175,13 +191,12 @@ const Commit = ({
               </span>
             </div>
 
-            {/* reply input */}
             {showReplyInput && (
               <div className="mt-2 flex gap-2">
                 <input
                   type="text"
                   placeholder="Write a reply..."
-                  className="border border-[#CCD0D5] rounded-2xl px-3 py-1 w-full text-sm"
+                  className="border border-[#CCD0D5] rounded-2xl px-3 py-1 w-52 text-sm"
                   value={replyText}
                   onChange={(e) => setReplyText(e.target.value)}
                 />
@@ -189,12 +204,11 @@ const Commit = ({
                   onClick={handleReplySubmit}
                   className="bg-[#1877F2] text-white px-3 py-1 rounded-2xl text-sm hover:bg-[#166FE5]"
                 >
-                  Send
+                  إرسال
                 </button>
               </div>
             )}
 
-            {/* replies list */}
             {arrowCommit && (
               <div className="ml-6 mt-3">
                 {commentReplies.length > 0 ? (
@@ -211,7 +225,7 @@ const Commit = ({
                     />
                   ))
                 ) : (
-                  <p className="text-[#65676B] text-sm">No replies yet</p>
+                  <p className="text-[#65676B] text-sm">لا يوجد ردود</p>
                 )}
               </div>
             )}
@@ -219,35 +233,47 @@ const Commit = ({
         </div>
 
         {/* edit & delete */}
-        <div className="relative">
-          <img
-            src={iconSettingUser}
-            alt="إعدادات التعليق"
-            className="cursor-pointer"
-            onClick={() => setShowOption((prev) => !prev)}
-          />
-          {showOption && (
-            <div className="absolute top-9 left-3 text-[.8rem] bg-white shadow-md rounded-md p-1 z-10">
-              <div
-                className="flex items-center gap-1 w-36 cursor-pointer hover:bg-gray-100 p-1"
-                onClick={() => {
-                  setUpdateCommentMode(!updateCommentMode);
-                  setShowOption(false);
-                }}
-              >
-                <img src={updatedIcon} alt="تعديل" />
-               تعديل التعليق
-              </div>
-              <div
-                className="flex items-center gap-1 cursor-pointer hover:bg-gray-100 p-1"
-                onClick={() => handleDeleteComment(id)}
-              >
-                <img src={deleteIcon} alt="حذف" />
-                حذف التعليق
-              </div>
-            </div>
-          )}
-        </div>
+        {userId == user?._id && (
+          <div className="relative">
+            <img
+              src={iconSettingUser}
+              alt="إعدادات التعليق"
+              className="cursor-pointer"
+              onClick={() => setShowOption((prev) => !prev)}
+            />
+
+            <AnimatePresence>
+              {showOption && (
+                <motion.div
+                  ref={menu}
+                  initial={{ opacity: 0, scale: 0.8, y: -10 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.8, y: -10 }}
+                  transition={{ duration: 0.2 }}
+                  className="absolute top-9 left-3 text-[.8rem] bg-white shadow-md rounded-md p-1 z-10"
+                >
+                  <div
+                    className="flex items-center gap-1 w-36 cursor-pointer hover:bg-gray-100 p-1 rounded transition"
+                    onClick={() => {
+                      setUpdateCommentMode(!updateCommentMode);
+                      setShowOption(false);
+                    }}
+                  >
+                    <img src={updatedIcon} alt="تعديل" />
+                    تعديل التعليق
+                  </div>
+                  <div
+                    className="flex items-center gap-1 cursor-pointer hover:bg-gray-100 p-1 rounded transition"
+                    onClick={() => handleDeleteComment(id)}
+                  >
+                    <img src={deleteIcon} alt="حذف" />
+                    حذف التعليق
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+        )}
       </div>
     </div>
   );

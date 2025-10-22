@@ -2,6 +2,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { lazy } from "react";
 import SuspenseFallback from "../feedback/suspenseFallback/suspenseFallback";
 import GoogleAuthCallback from "../components/forms/GoogleAuthCallback";
+import PreventAuthAccess from "./PreventAuthAccess";
 
 // ⚡ Lazy Load Pages & Components
 const App = lazy(() => import("../App"));
@@ -67,7 +68,7 @@ const router = createBrowserRouter([
     ),
     children: [
       { index: true, element: <MainWithFilters /> },
-      { path: "offer-details/:id", element: <OfferDetails /> },
+      { path: "offer-details/:id", element: <PreventAuthAccess ><OfferDetails /> </PreventAuthAccess>},
       { path: "offer-details/:id/report/:userId", element: <Report /> },
       { path: "google-callback", element: <GoogleAuthCallback /> },
       { path: "wishlist", element: <Wishlist /> },
@@ -78,19 +79,32 @@ const router = createBrowserRouter([
       { path: "newest", element: <Newest /> },
       { path: "contact-us", element: <ContactUs /> },
       { path: "search", element: <Search /> },
-      { path: "commits/:id", element: <Commits /> },
+      {
+        path: "commits/:id",
+        element: (
+          <PreventAuthAccess>
+            <Commits />
+          </PreventAuthAccess>
+        ),
+      },
       { path: "privacy-policy", element: <PrivacyPolicy /> },
       { path: "about-us", element: <We /> },
       {
         path: "profile/:id",
         element: <Profile />,
         children: [
-          { index: true, element: <MainProfile /> },  
           { path: "contact-info", element: <ContactInfo /> },
           { path: "rating", element: <Rating /> },
         ],
       },
-      { path: "create-offer", element: <CreateOffer /> },
+      {
+        path: "create-offer",
+        element: (
+          <PreventAuthAccess>
+            <CreateOffer />{" "}
+          </PreventAuthAccess>
+        ),
+      },
     ],
   },
 

@@ -1,5 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { userThunkById } from "./thunk/userThunkById";
+import { userThunkMe } from "./thunk/userThunkMe";
 import { getAllUsers } from "./thunk/getAllUsers";
 import { updateUser } from "./thunk/updateUser";
 import { deleteUser } from "./thunk/deleteUser";
@@ -8,14 +9,20 @@ import { banUser } from "./thunk/banUser";
 
 const initialState = {
   users: [],
-  user: [],
+  user: null,
+  me: null,
+  myImg: null,
   loading: false,
   error: null,
 };
 const usersSlice = createSlice({
   name: "users",
   initialState,
-  reducers: {},
+  reducers: {
+    setImgUser: (state, action) => {
+      state.myImg = action.payload;
+    },
+  },
   extraReducers: (builder) => {
     builder.addCase(userThunkById.pending, (state) => {
       state.loading = true;
@@ -26,6 +33,18 @@ const usersSlice = createSlice({
       state.user = action.payload;
     });
     builder.addCase(userThunkById.rejected, (state, action) => {
+      state.loading = false;
+      state.error = action.payload;
+    });
+    builder.addCase(userThunkMe.pending, (state) => {
+      state.loading = true;
+      state.error = null;
+    });
+    builder.addCase(userThunkMe.fulfilled, (state, action) => {
+      state.loading = false;
+      state.me = action.payload;
+    });
+    builder.addCase(userThunkMe.rejected, (state, action) => {
       state.loading = false;
       state.error = action.payload;
     });
@@ -50,7 +69,7 @@ const usersSlice = createSlice({
     });
     builder.addCase(updateUser.fulfilled, (state, action) => {
       state.loading = false;
-      state.users = action.payload;
+      state.me = action.payload;
     });
     builder.addCase(updateUser.rejected, (state, action) => {
       state.loading = false;
@@ -88,8 +107,10 @@ const usersSlice = createSlice({
     builder.addCase(banUser.rejected, (state, action) => {
       state.loading = false;
       state.error = action.payload;
-    }); 
+    });
   },
 });
+
+export const { setImgUser } = usersSlice.actions;
 
 export default usersSlice.reducer;

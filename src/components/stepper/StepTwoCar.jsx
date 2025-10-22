@@ -3,7 +3,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import InputCreateOffer from "../inputs/InputCreateOffer";
 import VideoUploader from "../common/VideoUploader";
 import { stepTwoCarsSchema } from "../../validation/createOffer";
-
 const StepTwoCars = ({ onSubmit }) => {
   // Initialize React Hook Form with Zod validation
   const methods = useForm({
@@ -65,13 +64,6 @@ const StepTwoCars = ({ onSubmit }) => {
         {/* Video Upload */}
         <VideoUploader name="video" label="إضافة فيديو" />
 
-        {/* Submit Button */}
-        <button
-          type="submit"
-          className="self-end bg-primary text-white rounded-xl py-1 px-5"
-        >
-          حفظ ومتابعة
-        </button>
       </form>
     </FormProvider>
   );

@@ -16,6 +16,7 @@ import {
   clearStep,
 } from "../../store/steps/stepsSlice";
 import { toast, ToastContainer } from "react-toastify";
+import Spinner from "../../feedback/loading/Spinner";
 
 const MainCreateOffer = () => {
   const dispatch = useDispatch();
@@ -30,6 +31,7 @@ const MainCreateOffer = () => {
 
   const [stepOneData, setStepOneData] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
   // Scroll to top and reset steps on mount
   useEffect(() => {
     offerRef.current.scrollIntoView();
@@ -74,6 +76,7 @@ const MainCreateOffer = () => {
     if (finalData.video) {
       formData.append("video", finalData.video);
     }
+
     try {
       setIsSubmitting(true);
       const res = await axios.post("/user/add_product", formData, {
@@ -96,8 +99,17 @@ const MainCreateOffer = () => {
   const handleBack = () => dispatch(stepDecrease());
 
   return (
-    <div className="pt-14" ref={offerRef}>
+    <div className="pt-14 relative" ref={offerRef}>
+      {/* Toast notifications */}
       <ToastContainer />
+
+      {/* Overlay Spinner أثناء الإرسال */}
+      {isSubmitting && (
+        <div className="absolute inset-0 z-50 bg-white/70 flex-center">
+          <Spinner size={60} />
+        </div>
+      )}
+
       <Heading title="الرجوع" />
       <div className="bg-[#F7F7FF] flex-center flex-col -mt-10">
         <h1 className="font-normal text-[2rem]">نشر إعلان</h1>
@@ -118,7 +130,7 @@ const MainCreateOffer = () => {
         {/* ================= Navigation Buttons ================= */}
         <div className="flex-between w-[80vw] md:w-[60vw] lg:w-[40vw] mt-4">
           <button
-            disabled={currentStep === 1}
+            disabled={currentStep === 1 || isSubmitting}
             onClick={handleBack}
             className={`flex-center rounded-xl py-[.4rem] px-5 border-[1px] ${
               currentStep === 1
@@ -133,7 +145,7 @@ const MainCreateOffer = () => {
             {currentStep === 2 ? (
               <button
                 onClick={() => document.querySelector("form")?.requestSubmit()}
-                disabled={isSubmitting} // 🟣 disable button while submitting
+                disabled={isSubmitting}
                 className={`bg-primary text-white rounded-xl py-[.4rem] px-5 transition ${
                   isSubmitting
                     ? "opacity-60 cursor-not-allowed"
@@ -145,6 +157,7 @@ const MainCreateOffer = () => {
             ) : (
               <button
                 onClick={() => document.getElementById("submit-step1")?.click()}
+                disabled={isSubmitting}
                 className="flex-center rounded-xl py-[.4rem] px-5 border-[1px] text-[#B1ADFF] border-[#B1ADFF]"
               >
                 التالي <img src={arrowLeft} alt="التالي" />

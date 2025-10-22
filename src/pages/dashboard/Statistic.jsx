@@ -1,3 +1,7 @@
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { motion } from "framer-motion";
+
 import StatisticComponent from "../../components/dashoard/StatisticComponent";
 import favorites from "../../assets/images/dashboard/statistic/favorites.svg";
 import rate from "../../assets/images/dashboard/statistic/rate.svg";
@@ -8,10 +12,9 @@ import reports from "../../assets/images/dashboard/statistic/reports.svg";
 import personalImg from "../../assets/images/personal.svg";
 import iconSettingUser from "../../assets/images/dashboard/iconSettingUser.svg";
 import CarStatsDashboard from "./CarStatsDashboard";
-import { useDispatch, useSelector } from "react-redux";
-import { useEffect } from "react";
-import { thunkStatistic } from "../../store/statistic/thunk/statisticThunk";
 import Spinner from "../../feedback/loading/Spinner";
+
+import { thunkStatistic } from "../../store/statistic/thunk/statisticThunk";
 import { statisticThunkCategory } from "../../store/statistic/thunk/statisticThunkCategory";
 import { topUsers } from "../../store/statistic/thunk/topUsers";
 import { topProducts } from "../../store/statistic/thunk/topProducts";
@@ -20,6 +23,16 @@ const Statistic = () => {
   const { statistic, topTwoUsers, topTwoProducts, loading } = useSelector(
     (state) => state.statistic
   );
+  const dispatch = useDispatch();
+
+  // Fetch all dashboard data
+  useEffect(() => {
+    dispatch(thunkStatistic());
+    dispatch(statisticThunkCategory());
+    dispatch(topUsers());
+    dispatch(topProducts());
+  }, [dispatch]);
+
   const stats = [
     {
       img: users,
@@ -46,6 +59,7 @@ const Statistic = () => {
       count: statistic?.Views,
     },
   ];
+
   const stats2 = [
     {
       img: messages,
@@ -60,19 +74,7 @@ const Statistic = () => {
       count: statistic?.Reports,
     },
   ];
-  const dispatch = useDispatch();
-  useEffect(() => {
-    dispatch(thunkStatistic());
-  }, []);
-  useEffect(() => {
-    dispatch(statisticThunkCategory());
-  }, []);
-  useEffect(() => {
-    dispatch(topUsers());
-  }, []);
-  useEffect(() => {
-    dispatch(topProducts());
-  }, []);
+
   return (
     <>
       {loading ? (
@@ -80,29 +82,74 @@ const Statistic = () => {
           <Spinner size={100} />
         </div>
       ) : (
-        <div dir="rtl" className="p-2 ">
+        <motion.div
+          dir="rtl"
+          className="p-2"
+          initial={{ opacity: 0, x: 50 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.5 }}
+        >
           <h1 className="text-[#23193E] font-bold text-xl mb-3">الإحصائيات</h1>
 
-          {/* الصف الأول: الإحصائيات الرئيسية */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-4">
+          {/* Main statistics cards */}
+          <motion.div
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-4"
+            initial="hidden"
+            animate="visible"
+            variants={{
+              hidden: { opacity: 0 },
+              visible: {
+                opacity: 1,
+                transition: { staggerChildren: 0.15 },
+              },
+            }}
+          >
             {stats.map((stat, index) => (
-              <StatisticComponent key={index} {...stat} />
+              <motion.div
+                key={index}
+                variants={{
+                  hidden: { opacity: 0, x: 100 },
+                  visible: { opacity: 1, x: 0 },
+                }}
+                transition={{ duration: 0.4 }}
+              >
+                <StatisticComponent {...stat} />
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
 
-          {/* الصف الثاني: الإحصائيات الثانوية والجدول */}
+          {/* Secondary stats + tables */}
           <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_2fr] gap-6">
-            {/* قسم الإحصائيات الثانوية */}
+            {/* Secondary statistics */}
             <div className="flex flex-col gap-2">
               {stats2.map((stat, index) => (
-                <StatisticComponent key={index + 4} {...stat} />
+                <motion.div
+                  key={index + 4}
+                  initial={{ opacity: 0, x: 100 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: index * 0.2, duration: 0.5 }}
+                >
+                  <StatisticComponent {...stat} />
+                </motion.div>
               ))}
-              <CarStatsDashboard />
+              <motion.div
+                initial={{ opacity: 0, x: 100 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.4, duration: 0.5 }}
+              >
+                <CarStatsDashboard />
+              </motion.div>
             </div>
 
-            {/* قسم الجدول */}
-            <div className=" rounded-xl shadow-md overflow-hidden h-fit">
-              <table className="w-full bg-white ">
+            {/* Users and products tables */}
+            <motion.div
+              className="rounded-xl shadow-md overflow-hidden h-fit"
+              initial={{ opacity: 0, x: 100 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.5 }}
+            >
+              {/* Top users table */}
+              <table className="w-full bg-white">
                 <thead className="bg-gray-50">
                   <tr>
                     <th className="py-4 px-4 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -112,7 +159,7 @@ const Statistic = () => {
                       الاسم
                     </th>
                     <th className="py-4 px-4 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      عدد الاعلانات
+                      عدد الإعلانات
                     </th>
                     <th className="py-4 px-4 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
                       الهاتف
@@ -121,13 +168,19 @@ const Statistic = () => {
                 </thead>
                 <tbody>
                   {topTwoUsers?.map((user, index) => (
-                    <tr key={index}>
+                    <motion.tr
+                      key={index}
+                      initial={{ opacity: 0, x: 100 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: index * 0.15 }}
+                    >
                       <td className="py-2 px-4">
                         <div className="flex items-center justify-end">
                           <img
+                            loading="lazy"
                             src={
-                              user?.avatar.replace(/^http/, "https")
-                                ? user?.avatar.replace(/^http/, "https")
+                              user?.avatar?.startsWith("http")
+                                ? user.avatar.replace(/^http/, "https")
                                 : personalImg
                             }
                             alt="صورة المستخدم"
@@ -144,15 +197,20 @@ const Statistic = () => {
                       <td className="py-2 px-4 text-center text-sm text-[#706F84]">
                         {user?.phone}
                       </td>
-                      <td className="py-2 px-4 text-center text-sm text-[#706F84]">
-                        <img src={iconSettingUser} alt="" />
+                      <td className="py-2 px-4 text-center">
+                        <img
+                          src={iconSettingUser}
+                          alt="إعدادات المستخدم"
+                          loading="lazy"
+                        />
                       </td>
-                    </tr>
+                    </motion.tr>
                   ))}
                 </tbody>
               </table>
-              <div></div>
-              <table className="w-full bg-white mt-4 ">
+
+              {/* Top products table */}
+              <table className="w-full bg-white mt-4">
                 <thead className="bg-gray-50">
                   <tr>
                     <th className="py-4 px-4 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -171,18 +229,23 @@ const Statistic = () => {
                 </thead>
                 <tbody>
                   {Array.isArray(topTwoProducts) &&
-                    topTwoProducts.length > 0 &&
-                    topTwoProducts.slice(0, 2).map((product) => (
-                      <tr>
+                    topTwoProducts.slice(0, 2).map((product, index) => (
+                      <motion.tr
+                        key={index}
+                        initial={{ opacity: 0, x: 100 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: index * 0.15 }}
+                      >
                         <td className="py-2 px-4">
                           <div className="flex items-center justify-end">
                             <img
+                              loading="lazy"
                               src={
                                 product?.main_photo
-                                  ? `https://api.ezsouq.store/uploads/images/${product?.main_photo}`
+                                  ? `https://api.ezsouq.store/uploads/images/${product.main_photo}`
                                   : personalImg
                               }
-                              alt="صورة المستخدم"
+                              alt="صورة المنتج"
                               className="w-10 h-10 rounded-full object-cover"
                             />
                           </div>
@@ -196,16 +259,20 @@ const Statistic = () => {
                         <td className="py-2 px-4 text-center text-sm text-[#706F84]">
                           {product?.views}
                         </td>
-                        <td className="py-2 px-4 text-center text-sm text-[#706F84]">
-                          <img src={iconSettingUser} alt="" />
+                        <td className="py-2 px-4 text-center">
+                          <img
+                            src={iconSettingUser}
+                            alt="إعدادات المنتج"
+                            loading="lazy"
+                          />
                         </td>
-                      </tr>
+                      </motion.tr>
                     ))}
                 </tbody>
               </table>
-            </div>
+            </motion.div>
           </div>
-        </div>
+        </motion.div>
       )}
     </>
   );

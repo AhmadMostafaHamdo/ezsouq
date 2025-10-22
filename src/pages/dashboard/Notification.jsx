@@ -4,6 +4,7 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { motion, AnimatePresence } from "framer-motion";
 
 import Spinner from "../../feedback/loading/Spinner";
 import Pagination from "../../components/dashoard/Pagination";
@@ -12,8 +13,18 @@ import { getAllMessages } from "../../store/messages/thunk/getAllMessages";
 
 // ✅ Modal component to show message details
 const MessageDetailsModal = ({ message, onClose }) => (
-  <div className="fixed inset-0 bg-[#00000080] z-50 flex items-center justify-center">
-    <div className="bg-[#FFFFFF] rounded-xl shadow-lg w-11/12 sm:w-96 p-5 relative">
+  <motion.div
+    initial={{ opacity: 0 }}
+    animate={{ opacity: 1 }}
+    exit={{ opacity: 0 }}
+    className="fixed inset-0 bg-[#00000080] z-50 flex items-center justify-center"
+  >
+    <motion.div
+      initial={{ scale: 0.8 }}
+      animate={{ scale: 1 }}
+      exit={{ scale: 0.8 }}
+      className="bg-[#FFFFFF] rounded-xl shadow-lg w-11/12 sm:w-96 p-5 relative"
+    >
       <button
         onClick={onClose}
         className="absolute top-2 right-2 text-[#CA4646] hover:text-[#000000] text-xl"
@@ -40,27 +51,27 @@ const MessageDetailsModal = ({ message, onClose }) => (
           إغلاق
         </button>
       </div>
-    </div>
-  </div>
+    </motion.div>
+  </motion.div>
 );
 
 const Notification = () => {
   const dispatch = useDispatch();
-  const { messages, loading, error } = useSelector((state) => state.messages);
+  const { messages, loading } = useSelector((state) => state.messages);
 
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
 
-  // ✅ State for delete modal
+  // ✅ Delete modal state
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedMessage, setSelectedMessage] = useState(null);
   const [deleting, setDeleting] = useState(false);
 
-  // ✅ State for message details modal
+  // ✅ Message details modal state
   const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [detailsMessage, setDetailsMessage] = useState(null);
 
-  // === Fetch messages when page changes ===
+  // === Fetch messages on page change ===
   useEffect(() => {
     dispatch(getAllMessages(page));
   }, [dispatch, page]);
@@ -70,15 +81,15 @@ const Notification = () => {
   const currentPage = messages?.page || 1;
   const totalItems = messages?.total || 0;
 
-  // === Search filter ===
-  const filtered = allMessages.filter(
-    (m) =>
-      m?.name?.toLowerCase().includes(search.toLowerCase()) ||
-      m?.subject?.toLowerCase().includes(search.toLowerCase()) ||
-      m?.message?.toLowerCase().includes(search.toLowerCase())
+  // === Filter messages based on search ===
+  const filteredMessages = allMessages.filter(
+    (msg) =>
+      msg?.name?.toLowerCase().includes(search.toLowerCase()) ||
+      msg?.subject?.toLowerCase().includes(search.toLowerCase()) ||
+      msg?.message?.toLowerCase().includes(search.toLowerCase())
   );
 
-  // === Delete message from server ===
+  // === Delete message handler ===
   const handleDelete = async () => {
     if (!selectedMessage?._id) return;
     try {
@@ -92,7 +103,6 @@ const Notification = () => {
       toast.success("✅ تم حذف الرسالة بنجاح");
       setShowDeleteModal(false);
       setSelectedMessage(null);
-
       dispatch(getAllMessages(page));
     } catch (err) {
       toast.error("❌ فشل حذف الرسالة");
@@ -102,10 +112,13 @@ const Notification = () => {
     }
   };
 
-  // === Render mobile card ===
+  // === Render mobile card view ===
   const renderMobileCard = (msg) => (
-    <div
+    <motion.div
       key={msg._id}
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: 20 }}
       className="bg-[#FFFFFF] p-4 rounded-xl shadow-md border border-[#E5E7EB] w-full"
     >
       <p className="font-semibold text-[#1F2937]">{msg?.name || "-"}</p>
@@ -134,7 +147,7 @@ const Notification = () => {
           حذف
         </button>
       </div>
-    </div>
+    </motion.div>
   );
 
   return (
@@ -172,8 +185,8 @@ const Notification = () => {
                   <Spinner />
                 </td>
               </tr>
-            ) : filtered.length > 0 ? (
-              filtered.map((msg) => (
+            ) : filteredMessages.length > 0 ? (
+              filteredMessages.map((msg) => (
                 <tr
                   key={msg._id}
                   className="border-t border-[#E5E7EB] hover:bg-[#F9FAFB] transition text-center"
@@ -217,6 +230,7 @@ const Notification = () => {
             )}
           </tbody>
         </table>
+
         {/* Pagination */}
         <div className="flex justify-center mt-6">
           <Pagination
@@ -231,36 +245,42 @@ const Notification = () => {
 
       {/* Mobile cards */}
       <div className="sm:hidden grid grid-cols-1 gap-4">
-        {loading ? (
-          <div className="flex justify-center py-10">
-            <Spinner />
-          </div>
-        ) : filtered.length > 0 ? (
-          filtered.map(renderMobileCard)
-        ) : (
-          <p className="text-center py-6 text-[#6B7280]">
-            لا توجد رسائل حالياً
-          </p>
-        )}
+        <AnimatePresence>
+          {loading ? (
+            <div className="flex justify-center py-10">
+              <Spinner />
+            </div>
+          ) : filteredMessages.length > 0 ? (
+            filteredMessages.map(renderMobileCard)
+          ) : (
+            <p className="text-center py-6 text-[#6B7280]">
+              لا توجد رسائل حالياً
+            </p>
+          )}
+        </AnimatePresence>
       </div>
 
       {/* Delete Modal */}
-      {showDeleteModal && (
-        <DeleteOrBanModal
-          type="msg"
-          loading={deleting}
-          onCancel={() => setShowDeleteModal(false)}
-          onConfirm={handleDelete}
-        />
-      )}
+      <AnimatePresence>
+        {showDeleteModal && (
+          <DeleteOrBanModal
+            type="msg"
+            loading={deleting}
+            onCancel={() => setShowDeleteModal(false)}
+            onConfirm={handleDelete}
+          />
+        )}
+      </AnimatePresence>
 
       {/* Message Details Modal */}
-      {showDetailsModal && detailsMessage && (
-        <MessageDetailsModal
-          message={detailsMessage}
-          onClose={() => setShowDetailsModal(false)}
-        />
-      )}
+      <AnimatePresence>
+        {showDetailsModal && detailsMessage && (
+          <MessageDetailsModal
+            message={detailsMessage}
+            onClose={() => setShowDetailsModal(false)}
+          />
+        )}
+      </AnimatePresence>
     </div>
   );
 };

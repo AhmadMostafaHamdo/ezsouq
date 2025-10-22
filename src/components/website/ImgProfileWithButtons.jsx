@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
-import { Link, useLocation, useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import Cookies from "js-cookie";
-import { jwtDecode } from "jwt-decode";
 
 import personalImg from "../../assets/images/pesonal.png";
 import star from "../../assets/images/start.svg";
@@ -11,19 +10,17 @@ import { userThunkById } from "../../store/users/thunk/userThunkById";
 import { updateUserPhoto } from "../../store/users/thunk/updateUserPhoto";
 import useUserId from "../../hooks/useUserId";
 import ProfileSkeleton from "../../assets/sketlon/ProfileSkeleton";
-import ContactInfo from "./ContactInfo";
+import { setImgUser } from "../../store/users/usersSlice";
 
 const ImgProfileWithButtons = ({ setActiveTab, activeTab }) => {
   const [previewImg, setPreviewImg] = useState(null);
   const [profileData, setProfileData] = useState(null);
   const [loading, setLoading] = useState(true);
-
+  console.log(profileData);
   const dispatch = useDispatch();
   const { id } = useParams();
   const myId = useUserId();
-  const location = useLocation();
   const token = Cookies.get("token");
-  const { Role } = jwtDecode(token);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -58,6 +55,11 @@ const ImgProfileWithButtons = ({ setActiveTab, activeTab }) => {
         ? profileData.avatar.replace(/^http:/, "https:")
         : `https://api.ezsouq.store/${profileData.avatar}`
       : personalImg);
+  useEffect(() => {
+    if (avatarUrl) {
+      dispatch(setImgUser(avatarUrl));
+    }
+  }, [avatarUrl, dispatch]);
 
   return (
     <div>
@@ -110,86 +112,44 @@ const ImgProfileWithButtons = ({ setActiveTab, activeTab }) => {
           </div>
 
           {/* Tabs as Buttons */}
-          {!location.pathname.includes("dashboard") && (
-            <nav className="flex justify-center text-[1rem] font-bold gap-3 my-3">
-              <Link
-                to={`/profile/${id}`}
-                onClick={() => setActiveTab("posts")}
-                className={`rounded-[3rem] py-1 px-8 transition relative ${
-                  !window.location.href.includes("contact")
-                    ? "bg-[#7770E9] text-white"
-                    : "border border-[#C2BFFF] text-[#C2BFFF]"
-                }`}
-              >
-                المنشورات
-                <p
-                  className={`transition duration-300 absolute -bottom-[5px] ${
-                    !window.location.href.includes("contact")
-                      ? "w-10 -translate-x-1/2 opacity-100 "
-                      : "w-0 opacity-0"
-                  } -translate-x-[50%] left-[50%] h-[2px] rounded-md bg-primary `}
-                ></p>
-              </Link>
-              <Link
-                to={`/profile/${id}/contact-info`}
-                onClick={() => setActiveTab("contact")}
-                className={`rounded-[3rem] py-1 px-8 transition relative ${
-                  window.location.href.includes("contact")
-                    ? "bg-[#7770E9] text-white"
-                    : "border border-[#C2BFFF] text-[#C2BFFF]"
-                }`}
-              >
-                معلومات التواصل
-                <p
-                  className={`transition duration-300 absolute -bottom-[5px] ${
-                    window.location.href.includes("contact")
-                      ? "w-10 -translate-x-1/2 opacity-100 "
-                      : "w-0 opacity-0"
-                  } -translate-x-[50%] left-[50%] h-[2px] rounded-md bg-primary `}
-                ></p>
-              </Link>
-            </nav>
-          )}
-
-          {/* Tabs as Buttons */}
-          {location.pathname.includes("dashboard") && (
-            <nav className="flex justify-center text-[1rem] font-bold gap-3 my-3">
-              <button
-                onClick={() => setActiveTab("posts")}
-                className={`rounded-[3rem] py-1 px-8 transition relative ${
+          <nav className="flex justify-center text-[1rem] font-bold gap-3 my-3">
+            <button
+              onClick={() => setActiveTab("posts")}
+              className={`relative rounded-[3rem] py-1 px-8 transition-all duration-300 
+      ${
+        activeTab === "posts"
+          ? "bg-[#7770E9] text-white"
+          : "border border-[#C2BFFF] text-[#C2BFFF] hover:text-[#7770E9]"
+      }`}
+            >
+              المنشورات
+              <span
+                className={`absolute -bottom-[6px] left-1/2 h-[2px] w-10 rounded-md bg-primary transition-transform duration-300 origin-center ${
                   activeTab === "posts"
-                    ? "bg-[#7770E9] text-white"
-                    : "border border-[#C2BFFF] text-[#C2BFFF]"
-                }`}
-              >
-                المنشورات
-                <p
-                  className={`transition duration-300 absolute -bottom-[5px] ${
-                    activeTab === "posts"
-                      ? "w-10 -translate-x-1/2 opacity-100"
-                      : "w-0 opacity-0"
-                  } -translate-x-[50%] left-[50%] h-[2px] rounded-md bg-primary `}
-                ></p>
-              </button>
-              <button
-                onClick={() => setActiveTab("contact")}
-                className={`rounded-[3rem] py-1 px-8 transition relative ${
+                    ? "scale-x-100 opacity-100"
+                    : "scale-x-0 opacity-0"
+                } -translate-x-1/2`}
+              ></span>
+            </button>
+            <button
+              onClick={() => setActiveTab("contact")}
+              className={`relative rounded-[3rem] py-1 px-8 transition-all duration-300 
+      ${
+        activeTab === "contact"
+          ? "bg-[#7770E9] text-white"
+          : "border border-[#C2BFFF] text-[#C2BFFF] hover:text-[#7770E9]"
+      }`}
+            >
+              معلومات التواصل
+              <span
+                className={`absolute -bottom-[6px] left-1/2 h-[2px] w-10 rounded-md bg-primary transition-transform duration-300 origin-center ${
                   activeTab === "contact"
-                    ? "bg-[#7770E9] text-white"
-                    : "border border-[#C2BFFF] text-[#C2BFFF]"
-                }`}
-              >
-                معلومات التواصل
-                <p
-                  className={`transition duration-300 absolute -bottom-[5px] ${
-                    activeTab === "contact"
-                      ? "w-10 -translate-x-1/2 opacity-100"
-                      : "w-0 opacity-0"
-                  } -translate-x-[50%] left-[50%] h-[2px] rounded-md bg-primary `}
-                ></p>
-              </button>
-            </nav>
-          )}
+                    ? "scale-x-100 opacity-100"
+                    : "scale-x-0 opacity-0"
+                } -translate-x-1/2`}
+              ></span>
+            </button>
+          </nav>
         </>
       )}
     </div>
