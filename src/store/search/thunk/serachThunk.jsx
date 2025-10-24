@@ -9,13 +9,12 @@ export const searchThunk = createAsyncThunk(
     try {
       const query = new URLSearchParams();
 
-      // مرر كل الفلاتر بشكل ديناميكي
       Object.entries(params).forEach(([key, value]) => {
         if (value !== "" && value !== null && value !== undefined) {
           query.append(key, value);
         }
       });
-
+console.log(query.toString());
       const res = await axios.get(`/user/search_product?${query.toString()}`);
       console.log("🔍 Search Response:", res.data);
       return res.data;

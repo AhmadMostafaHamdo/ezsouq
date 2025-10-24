@@ -29,7 +29,7 @@ const Rating = () => {
     }
   };
 
-  const goToProfile = () => navigate(`/profile/${id}`);
+  const goToProfile = () => navigate(`/profile/${id}`, {replace:true});
 
   return (
     <AnimatePresence mode="wait">

@@ -46,7 +46,7 @@ const UsersTable = ({ title = "المستخدمين", extraActions = null }) => 
     { key: "image", label: "الصورة" },
     { key: "name", label: "الاسم" },
     { key: "email", label: "البريد الإلكتروني" },
-    { key: "adsCount", label: "عدد الإعلانات" },
+    { key: "averageRating", label: "تقييمه" },
     { key: "status", label: "الحالة" },
     { key: "actions", label: "الإجراءات" },
   ];
@@ -222,14 +222,14 @@ const UsersTable = ({ title = "المستخدمين", extraActions = null }) => 
                         <img
                           loading="lazy"
                           src={user?.avatar || profile}
-                          alt=""
+                          alt="صورة المستخدم"
                           className="rounded-full w-10 h-10 mx-auto"
                         />
                       </td>
                       <td className="py-3 text-center">{user.name}</td>
                       <td className="py-3 text-center">{user.email}</td>
                       <td className="py-3 text-center">
-                        {user.productCount || 0}
+                        {user.averageRating?.toFixed(1) || 0}
                       </td>
                       <td className="py-3 text-center">
                         {user.Role === "BANNED" ? (
@@ -249,7 +249,7 @@ const UsersTable = ({ title = "المستخدمين", extraActions = null }) => 
                             src={iconSettingUser}
                             className="cursor-pointer"
                             onClick={(e) => handleSettingUser(user._id, e)}
-                            alt=""
+                            alt="إعدادات المستخدم"
                             width={25}
                           />
                           <AnimatePresence>
@@ -259,7 +259,7 @@ const UsersTable = ({ title = "المستخدمين", extraActions = null }) => 
                                 animate={{ opacity: 1, y: 0, scale: 1 }}
                                 exit={{ opacity: 0, y: -8, scale: 0.95 }}
                                 transition={{ duration: 0.25, ease: "easeOut" }}
-                                className="w-44 leading-5 absolute left-[4.2rem]  rounded-lg bg-white p-3 shadow-md "
+                                className="w-44 leading-5 absolute left-[4.2rem] rounded-lg bg-white p-3 shadow-md "
                               >
                                 <Link
                                   to={user._id}
@@ -332,7 +332,7 @@ const UsersTable = ({ title = "المستخدمين", extraActions = null }) => 
                                     setShowDeleteUser(true);
                                   }}
                                 >
-                                  <img src={deleteIcon} alt="حذف" />
+                                  <img src={deleteIcon} alt="حذف المستخدم" />
                                   <span className="text-[#C73030]">حذف</span>
                                 </p>
                               </motion.div>
@@ -371,7 +371,7 @@ const UsersTable = ({ title = "المستخدمين", extraActions = null }) => 
                       <img
                         loading="lazy"
                         src={user.avatar || profile}
-                        alt=""
+                        alt="صورة المستخدم"
                         className="w-12 h-12 rounded-full object-cover border border-gray-300"
                       />
                       <div className="flex flex-col">
@@ -384,7 +384,7 @@ const UsersTable = ({ title = "المستخدمين", extraActions = null }) => 
                       </div>
                     </div>
                     <div className="flex justify-between text-xs text-[#808080ec] mb-2">
-                      <span>عدد الإعلانات: {user.productCount || 0}</span>
+                      <span>تقييمه: {user.averageRating?.toFixed(1) || 0}</span>
                       <span
                         className={
                           user.Role === "BANNED"

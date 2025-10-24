@@ -37,7 +37,7 @@ const ContactInfo = lazy(() => import("../components/website/ContactInfo"));
 const Rating = lazy(() => import("../components/website/Rating/Rating"));
 const CreateOffer = lazy(() => import("../pages/CreateOffer"));
 
-// 📊 Dashboard
+// Dashboard
 const Dashboard = lazy(() => import("../pages/dashboard/Dashboard"));
 const Statistic = lazy(() => import("../pages/dashboard/Statistic"));
 const Offers = lazy(() => import("../pages/dashboard/Offers"));

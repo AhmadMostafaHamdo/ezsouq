@@ -24,7 +24,7 @@ const Profile = () => {
     >
       <HeaderLogin />
       <div className="pt-[4rem]">
-        <Heading title="الرجوع" url={"/"} />
+        <Heading title="الرجوع" />
       </div>
 
       <ImgProfileWithButtons

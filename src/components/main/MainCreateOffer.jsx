@@ -117,7 +117,7 @@ const MainCreateOffer = () => {
 
         {/* ================= Step Forms ================= */}
         {currentStep === 1 && <StepOne onSubmit={handleStepOneSubmit} />}
-        {currentStep === 2 && selectedCategory === "موبايلات" && (
+        {currentStep === 2 && selectedCategory === "تقنيات" && (
           <StepTwoTec onSubmit={handleStepTwoSubmit} />
         )}
         {currentStep === 2 && selectedCategory === "سيارات" && (

@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  category: ["سيارات", "عقارات", "موبايلات"], 
+  category: ["سيارات", "عقارات", "تقنيات"],
   selectedCategory: "",
 };
 

@@ -2,6 +2,7 @@ import { useState, useEffect, useRef, memo } from "react";
 import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
 import axios from "axios";
+import ContentLoader from "react-content-loader";
 
 import menuIcon from "../../../assets/images/menu.svg";
 import logo from "../../../assets/images/logoWithTitleWhite.svg";
@@ -17,7 +18,7 @@ import useUserId from "../../../hooks/useUserId";
 import { ulLinksLogin } from "../../../data/filterData";
 import { AnimatePresence, motion } from "framer-motion";
 
-// ====================== Hook to detect scroll ======================
+// Hook to detect scroll
 const useScrolled = (threshold = 10) => {
   const [scrolled, setScrolled] = useState(false);
 
@@ -33,6 +34,7 @@ const useScrolled = (threshold = 10) => {
 const HeaderLogin = () => {
   const [isSidebarOpen, setSidebarOpen] = useState(false);
   const [image, setImage] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [menuOpen, setMenuOpen] = useState(false);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
 
@@ -46,30 +48,29 @@ const HeaderLogin = () => {
   const getMyImage = async () => {
     try {
       const res = await axios.get(`/user/get_user/${userId}`);
-      const img = res.data?.avatar?.replace(/^http:/, "https:") || "";
+      const img = res.data?.avatar
+        ? res.data.avatar.replace(/^http:/, "https:")
+        : null;
       setImage(img);
     } catch (error) {
       console.error("Error fetching user image:", error);
+      setImage(null);
+    } finally {
+      setLoading(false);
     }
   };
 
-  // Fetch image only when userId is available
   useEffect(() => {
     if (userId) getMyImage();
   }, [userId]);
 
-  const myImage = image ? image : personal;
-
-  // Handle sidebar open/close
   const toggleSidebar = () => setSidebarOpen((prev) => !prev);
 
-  // Logout handler
   const handleLogout = () => {
     Cookies.remove("token");
     window.location.href = "/";
   };
 
-  // Disable page scroll when sidebar is open
   useEffect(() => {
     document.body.style.overflow = isSidebarOpen ? "hidden" : "auto";
     return () => {
@@ -94,9 +95,8 @@ const HeaderLogin = () => {
         isScrolled ? "opacity-90 shadow-custom" : "bg-primary"
       }`}
     >
-      {/* ================= Header Container ================= */}
       <div className="container flex items-center justify-between">
-        {/* Mobile Menu Button */}
+        {/* Menu Button */}
         <button
           onClick={toggleSidebar}
           className="flex-center w-8 h-8 lg:hidden outline-none"
@@ -113,12 +113,13 @@ const HeaderLogin = () => {
         <Link to="/">
           <img
             src={logo}
+            onError={(e) => (e.target.src = personal)}
             alt="Website logo"
             className="w-20 h-12 ml-16 outline-none"
           />
         </Link>
 
-        {/* Navigation Links */}
+        {/* Navigation */}
         <div className="flex-1">
           <div className="hidden md:flex justify-end lg:hidden">
             <Link
@@ -147,36 +148,54 @@ const HeaderLogin = () => {
           </ul>
         </div>
 
-        {/* Icons Section */}
+        {/* Right Icons */}
         <div className="flex-center gap-4">
           <Link to="/search">
-            <img src={search} alt="Search" className="w-4 h-4" />
+            <img
+              src={search}
+              alt="بحث"
+              className="w-4 h-4 hover:scale-110 duration-300"
+            />
           </Link>
 
           <Link to="/wishlist">
             <img
               src={location.pathname === "/wishlist" ? redHeart : emptyHeart}
-              alt={
-                location.pathname === "/wishlist"
-                  ? "Wishlist"
-                  : "Add to wishlist"
-              }
-              className="w-6 h-6"
-              style={{ stroke: "white", fill: "red" }}
+              alt="محفوظاتي"
+              className="w-6 h-6 hover:scale-110 duration-300"
             />
           </Link>
 
           {/* Profile Dropdown */}
           <div
             ref={menuRef}
-            className="relative cursor-pointer border-solid border-[#f5f5f559] border-[1.5px] rounded-[50%] p-[1.5px]"
+            className="relative cursor-pointer hover:scale-110 duration-300 border-solid border-[#f5f5f559] border-[1.5px] rounded-[50%] p-[1.5px]"
           >
-            <img
-              src={myImage}
-              alt="Profile"
-              className="w-10 h-10 rounded-full"
-              onClick={() => setMenuOpen((prev) => !prev)}
-            />
+            {loading ? (
+              <ContentLoader
+                speed={2}
+                width={40}
+                height={40}
+                viewBox="0 0 40 40"
+                backgroundColor="#cccccc"
+                foregroundColor="#e6e6e6"
+                className="rounded-full"
+              >
+                <circle cx="20" cy="20" r="20" />
+              </ContentLoader>
+            ) : (
+              <img
+                src={image || personal}
+                alt="الملف الشخصي"
+                className="w-10 h-10 rounded-full object-cover"
+                onClick={() => setMenuOpen((prev) => !prev)}
+                loading="lazy"
+                onError={(e) => {
+                  e.target.onerror = null;
+                  e.target.src = personal;
+                }}
+              />
+            )}
 
             <AnimatePresence>
               {menuOpen && (
@@ -196,7 +215,7 @@ const HeaderLogin = () => {
                       }
                       setMenuOpen(false);
                     }}
-                    className="mb-2 w-20 shadow-sm hover:text-primary"
+                    className="mb-2 py-1 w-20 shadow-sm hover:text-primary"
                   >
                     الملف الشخصي
                   </button>
@@ -216,13 +235,13 @@ const HeaderLogin = () => {
           </div>
         </div>
       </div>
-      {/* Sidebar Component */}
+
       <Sidebar
         toggleSidebar={toggleSidebar}
         logo={logo}
         isSidebarOpen={isSidebarOpen}
       />
-      {/* Logout Confirmation Modal */};
+
       <AnimatePresence>
         {showLogoutModal && (
           <motion.div
@@ -249,16 +268,16 @@ const HeaderLogin = () => {
                 هل أنت متأكد من أنك تريد تسجيل الخروج؟ لا يمكنك التراجع عن هذا
                 الإجراء
               </p>
-              <div className="flex justify-around ">
+              <div className="flex justify-around">
                 <button
                   onClick={() => setShowLogoutModal(false)}
-                  className="px-8 py-1 border border-[#818181] rounded text-[#818181]"
+                  className="px-8 py-1 border border-[#818181] hover:bg-[#80808083] rounded text-[#818181]"
                 >
                   إلغاء
                 </button>
                 <button
                   onClick={handleLogout}
-                  className="px-4 py-2 bg-red text-white rounded hover:bg-red-600"
+                  className="px-4 py-2 bg-red text-white rounded hover:bg-[#a71c1c]"
                 >
                   تأكيد الخروج
                 </button>

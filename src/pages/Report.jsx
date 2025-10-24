@@ -8,6 +8,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { thunkReport } from "../store/report/thunk/thunkReport";
 import { reportData } from "../data/report";
 import close from "../assets/images/close.svg";
+import { replace } from "lodash";
 
 const Report = () => {
   const [selected, setSelected] = useState(false); // Track if a reason is selected
@@ -25,7 +26,7 @@ const Report = () => {
   }, []);
 
   // Close modal and go back
-  const handleClose = () => navigate(-1);
+  const handleClose = () => navigate(-1, replace(true));
 
   // Select report reason
   const handleSelectReason = (selectedReason) => {

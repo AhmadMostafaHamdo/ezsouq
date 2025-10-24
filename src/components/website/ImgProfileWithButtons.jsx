@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
-import { Link, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import Cookies from "js-cookie";
 
@@ -21,6 +21,7 @@ const ImgProfileWithButtons = ({ setActiveTab, activeTab }) => {
   const { id } = useParams();
   const myId = useUserId();
   const token = Cookies.get("token");
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -60,7 +61,7 @@ const ImgProfileWithButtons = ({ setActiveTab, activeTab }) => {
       dispatch(setImgUser(avatarUrl));
     }
   }, [avatarUrl, dispatch]);
-
+  const handelRating = () => navigate("rating", { replace: true });
   return (
     <div>
       <ToastContainer />
@@ -101,12 +102,12 @@ const ImgProfileWithButtons = ({ setActiveTab, activeTab }) => {
                     ? profileData.averageRating.toFixed(1)
                     : "0.0"}
                 </span>
-                <Link
-                  to={`/profile/${id}/rating`}
+                <button
                   className="text-[#7770E9] text-sm cursor-pointer"
+                  onClick={handelRating}
                 >
                   تقييم
-                </Link>
+                </button>
               </div>
             </div>
           </div>

@@ -56,15 +56,6 @@ const TopBar = () => {
         </div>
 
         <div className="flex items-center gap-4">
-          {/* Button to navigate to home page */}
-          <button
-            onClick={() => navigate("/")}
-            title="الصفحة الرئيسية"
-            className="p-2 rounded-full bg-[#F5F5F5] hover:bg-[#EDEDED] transition"
-          >
-            <Home size={20} />
-          </button>
-
           {/* Admin avatar */}
           {loading ? (
             <div className="w-10 h-10 rounded-full bg-gray-200 animate-pulse" />

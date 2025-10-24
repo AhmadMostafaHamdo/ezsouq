@@ -275,7 +275,7 @@ const Card = ({
 
             <div className="flex justify-between items-center my-2 text-sm">
               <span className="text-[#A3A0DD] font-bold">
-                {Category_name === "موبايلات" && (isnew ? "جديد" : "قديم")}
+                {Category_name === "تقنيات" && (isnew ? "جديد" : "قديم")}
                 {Category_name === "عقارات" && real_estate_type}
                 {Category_name === "سيارات" && (for_sale ? "للبيع" : "للإيجار")}
               </span>
@@ -327,7 +327,11 @@ const Card = ({
                   aria-label="Share"
                   className="flex items-center"
                 >
-                  <img src={shareIcon} alt="مشاركة" className="hover:scale-110  duration-300"/>
+                  <img
+                    src={shareIcon}
+                    alt="مشاركة"
+                    className="hover:scale-110  duration-300"
+                  />
                 </button>
 
                 <AnimatePresence>

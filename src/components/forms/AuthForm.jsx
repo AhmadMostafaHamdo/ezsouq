@@ -81,9 +81,10 @@ const AuthForm = ({ fields, schema, btnAuth }) => {
       {!visible ? <EyeOff /> : <Eye />}
     </button>
   );
-useEffect(() => {
-  dispatch(resetLoading());
-}, [dispatch]);  return (
+  useEffect(() => {
+    dispatch(resetLoading());
+  }, [dispatch]);
+  return (
     <div className="relative flex-center h-screen overflow-hidden bg-white">
       {(loadingGoogle || loading) && (
         <div className="absolute inset-0 bg-white/70 flex-center z-50">
@@ -186,19 +187,22 @@ useEffect(() => {
 
               {!isLogin && (
                 <>
-                  <div className="flex items-center">
+                  <div className="flex items-center text-[12px] ">
                     <input
                       type="checkbox"
                       className="ml-2 cursor-pointer"
                       {...register("checkbox")}
                       id="accept"
                     />
+                    <label htmlFor="accept" className="cursor-pointer">
+                      أوافق على
+                    </label>
                     <Link
                       to="/privacy-policy"
                       htmlFor="accept"
-                      className="text-[12px]"
+                      className=" text-primary underline mr-1"
                     >
-                      أوافق على سياسة الخصوصية
+                      سياسة الخصوصية
                     </Link>
                   </div>
                   <p className="text-red mb-1 h-[18px] text-[13px]">

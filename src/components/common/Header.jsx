@@ -114,7 +114,7 @@ const Header = () => {
               >
                 <option value="">التصنيفات</option>
                 <option value="عقارات">عقارات</option>
-                <option value="موبايلات">موبايلات</option>
+                <option value="تقنيات">تقنيات</option>
                 <option value="سيارات">سيارات</option>
               </select>
               <input
@@ -151,7 +151,7 @@ const Header = () => {
             >
               <option value="">التصنيفات</option>
               <option value="عقارات">عقارات</option>
-              <option value="موبايلات">موبايلات</option>
+              <option value="تقنيات">تقنيات</option>
               <option value="سيارات">سيارات</option>
             </select>
             <input
