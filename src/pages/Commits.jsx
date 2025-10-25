@@ -46,7 +46,7 @@ const Commits = () => {
   const totalPages = commentsByProductId?.[product?._id]?.pages || 1;
   const currentPage = commentsByProductId?.[product?._id]?.page || 1;
 
-  // Scroll to top on mount
+  // ------------------- Scroll to top -------------------
   useEffect(() => {
     topPage.current?.scrollIntoView();
   }, []);
@@ -94,16 +94,15 @@ const Commits = () => {
       await dispatch(
         thunkAddCommit({ product_id: product._id, comment })
       ).unwrap();
-
       setComment("");
       dispatch(getAllCommentsByIdThunk({ product_id: product._id, page: 1 }));
-      toast.success("Comment added successfully");
+      toast.success("تمت إضافة التعليق بنجاح");
     } catch (err) {
       toast.error(err || "An error occurred while adding the comment");
     }
   };
 
-  // Send on Enter key
+  // ------------------- Send on Enter key -------------------
   const handleKeyPress = (e) => {
     if (e.key === "Enter") handleSend();
   };
@@ -129,34 +128,45 @@ const Commits = () => {
 
         {/* Comments Section */}
         <div className="flex-1 mt-8 md:mt-14">
-          <p className="font-normal text-[1.5rem]">{totalComments} تعليقات</p>
+          {/* Total Comments */}
+          <p className="font-normal text-[1.5rem] text-[#050505]">
+            {totalComments} تعليقات
+          </p>
 
+          {/* Sorting Dropdown */}
           <SortDropdown />
 
           {/* Input Field for Adding Comment */}
           {user && (
             <div className="flex items-center gap-4 mb-8">
-              <div className="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center text-gray-600 font-bold">
-                {user?.name?.charAt(0)?.toUpperCase() || "U"}
+              {/* User Name Avatar */}
+              <div className="w-12 h-12 bg-[#F0F2F5] text-[#505050] rounded-full flex items-center justify-center font-bold">
+                {user?.name?.length > 6
+                  ? user?.name.slice(0, 6) + "..."
+                  : user?.name || "مستخدم"}
               </div>
+
+              {/* Comment Input */}
               <input
                 value={comment}
                 onKeyDown={handleKeyPress}
                 onChange={(e) => setComment(e.target.value)}
                 type="text"
                 placeholder="اكتب تعليقك..."
-                className="p-3 rounded-[5px] w-full md:w-[40vw] border border-gray-400 outline-none bg-white"
+                className="p-3 rounded-[5px] w-full md:w-[40vw] border border-[#CCD0D5] outline-none bg-[#FFFFFF] text-[#050505]"
               />
+
+              {/* Send Button */}
               <button
                 onClick={handleSend}
                 disabled={!comment.trim()}
-                className={`px-4 py-2 rounded-md bg-blue-600 text-white transition ${
+                className={`px-4 py-2 rounded-md bg-[#1877F2] text-[#FFFFFF] transition ${
                   comment.trim()
-                    ? "opacity-100 hover:bg-blue-700"
+                    ? "opacity-100 hover:bg-[#166FE5]"
                     : "opacity-50 cursor-not-allowed"
                 }`}
               >
-                Send
+                إرسال
               </button>
             </div>
           )}
@@ -190,13 +200,13 @@ const Commits = () => {
                 })}
               </>
             ) : (
-              <div className="text-center text-gray-500 py-8">
-                <p>No comments yet</p>
+              <div className="text-center text-[#808080] py-8">
+                <p>لا توجد تعليقات بعد</p>
               </div>
             )}
 
             {commentsLoading && page > 1 && <CommentSkeleton />}
-            <hr className="my-3 w-full md:w-[40vw]" />
+            <hr className="my-3 w-full md:w-[40vw] border-[#CCD0D5]" />
           </div>
         </div>
       </div>

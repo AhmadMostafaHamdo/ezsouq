@@ -17,6 +17,7 @@ export const logout = createAsyncThunk(
           },
         }
       );
+      console.log(res.data)
       return res.data;
     } catch (error) {
       let errorMessage = "حدث خطأ غير متوقع";

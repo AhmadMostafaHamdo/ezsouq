@@ -9,6 +9,7 @@ import iconSettingUser from "../../../assets/images/dashboard/iconSettingUser.sv
 import deleteIcon from "../../../assets/images/dashboard/deleteIcon.svg";
 import updatedIcon from "../../../assets/images/updatedIcon.svg";
 import TimeAgo from "../../TimeAgo";
+import personal from "../../../assets/images/pesonal.png";
 
 import { deleteComment } from "../../../store/commits/thunk/deleteCommit";
 import { updateComment } from "../../../store/commits/thunk/updateComment";
@@ -35,7 +36,7 @@ const Commit = ({
   const [updateCommentMode, setUpdateCommentMode] = useState(false);
   const [commentText, setCommentText] = useState(comment);
   const userId = useUserId();
-    const inputRef = useRef(null);
+  const inputRef = useRef(null);
   const menu = useRef(null);
   const dispatch = useDispatch();
 
@@ -115,7 +116,8 @@ const Commit = ({
     setArrowCommit(!arrowCommit);
     setArrow(!arrowCommit);
   };
-
+  const img = user?.avatar ? user?.avatar.replace(/^http/, "https") : personal;
+  console.log(user?.name)
   return (
     <div className={`flex gap-2 mt-4 pb-2 relative ${depth > 0 ? "ml-8" : ""}`}>
       {/* connecting line */}
@@ -127,7 +129,7 @@ const Commit = ({
       )}
 
       <img
-        src={user?.avatar || cat}
+        src={img}
         alt="صورة المستخدم"
         className="w-12 h-12 object-cover rounded-full"
       />

@@ -40,6 +40,9 @@ const DeleteOrBanModal = ({ type, action, onConfirm, onCancel }) => {
     ? "هل أنت متأكد من أنك تريد منح الصلاحيات لهذا المستخدم؟"
     : isWithdraw
     ? "هل أنت متأكد من أنك تريد سحب الصلاحيات من هذا المستخدم؟"
+    :offer
+    ? "هل أنت متأكد من أنك تريد حذف هذا الإعلان ؟"
+
     : "";
 
   const confirmLabel = isDelete

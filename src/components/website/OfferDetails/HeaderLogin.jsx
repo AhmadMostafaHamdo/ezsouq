@@ -18,16 +18,14 @@ import useUserId from "../../../hooks/useUserId";
 import { ulLinksLogin } from "../../../data/filterData";
 import { AnimatePresence, motion } from "framer-motion";
 
-// Hook to detect scroll
+// Custom hook to detect scroll
 const useScrolled = (threshold = 10) => {
   const [scrolled, setScrolled] = useState(false);
-
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > threshold);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, [threshold]);
-
   return scrolled;
 };
 
@@ -44,14 +42,19 @@ const HeaderLogin = () => {
   const isScrolled = useScrolled(10);
   const menuRef = useRef();
 
-  // Fetch user image
+  // Keep image loaded only once
+  const imageLoaded = useRef(false);
+
+  // Fetch user image once
   const getMyImage = async () => {
+    if (imageLoaded.current) return; // prevent re-fetch
     try {
       const res = await axios.get(`/user/get_user/${userId}`);
       const img = res.data?.avatar
         ? res.data.avatar.replace(/^http:/, "https:")
         : null;
       setImage(img);
+      imageLoaded.current = true;
     } catch (error) {
       console.error("Error fetching user image:", error);
       setImage(null);
@@ -61,7 +64,7 @@ const HeaderLogin = () => {
   };
 
   useEffect(() => {
-    if (userId) getMyImage();
+    if (userId && !imageLoaded.current) getMyImage();
   }, [userId]);
 
   const toggleSidebar = () => setSidebarOpen((prev) => !prev);
@@ -96,7 +99,7 @@ const HeaderLogin = () => {
       }`}
     >
       <div className="container flex items-center justify-between">
-        {/* Menu Button */}
+        {/* ☰ Sidebar toggle */}
         <button
           onClick={toggleSidebar}
           className="flex-center w-8 h-8 lg:hidden outline-none"
@@ -114,12 +117,12 @@ const HeaderLogin = () => {
           <img
             src={logo}
             onError={(e) => (e.target.src = personal)}
-            alt="Website logo"
+            alt="شعار الموقع"
             className="w-20 h-12 ml-16 outline-none"
           />
         </Link>
 
-        {/* Navigation */}
+        {/* Navigation Links */}
         <div className="flex-1">
           <div className="hidden md:flex justify-end lg:hidden">
             <Link
@@ -161,12 +164,12 @@ const HeaderLogin = () => {
           <Link to="/wishlist">
             <img
               src={location.pathname === "/wishlist" ? redHeart : emptyHeart}
-              alt="محفوظاتي"
+              alt="المفضلة"
               className="w-6 h-6 hover:scale-110 duration-300"
             />
           </Link>
 
-          {/* Profile Dropdown */}
+          {/* Profile dropdown */}
           <div
             ref={menuRef}
             className="relative cursor-pointer hover:scale-110 duration-300 border-solid border-[#f5f5f559] border-[1.5px] rounded-[50%] p-[1.5px]"
@@ -197,6 +200,7 @@ const HeaderLogin = () => {
               />
             )}
 
+            {/* Animated dropdown using Framer Motion */}
             <AnimatePresence>
               {menuOpen && (
                 <motion.div
@@ -204,7 +208,7 @@ const HeaderLogin = () => {
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
-                  transition={{ duration: 0.2 }}
+                  transition={{ duration: 0.25 }}
                 >
                   <button
                     onClick={() => {
@@ -236,12 +240,14 @@ const HeaderLogin = () => {
         </div>
       </div>
 
+      {/* Sidebar */}
       <Sidebar
         toggleSidebar={toggleSidebar}
         logo={logo}
         isSidebarOpen={isSidebarOpen}
       />
 
+      {/* Logout Modal */}
       <AnimatePresence>
         {showLogoutModal && (
           <motion.div
@@ -260,7 +266,7 @@ const HeaderLogin = () => {
             >
               <img
                 src={confirmLogout}
-                alt="Confirm logout"
+                alt="تأكيد الخروج"
                 className="w-20 m-auto"
               />
               <h3 className="my-2 text-black">تسجيل الخروج</h3>

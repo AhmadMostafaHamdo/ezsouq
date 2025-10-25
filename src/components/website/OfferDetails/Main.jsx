@@ -34,7 +34,7 @@ const Main = () => {
   const [selectedImage, setSelectedImage] = useState("");
   const [isImageLoaded, setIsImageLoaded] = useState(false);
   const imgRef = useRef(null);
-
+  console.log(product);
   // 🔹 Fetch product details by ID
   useEffect(() => {
     if (id) dispatch(productThunkById(id));
@@ -104,10 +104,8 @@ const Main = () => {
       </div>
     );
   }
-
-  const myImg = publisher?.avatar
-    ? publisher.avatar.replace(/^http/, "https")
-    : personalImg;
+  console.log(publisher);
+  const myImg = publisher?.avatar ? publisher.avatar : personalImg;
 
   return (
     <div className="bg-[#F7F7FF] md:pt-2 overflow-x-hidden h-fit">
@@ -236,34 +234,46 @@ const Main = () => {
                     معلومات الناشر
                   </h3>
                   {publisher && (
-                    <div className="flex justify-between bg-white p-3 rounded-lg hover:shadow-md transition-all duration-200">
+                    <div className="flex flex-col md:flex-row justify-between bg-[#FFFFFF] p-3 rounded-lg hover:shadow-md transition-all duration-200 gap-4">
                       {/* Avatar */}
                       <img
                         key={publisher.avatar}
-                        src={`${myImg}?t=${Date.now()}`}
+                        src={`${myImg}`}
                         loading="lazy"
                         alt="صورة الناشر"
-                        className="w-16 h-16 lg:w-24 lg:h-24 rounded-full"
+                        className="w-16 h-16 md:w-20 md:h-20 lg:w-24 lg:h-24 rounded-full self-center md:self-start"
                       />
 
                       {/* Info */}
-                      <ul>
-                        <li className="flex items-center gap-2 mb-2 text-[#716D97]">
-                          <img src={iconProfile} alt="رمز الملف الشخصي" />
+                      <ul className="flex flex-col justify-center gap-2 text-[#716D97]">
+                        <li className="flex items-center gap-2">
+                          <img
+                            src={iconProfile}
+                            alt="رمز الملف الشخصي"
+                            className="w-4 h-4"
+                          />
                           <span>{publisher?.name}</span>
                         </li>
-                        <li className="flex items-center gap-2 mb-2 text-[#716D97]">
-                          <img src={phoneIcon} alt="رمز البريد الإلكتروني" />
+                        <li className="flex items-center gap-2">
+                          <img
+                            src={phoneIcon}
+                            alt="رمز البريد الإلكتروني"
+                            className="w-4 h-4"
+                          />
                           <span>{publisher?.email}</span>
                         </li>
-                        <li className="flex items-center gap-2 text-[#716D97]">
-                          <img src={whatsIcon} alt="رمز الواتس آب" />
+                        <li className="flex items-center gap-2">
+                          <img
+                            src={whatsIcon}
+                            alt="رمز الواتس آب"
+                            className="w-4 h-4"
+                          />
                           <span>{publisher?.whats_app}</span>
                         </li>
                       </ul>
 
                       {/* Rating + Profile Link */}
-                      <div className="flex flex-col items-end gap-4">
+                      <div className="flex flex-col md:items-end gap-2 mt-2 md:mt-0">
                         <p className="flex items-center justify-end">
                           <img src={start} alt="تقييم" className="w-4 h-4" />
                           <span className="mr-1 text-[#1D2232]">
@@ -274,7 +284,7 @@ const Main = () => {
                         </p>
                         <Link
                           to={`/profile/${product?.Owner?._id}`}
-                          className="bg-[#918AFF] hover:bg-[#7C73FF] transition-colors duration-200 text-white px-3 py-2 rounded-md font-bold text-[.8rem]"
+                          className="bg-[#918AFF] text-nowrap hover:bg-[#7C73FF] transition-colors duration-200 text-white px-3 py-2 rounded-md font-bold text-[.8rem] text-center md:text-right"
                         >
                           عرض الملف الشخصي
                         </Link>

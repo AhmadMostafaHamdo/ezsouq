@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
+import { motion } from "framer-motion"; // ✅ For animation
 import { useDispatch } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import Cookies from "js-cookie";
+import { Camera } from "lucide-react"; // ✅ Lucide camera icon
 
 import personalImg from "../../assets/images/pesonal.png";
 import star from "../../assets/images/start.svg";
@@ -16,13 +18,15 @@ const ImgProfileWithButtons = ({ setActiveTab, activeTab }) => {
   const [previewImg, setPreviewImg] = useState(null);
   const [profileData, setProfileData] = useState(null);
   const [loading, setLoading] = useState(true);
-  console.log(profileData);
+  const [isHovered, setIsHovered] = useState(false); // ✅ Hover state
+
   const dispatch = useDispatch();
   const { id } = useParams();
   const myId = useUserId();
   const token = Cookies.get("token");
   const navigate = useNavigate();
 
+  // ✅ Fetch user data
   useEffect(() => {
     const fetchUser = async () => {
       setLoading(true);
@@ -38,6 +42,7 @@ const ImgProfileWithButtons = ({ setActiveTab, activeTab }) => {
     if (id) fetchUser();
   }, [dispatch, id]);
 
+  // ✅ Handle profile image upload
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -49,6 +54,7 @@ const ImgProfileWithButtons = ({ setActiveTab, activeTab }) => {
     dispatch(updateUserPhoto(file));
   };
 
+  // ✅ Determine avatar URL
   const avatarUrl =
     previewImg ||
     (profileData?.avatar
@@ -56,12 +62,15 @@ const ImgProfileWithButtons = ({ setActiveTab, activeTab }) => {
         ? profileData.avatar.replace(/^http:/, "https:")
         : `https://api.ezsouq.store/${profileData.avatar}`
       : personalImg);
+
   useEffect(() => {
     if (avatarUrl) {
       dispatch(setImgUser(avatarUrl));
     }
   }, [avatarUrl, dispatch]);
+
   const handelRating = () => navigate("rating", { replace: true });
+
   return (
     <div>
       <ToastContainer />
@@ -73,23 +82,48 @@ const ImgProfileWithButtons = ({ setActiveTab, activeTab }) => {
         <>
           {/* Profile Image & Name */}
           <div className="flex flex-col items-center relative">
-            <label htmlFor="uploadProfile" className="cursor-pointer">
-              <img
-                src={avatarUrl}
-                alt="صورة الملف الشخصي"
-                className="w-24 h-24 shadow-xl rounded-full object-cover"
-                loading="lazy"
-              />
-            </label>
-            {id === myId && (
-              <input
-                type="file"
-                id="uploadProfile"
-                className="hidden"
-                accept="image/*"
-                onChange={handleImageChange}
-              />
-            )}
+            <div
+              className="relative"
+              onMouseEnter={() => setIsHovered(true)} // ✅ show on hover
+              onMouseLeave={() => setIsHovered(false)} // ✅ hide on leave
+            >
+              <label htmlFor="uploadProfile" className="cursor-pointer">
+                <img
+                  src={avatarUrl}
+                  alt="صورة الملف الشخصي"
+                  className="w-24 h-24 shadow-xl rounded-full object-cover transition-all duration-300"
+                  loading="lazy"
+                />
+                {/* ✅ Animated Lucide camera icon */}
+                {id === myId && (
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.8, y: 10 }}
+                    animate={{
+                      opacity: isHovered ? 1 : 0,
+                      scale: isHovered ? 1 : 0.8,
+                      y: isHovered ? 0 : 10,
+                    }}
+                    transition={{ duration: 0.25 }}
+                    className="absolute bottom-0 right-0 bg-white rounded-full shadow-md border p-1 cursor-pointer"
+                  >
+                    <Camera
+                      size={20}
+                      strokeWidth={1.8}
+                      className="text-[#7770E9]"
+                    />
+                  </motion.div>
+                )}
+              </label>
+              {id === myId && (
+                <input
+                  type="file"
+                  id="uploadProfile"
+                  className="hidden"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                />
+              )}
+            </div>
 
             <p className="font-normal text-[1.3rem] text-[#2F2E41] mt-2">
               {profileData?.name || "مستخدم"}

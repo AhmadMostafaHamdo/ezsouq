@@ -98,7 +98,7 @@ const Sidebar = () => {
 
           {/* Logout button */}
           <button
-            className="text-[#2F2E41] flex items-center gap-2 text-[.9rem] mt-3 rounded-md p-2 hover:text-red bg-red"
+            className="text-[#2F2E41] flex items-center gap-2 text-[.9rem] mt-3 rounded-md p-2 hover:text-red"
             onClick={() => setShowLogoutModal(true)}
           >
             <img src={logoutImg} alt="زر تسجيل الخروج" />
