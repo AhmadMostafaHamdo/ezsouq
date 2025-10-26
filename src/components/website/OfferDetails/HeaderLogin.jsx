@@ -17,6 +17,8 @@ import Sidebar from "../../common/Sidebar";
 import useUserId from "../../../hooks/useUserId";
 import { ulLinksLogin } from "../../../data/filterData";
 import { AnimatePresence, motion } from "framer-motion";
+import { logout } from "../../../store/auth/thunk/logout";
+import { useDispatch } from "react-redux";
 
 // Custom hook to detect scroll
 const useScrolled = (threshold = 10) => {
@@ -41,7 +43,7 @@ const HeaderLogin = () => {
   const userId = useUserId();
   const isScrolled = useScrolled(10);
   const menuRef = useRef();
-
+  const dispatch = useDispatch();
   // Keep image loaded only once
   const imageLoaded = useRef(false);
 
@@ -69,7 +71,8 @@ const HeaderLogin = () => {
 
   const toggleSidebar = () => setSidebarOpen((prev) => !prev);
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    await dispatch(logout());
     Cookies.remove("token");
     window.location.href = "/";
   };

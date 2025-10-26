@@ -11,7 +11,7 @@ import SortDropdown from "../components/website/SortDropdown";
 import Commit from "../components/website/commits/Commit";
 import Heading from "../components/common/Heading";
 import CommentSkeleton from "../assets/sketlon/CommentSketlon";
-
+import noCommits from "../assets/images/noCommits.svg";
 import { productThunkById } from "../store/product/thunk/productThunkById";
 import { getAllCommentsByIdThunk } from "../store/commits/thunk/getAllCommentsById";
 import { thunkAddCommit } from "../store/commits/thunk/thunkAddCommit";
@@ -38,7 +38,6 @@ const Commits = () => {
   // ------------------- Token Decode -------------------
   const token = Cookies.get("token");
   const { id: userId } = token ? jwtDecode(token) : {};
-
   // ------------------- Comments Meta -------------------
   const productComments = commentsByProductId?.[product?._id]?.comments || [];
   const totalComments =
@@ -113,7 +112,6 @@ const Commits = () => {
       dispatch(getRepliesByCommentId(commentId));
     }
   };
-
   // ------------------- JSX -------------------
   return (
     <div className="container pt-16" ref={topPage}>
@@ -139,13 +137,6 @@ const Commits = () => {
           {/* Input Field for Adding Comment */}
           {user && (
             <div className="flex items-center gap-4 mb-8">
-              {/* User Name Avatar */}
-              <div className="w-12 h-12 bg-[#F0F2F5] text-[#505050] rounded-full flex items-center justify-center font-bold">
-                {user?.name?.length > 6
-                  ? user?.name.slice(0, 6) + "..."
-                  : user?.name || "مستخدم"}
-              </div>
-
               {/* Comment Input */}
               <input
                 value={comment}
@@ -200,8 +191,11 @@ const Commits = () => {
                 })}
               </>
             ) : (
-              <div className="text-center text-[#808080] py-8">
-                <p>لا توجد تعليقات بعد</p>
+              <div className=" text-[#808080] py-8 flex-col flex-center md:w-[60vw]">
+                <p className="mb-5 -mt-10">
+                  لا توجد تعليقات بعد. كن أول من يشارك رأيه!
+                </p>
+                <img src={noCommits} alt="لا ي تعليقات" width={200} />
               </div>
             )}
 

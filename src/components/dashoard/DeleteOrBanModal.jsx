@@ -1,7 +1,7 @@
 import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { UserPlus, UserMinus } from "lucide-react";
-import block from "../../assets/images/dashboard/block.svg"
+import block from "../../assets/images/dashboard/block.svg";
 import deleteUser from "../../assets/images/dashboard/deleteIcon.svg";
 import close from "../../assets/images/close.svg";
 
@@ -14,8 +14,10 @@ const DeleteOrBanModal = ({ type, action, onConfirm, onCancel }) => {
   const isUnban = action === "unban";
   const isGrant = type === "grant";
   const isWithdraw = type === "withdraw";
+  const governorate = type === "governorate";
   const offer = type === "offer";
-  const img = type === "ban" ? block : type === "delete"||"offer" ? deleteUser : "";
+  const img =
+    type === "ban" ? block : type === "delete" || "offer" ? deleteUser : "";
   const title = isDelete
     ? "حذف مستخدم"
     : isUnban
@@ -26,8 +28,10 @@ const DeleteOrBanModal = ({ type, action, onConfirm, onCancel }) => {
     ? "منح الصلاحيات"
     : isWithdraw
     ? "سحب الصلاحيات"
-    :offer
-    ?"حذف الإعلان"
+    : offer
+    ? "حذف الإعلان"
+    : governorate
+    ? "حذف محافظة"
     : "";
 
   const description = isDelete
@@ -40,9 +44,10 @@ const DeleteOrBanModal = ({ type, action, onConfirm, onCancel }) => {
     ? "هل أنت متأكد من أنك تريد منح الصلاحيات لهذا المستخدم؟"
     : isWithdraw
     ? "هل أنت متأكد من أنك تريد سحب الصلاحيات من هذا المستخدم؟"
-    :offer
+    : governorate
+    ? "هل أنت متأكد من أنك تريد حذف هذ ؟"
+    : offer
     ? "هل أنت متأكد من أنك تريد حذف هذا الإعلان ؟"
-
     : "";
 
   const confirmLabel = isDelete
@@ -55,8 +60,10 @@ const DeleteOrBanModal = ({ type, action, onConfirm, onCancel }) => {
     ? "منح الصلاحيات"
     : isWithdraw
     ? "سحب الصلاحيات"
-    :offer
-    ?"حذف"
+    : offer
+    ? "حذف"
+    : governorate
+    ? "حذف المحافظة"
     : "";
 
   const confirmColor = isGrant

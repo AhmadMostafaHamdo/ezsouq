@@ -5,7 +5,7 @@ import TopBar from "../../components/dashoard/TopBar";
 const Dashboard = () => {
   return (
     <div className="bg-[#F7F7FF] min-h-screen">
-      <div className="container flex gap-6">
+      <div className="container flex gap-6 md:pr-40">
         <div className="flex">
           <Sidebar />
         </div>

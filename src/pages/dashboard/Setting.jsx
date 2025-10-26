@@ -24,6 +24,9 @@ const Offers = () => {
   const dispatch = useDispatch();
   const { governorates, loading } = useSelector((state) => state.governorates);
 
+  // Spinner overlay for add/update/delete actions
+  const [actionLoading, setActionLoading] = useState(false);
+
   // Search & Pagination
   const [inputValue, setInputValue] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
@@ -45,7 +48,7 @@ const Offers = () => {
     dispatch(thunkGovernorates());
   }, [dispatch]);
 
-  //  Debounce search input
+  // Debounce search input
   useEffect(() => {
     const timeout = setTimeout(() => {
       setSearchTerm(inputValue);
@@ -110,6 +113,7 @@ const Offers = () => {
 
   // Confirm Delete
   const handleDelete = async () => {
+    setActionLoading(true);
     try {
       await dispatch(deleteGovernorate(deleteModal.id)).unwrap();
       toast.success("تم حذف المحافظة بنجاح", {
@@ -122,6 +126,8 @@ const Offers = () => {
     } catch (error) {
       console.error("Error deleting governorate:", error);
       toast.error("حدث خطأ أثناء الحذف");
+    } finally {
+      setActionLoading(false);
     }
   };
 
@@ -138,6 +144,7 @@ const Offers = () => {
 
     const data = { name: trimmedName, cities: filteredCities };
 
+    setActionLoading(true);
     try {
       if (modal.type === "add") {
         await dispatch(addGovernorate({ data })).unwrap();
@@ -161,9 +168,12 @@ const Offers = () => {
     } catch (err) {
       console.error("Error saving governorate:", err);
       toast.error("حدث خطأ أثناء الحفظ");
+    } finally {
+      setActionLoading(false);
     }
   };
 
+  // Spinner during initial load
   if (loading)
     return (
       <div className="mt-48">
@@ -172,8 +182,15 @@ const Offers = () => {
     );
 
   return (
-    <div className="overflow-hidden font-sans bg-[#F5F5F5] min-h-screen">
+    <div className="overflow-hidden font-sans h-[60vh] relative">
       <ToastContainer />
+
+      {/* 🔹 Spinner Overlay during add/update/delete */}
+      {actionLoading && (
+        <div className="fixed inset-0 bg-[#00000060] z-50 flex justify-center items-center">
+          <Spinner />
+        </div>
+      )}
 
       {/* Add / Update Modal */}
       {modal.show && (
@@ -222,7 +239,7 @@ const Offers = () => {
               <label className="block text-sm font-medium mb-2">
                 المدن التابعة لها
               </label>
-              <div className="space-y-2 max-h-44 overflow-auto">
+              <div className="space-y-2 max-h-44 p-1 overflow-auto">
                 {currentGov.cities.map((city, idx) => (
                   <div
                     key={idx}

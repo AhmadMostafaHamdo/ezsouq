@@ -1,3 +1,4 @@
+// Sidebar.jsx
 import { NavLink } from "react-router-dom";
 import logo from "../../assets/images/logoWithTitle.svg";
 import logoutImg from "../../assets/images/dashboard/logout.svg";
@@ -14,17 +15,17 @@ const Sidebar = () => {
   const { sidebarIsOpen } = useSelector((state) => state.sidebar);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
 
-  // ✅ Logout handler
-  const handleLogout = () => {
-    dispatch(logout());
+  // ✅ Handle logout
+  const handleLogout = async () => {
+    await dispatch(logout());
     Cookies.remove("token");
     window.location.href = "/login";
   };
 
-  // ✅ Sidebar links
+  // ✅ Render dashboard links
   const renderLinks = () =>
     ulLinks?.map((link, index) => (
-      <div className="flex items-center gap-2 mb-4" key={index}>
+      <div className="flex items-center overflow-hidden gap-2 mb-4" key={index}>
         <img src={link.img} alt={`رابط ${link.name}`} width={25} />
         <li>
           <NavLink
@@ -33,8 +34,8 @@ const Sidebar = () => {
             onClick={() => dispatch(closeSidebar())}
             className={({ isActive }) =>
               isActive
-                ? "px-7 py-2 rounded-[10px] bg-[#E0E0FF] text-[#2F2E41] text-[.79rem] outline-none"
-                : "px-4 py-2 rounded-[10px] text-[#2F2E41] text-[.79rem] outline-none hover:text-[.88rem] hover:text-main"
+                ? "px-7 py-2 rounded-[10px] bg-[#E0E0FF] text-[#2F2E41] text-[.79rem]"
+                : "px-4 py-2 rounded-[10px] text-[#2F2E41] text-[.79rem] hover:text-[.88rem] hover:text-main"
             }
           >
             {link.name}
@@ -45,9 +46,9 @@ const Sidebar = () => {
 
   return (
     <>
-      {/* ===== Desktop Sidebar ===== */}
-      <div className="mt-[3vh] hidden lg:block">
-        <div className="w-44 rounded-lg flex flex-col justify-between h-[94vh] bg-white p-4 pt-1 pb-6">
+      {/* ===== Desktop Sidebar (fixed on right) ===== */}
+      <div className="hidden lg:block fixed top-0 right-0 h-screen z-40">
+        <div className="w-44 bg-white rounded-lg flex flex-col justify-between h-full p-4 pt-1 pb-6 shadow-sm">
           {/* Logo & Title */}
           <div>
             <img src={logo} alt="شعار الموقع" width={100} />
@@ -70,13 +71,13 @@ const Sidebar = () => {
         </div>
       </div>
 
-      {/* ===== Mobile Sidebar (from right) ===== */}
+      {/* ===== Mobile Sidebar (slide from right) ===== */}
       <div
         className={`fixed top-0 right-0 h-full w-64 bg-white shadow-xl transform transition-transform duration-300 z-50 lg:hidden
         ${sidebarIsOpen ? "translate-x-0" : "translate-x-full"}`}
       >
         <div className="flex flex-col justify-between h-full p-4">
-          {/* Header with logo + close button */}
+          {/* Header */}
           <div>
             <div className="flex items-center justify-between mb-4">
               <img src={logo} alt="شعار الموقع" width={100} />
@@ -107,7 +108,7 @@ const Sidebar = () => {
         </div>
       </div>
 
-      {/* ===== Overlay (closes sidebar on click) ===== */}
+      {/* ===== Overlay (mobile only) ===== */}
       {sidebarIsOpen && (
         <div
           className="fixed inset-0 bg-black bg-opacity-40 lg:hidden"

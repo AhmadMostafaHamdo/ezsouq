@@ -1,6 +1,8 @@
 import { useEffect, useState, useRef, useMemo } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useLocation, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
+import { motion, AnimatePresence } from "framer-motion";
+import { Maximize2, X } from "lucide-react"; // ✅ lucide-react icons
 
 // Images
 import iconProfile from "../../../assets/images/profileIcon.svg";
@@ -28,13 +30,14 @@ const Main = () => {
   const { product, loading } = useSelector((state) => state.products);
   const dispatch = useDispatch();
   const { id } = useParams();
-
+  const location = useLocation();
   const [publisher, setPublisher] = useState(null);
   const [loadingPublisher, setLoadingPublisher] = useState(false);
   const [selectedImage, setSelectedImage] = useState("");
   const [isImageLoaded, setIsImageLoaded] = useState(false);
+  const [isFullScreen, setIsFullScreen] = useState(false); // ✅ full image state
   const imgRef = useRef(null);
-  console.log(product);
+
   // 🔹 Fetch product details by ID
   useEffect(() => {
     if (id) dispatch(productThunkById(id));
@@ -45,7 +48,7 @@ const Main = () => {
     if (id) dispatch(viewsThunk(id));
   }, [dispatch, id]);
 
-  // 🔹 Fetch publisher (owner) info
+  // 🔹 Fetch publisher info
   useEffect(() => {
     const fetchPublisher = async () => {
       if (!product?.Owner?._id) return;
@@ -70,15 +73,8 @@ const Main = () => {
     }
   }, [product]);
 
-  // 🔹 Handle image load state
-  useEffect(() => {
-    setIsImageLoaded(false);
-    if (imgRef.current?.complete) setIsImageLoaded(true);
-  }, [selectedImage]);
-
   const mainPhotos = useMemo(() => product?.main_photos || [], [product]);
 
-  // 🔹 Image navigation
   const handleSelectImage = (img) => setSelectedImage(img);
   const handleImageLoad = () => setIsImageLoaded(true);
 
@@ -104,11 +100,11 @@ const Main = () => {
       </div>
     );
   }
-  console.log(publisher);
+
   const myImg = publisher?.avatar ? publisher.avatar : personalImg;
 
   return (
-    <div className="bg-[#F7F7FF] md:pt-2 overflow-x-hidden h-fit">
+    <div className="bg-[#F7F7FF] md:pt-2 overflow-x-hidden h-fit relative">
       {loading ? (
         <div className="mt-56">
           <Spinner />
@@ -136,7 +132,7 @@ const Main = () => {
                     <img
                       ref={imgRef}
                       src={`https://api.ezsouq.store/uploads/images/${selectedImage}`}
-                      alt="الصورة الرئيسية للمنتج"
+                      alt="Main Product Image"
                       className={`h-full w-full object-contain md:rounded-2xl bg-[#F7F7FF] transition-opacity duration-300 ${
                         isImageLoaded ? "opacity-100" : "opacity-0"
                       }`}
@@ -144,23 +140,31 @@ const Main = () => {
                       onLoad={handleImageLoad}
                       onError={() => setIsImageLoaded(true)}
                     />
+
+                    {/* ✅ expand icon */}
+                    <button
+                      onClick={() => setIsFullScreen(true)}
+                      className="absolute top-2 right-2 bg-white/80 hover:bg-white text-[#3F3D56] p-2 rounded-full shadow-md transition-all"
+                    >
+                      <Maximize2 className="w-5 h-5" />
+                    </button>
                   </>
                 )}
 
-                {/* Image Navigation Buttons */}
+                {/* Image navigation */}
                 {mainPhotos.length > 1 && (
                   <div className="absolute inset-y-1/2 left-1/2 -translate-x-1/2 flex justify-between w-[92%]">
                     <button
                       onClick={previousImg}
                       className="w-8 h-8 bg-[#FFFFFF] hover:bg-[#E0E0FF] transition-colors duration-200 flex items-center justify-center rounded-md shadow-md"
                     >
-                      <img src={rightArrow} alt="السابق" loading="lazy" />
+                      <img src={rightArrow} alt="Previous" loading="lazy" />
                     </button>
                     <button
                       onClick={nextImg}
                       className="w-8 h-8 bg-[#FFFFFF] hover:bg-[#E0E0FF] transition-colors duration-200 flex items-center justify-center rounded-md shadow-md"
                     >
-                      <img src={leftArrow} alt="التالي" loading="lazy" />
+                      <img src={leftArrow} alt="Next" loading="lazy" />
                     </button>
                   </div>
                 )}
@@ -183,7 +187,6 @@ const Main = () => {
 
             {/* ================= Right Section (Details) ================= */}
             <div className="w-full md:w-[70vw] pt-4 md:pt-2 pb-1">
-              {/* Product Name + Price */}
               <div className="flex justify-between md:block">
                 <div className="md:flex md:justify-between">
                   <h1 className="text-nowrap text-[1.5rem] lg:text-[1.8rem] text-[#3F3D56] font-bold">
@@ -191,7 +194,7 @@ const Main = () => {
                   </h1>
                   <img
                     src={heartDetails}
-                    alt="مفضلة"
+                    alt="Favorite"
                     className="hidden md:inline w-8 h-8 lg:w-9 lg:h-9"
                   />
                 </div>
@@ -200,32 +203,35 @@ const Main = () => {
                 </p>
               </div>
 
-              {/* Product Info */}
               <ul className="my-2">
                 <li className="flex gap-2 items-center mb-2 text-[#716D97]">
-                  <img src={car} alt="رمز السيارة" />
+                  <img src={car} alt="Car icon" />
                   <span>{product?.name}</span>
                 </li>
                 <li className="flex gap-2 items-center mb-2 text-[#716D97]">
-                  <img src={location} alt="رمز الموقع" />
+                  <img src={location} alt="Location icon" />
                   <span>
                     {product?.Governorate_name} - {product?.city}
                   </span>
                 </li>
                 <li className="flex gap-2 items-center mb-2 text-[#716D97]">
-                  <img src={time} alt="رمز الوقت" loading="lazy" />
+                  <img src={time} alt="Time icon" loading="lazy" />
                   <TimeAgo postDate={product?.createdAt} />
                 </li>
               </ul>
 
-              {/* Description */}
-              <div className="text-[#827FB2] text-[.9rem] break-words md:ml-44 lg:ml-32">
+              <div
+                className={`${
+                  location.pathname.includes("dashboard")
+                    ? "md:ml-44 lg:ml-36"
+                    : "md:ml-44 lg:ml-32"
+                }text-[#827FB2] text-[.9rem] break-words `}
+              >
                 {product.description}
               </div>
 
               <hr className="text-[#D9D9D9] mt-3" />
 
-              {/* Publisher Info */}
               {loadingPublisher ? (
                 <Spinner />
               ) : (
@@ -235,21 +241,18 @@ const Main = () => {
                   </h3>
                   {publisher && (
                     <div className="flex flex-col md:flex-row justify-between bg-[#FFFFFF] p-3 rounded-lg hover:shadow-md transition-all duration-200 gap-4">
-                      {/* Avatar */}
                       <img
                         key={publisher.avatar}
                         src={`${myImg}`}
                         loading="lazy"
-                        alt="صورة الناشر"
+                        alt="Publisher"
                         className="w-16 h-16 md:w-20 md:h-20 lg:w-24 lg:h-24 rounded-full self-center md:self-start"
                       />
-
-                      {/* Info */}
                       <ul className="flex flex-col justify-center gap-2 text-[#716D97]">
                         <li className="flex items-center gap-2">
                           <img
                             src={iconProfile}
-                            alt="رمز الملف الشخصي"
+                            alt="Profile icon"
                             className="w-4 h-4"
                           />
                           <span>{publisher?.name}</span>
@@ -257,7 +260,7 @@ const Main = () => {
                         <li className="flex items-center gap-2">
                           <img
                             src={phoneIcon}
-                            alt="رمز البريد الإلكتروني"
+                            alt="Email icon"
                             className="w-4 h-4"
                           />
                           <span>{publisher?.email}</span>
@@ -265,17 +268,15 @@ const Main = () => {
                         <li className="flex items-center gap-2">
                           <img
                             src={whatsIcon}
-                            alt="رمز الواتس آب"
+                            alt="WhatsApp icon"
                             className="w-4 h-4"
                           />
                           <span>{publisher?.whats_app}</span>
                         </li>
                       </ul>
-
-                      {/* Rating + Profile Link */}
                       <div className="flex flex-col md:items-end gap-2 mt-2 md:mt-0">
                         <p className="flex items-center justify-end">
-                          <img src={start} alt="تقييم" className="w-4 h-4" />
+                          <img src={start} alt="Rating" className="w-4 h-4" />
                           <span className="mr-1 text-[#1D2232]">
                             {publisher?.averageRating
                               ? publisher.averageRating.toFixed(1)
@@ -283,8 +284,12 @@ const Main = () => {
                           </span>
                         </p>
                         <Link
-                          to={`/profile/${product?.Owner?._id}`}
-                          className="bg-[#918AFF] text-nowrap hover:bg-[#7C73FF] transition-colors duration-200 text-white px-3 py-2 rounded-md font-bold text-[.8rem] text-center md:text-right"
+                          to={
+                            location.pathname.includes("dashboard")
+                              ? `/dashboard/users/${product?.Owner?._id}`
+                              : `/profile/${product?.Owner?._id}`
+                          }
+                          className="bg-[#918AFF] hover:bg-[#7C73FF] transition-colors duration-200 text-white px-3 py-2 rounded-md font-bold text-[.8rem] text-center md:text-right"
                         >
                           عرض الملف الشخصي
                         </Link>
@@ -296,7 +301,35 @@ const Main = () => {
             </div>
           </div>
 
-          {/* 🔹 Report Section */}
+          {/* ✅ Fullscreen Image Modal */}
+          <AnimatePresence>
+            {isFullScreen && (
+              <motion.div
+                className="fixed inset-0 bg-black/90 flex items-center justify-center z-50"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+              >
+                <motion.img
+                  src={`https://api.ezsouq.store/uploads/images/${selectedImage}`}
+                  alt="Expanded Image"
+                  className="max-h-[90vh] max-w-[95vw] object-contain rounded-lg"
+                  initial={{ scale: 0.8, opacity: 0 }}
+                  animate={{ scale: 1.05, opacity: 1 }}
+                  exit={{ scale: 0.8, opacity: 0 }}
+                  transition={{ duration: 0.4, ease: "easeInOut" }}
+                />
+                <button
+                  onClick={() => setIsFullScreen(false)}
+                  className="absolute top-4 right-4 bg-white/80 hover:bg-white text-[#1D2232] p-2 rounded-full shadow-md transition-all"
+                >
+                  <X className="w-6 h-6" />
+                </button>
+              </motion.div>
+            )}
+            []
+          </AnimatePresence>
+
           <Link to={`/offer-details/${id}/report/${product?.Owner?._id}`}>
             <p className="text-center text-[12px] font-normal text-[#7E7E7E] pt-5 pb-10 underline cursor-pointer hover:text-[#918AFF] transition-colors duration-200">
               ابلاغ عن هذا المستخدم

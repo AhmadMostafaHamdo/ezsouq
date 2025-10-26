@@ -217,12 +217,16 @@ const AuthForm = ({ fields, schema, btnAuth }) => {
                 </Link>
               )}
 
-              <button
+              <motion.button
+initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.4 }}
+                whileHover={{ scale: 1.05 }}            
                 disabled={isSubmitting}
                 className="w-full h-[2.9rem] text-white bg-primary rounded-xl"
               >
                 {isSubmitting ? "جارٍ الإرسال..." : btnAuth}
-              </button>
+              </motion.button>
 
               <p
                 className={`${

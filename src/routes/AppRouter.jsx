@@ -3,6 +3,7 @@ import { lazy } from "react";
 import SuspenseFallback from "../feedback/suspenseFallback/suspenseFallback";
 import GoogleAuthCallback from "../components/forms/GoogleAuthCallback";
 import PreventAuthAccess from "./PreventAuthAccess";
+import ProtectedRoute from "./ProtectedRoute";
 
 // ⚡ Lazy Load Pages & Components
 const App = lazy(() => import("../App"));
@@ -68,7 +69,14 @@ const router = createBrowserRouter([
     ),
     children: [
       { index: true, element: <MainWithFilters /> },
-      { path: "offer-details/:id", element: <PreventAuthAccess ><OfferDetails /> </PreventAuthAccess>},
+      {
+        path: "offer-details/:id",
+        element: (
+          <PreventAuthAccess>
+            <OfferDetails />{" "}
+          </PreventAuthAccess>
+        ),
+      },
       { path: "offer-details/:id/report/:userId", element: <Report /> },
       { path: "google-callback", element: <GoogleAuthCallback /> },
       { path: "wishlist", element: <Wishlist /> },
@@ -111,10 +119,15 @@ const router = createBrowserRouter([
   //  Dashboard (Admin Panel)
   {
     path: "/dashboard",
-    element: <Dashboard />,
+    element: (
+      <ProtectedRoute allowedRoles={["OWNER"]}>
+        <Dashboard />
+      </ProtectedRoute>
+    ),
     children: [
       { index: true, element: <Statistic /> },
       { path: "offers", element: <Offers /> },
+      { path: "offers/:id", element: <OfferDetails /> },
       { path: "users", element: <UsersDashboard /> },
       { path: "users/:id", element: <UserDetails /> },
       { path: "rating", element: <RatingDashboard /> },

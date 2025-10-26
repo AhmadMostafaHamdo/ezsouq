@@ -35,7 +35,7 @@ const Main = () => {
           onClick={() =>
             requireAuth(() => (window.location.href = "/create-offer"))
           }
-          className="mt-8 block h-[8vh] hover:scale-105 w-[70vw] flex-center rounded-xl bg-white text-[1rem] font-bold text-primary md:h-[60px] md:w-[262px]"
+          className="mt-8 block h-[8vh] w-[70vw] flex-center rounded-xl bg-white text-[1rem] font-bold text-primary md:h-[60px] md:w-[262px] hover:scale-105 hover:bg-[#ffffffe8]"
           aria-label="Publish Offer"
         >
           نشر إعلان

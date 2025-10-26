@@ -1,45 +1,54 @@
-// src/components/CarStatsDashboard.jsx
-import React, { useEffect } from "react";
+// 🧩 CarStatsDashboard.jsx
+// Comments in English only
+// لوحة إحصائيات الإعلانات - Dashboard Statistics
+
+import React, { useMemo } from "react";
 import { ResponsivePie } from "@nivo/pie";
 import { useSelector } from "react-redux";
 
 const CarStatsDashboard = () => {
   const { statisticCategories } = useSelector((state) => state.statistic);
-  const pieData = [
-    {
-      id: "عقارات",
-      label: "إعلانات العقارات",
-      value: statisticCategories[1]?.count,
-      color: "#4c6ef5",
-    },
-    {
-      id: "سيارات",
-      label: "إعلانات السيارات",
-      value: statisticCategories[2]?.count,
-      color: "#5f3dc4",
-    },
-    {
-      id: "منوعات",
-      label: "إعلانات المنوعات",
-      value:
-        statisticCategories[1]?.count +
-        statisticCategories[1]?.count +
-        statisticCategories[2]?.count,
-      color: "#748ffc",
-    },
-    {
-      id: "إلكترونيات",
-      label: "إعلانات الالكترونيات",
-      value: statisticCategories[1]?.count,
-      color: "#9775fa",
-    },
-  ];
 
-  const total =
-    statisticCategories[1]?.count +
-    statisticCategories[1]?.count +
-    statisticCategories[2]?.count;
+  // ✅ Safely extract counts or default to 0
+  const realEstate = statisticCategories?.[1]?.count || 0;
+  const cars = statisticCategories?.[2]?.count || 0;
+  const electronics = statisticCategories?.[3]?.count || 0;
 
+  // ✅ Compute totals safely
+  const total = realEstate + cars + electronics;
+
+  // ✅ Prepare chart data using useMemo (optimization)
+  const pieData = useMemo(
+    () => [
+      {
+        id: "عقارات",
+        label: "إعلانات العقارات",
+        value: realEstate,
+        color: "#4c6ef5",
+      },
+      {
+        id: "سيارات",
+        label: "إعلانات السيارات",
+        value: cars,
+        color: "#5f3dc4",
+      },
+      {
+        id: "إلكترونيات",
+        label: "إعلانات الإلكترونيات",
+        value: electronics,
+        color: "#9775fa",
+      },
+      {
+        id: "منوعات",
+        label: "إعلانات منوعة",
+        value: total,
+        color: "#748ffc",
+      },
+    ],
+    [realEstate, cars, electronics, total]
+  );
+
+  // ✅ Inner metric text in the center of the pie
   const CenteredMetric = ({ centerX, centerY }) => (
     <>
       <text
@@ -47,11 +56,7 @@ const CarStatsDashboard = () => {
         y={centerY - 10}
         textAnchor="middle"
         dominantBaseline="central"
-        style={{
-          fontSize: "16px",
-          fontWeight: "bold",
-          fill: "#111",
-        }}
+        style={{ fontSize: 16, fontWeight: "bold", fill: "#111" }}
       >
         {total}
       </text>
@@ -60,11 +65,7 @@ const CarStatsDashboard = () => {
         y={centerY + 10}
         textAnchor="middle"
         dominantBaseline="central"
-        style={{
-          fontSize: "10px",
-          fill: "#555",
-          fontWeight: "bold",
-        }}
+        style={{ fontSize: 10, fontWeight: "bold", fill: "#555" }}
       >
         إعلان منشور
       </text>
@@ -74,17 +75,18 @@ const CarStatsDashboard = () => {
   return (
     <div
       style={{
-        background: "#ffffff",
-        borderRadius: "16px",
+        background: "#fff",
+        borderRadius: 16,
         boxShadow: "0 2px 6px rgba(0,0,0,0.1)",
         textAlign: "center",
-        maxWidth: "350px",
+        maxWidth: 350,
         margin: "10px auto 0",
-        paddingLeft: "10px",
+        paddingLeft: 10,
       }}
       className="flex-col md:flex-row flex-between"
     >
-      <div style={{ height: "170px", width: "240px" }}>
+      {/* ✅ Pie chart section */}
+      <div style={{ height: 170, width: 240 }}>
         <ResponsivePie
           data={pieData}
           margin={{ top: 10, right: 10, bottom: 10, left: 10 }}
@@ -99,13 +101,13 @@ const CarStatsDashboard = () => {
         />
       </div>
 
-      {/* القائمة أسفل */}
+      {/* ✅ Categories list below */}
       <div
         style={{
           display: "grid",
           gridTemplateColumns: "1fr 1fr",
-          gap: "12px",
-          marginTop: "20px",
+          gap: 12,
+          marginTop: 20,
         }}
       >
         {pieData.map((item) => (
@@ -115,22 +117,22 @@ const CarStatsDashboard = () => {
               display: "flex",
               justifyContent: "center",
               alignItems: "center",
-              gap: "6px",
-              fontSize: "14px",
+              gap: 6,
+              fontSize: 14,
               color: "#333",
             }}
           >
             <span
               style={{
-                width: "8px",
-                height: "8px",
+                width: 8,
+                height: 8,
                 borderRadius: "50%",
                 backgroundColor: item.color,
                 display: "inline-block",
               }}
             />
             <span>{item.label}</span>
-            <strong style={{ marginLeft: "4px" }}>{item.value}</strong>
+            <strong style={{ marginLeft: 4 }}>{item.value}</strong>
           </div>
         ))}
       </div>

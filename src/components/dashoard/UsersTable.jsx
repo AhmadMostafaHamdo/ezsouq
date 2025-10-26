@@ -85,7 +85,6 @@ const UsersTable = ({ title = "المستخدمين", extraActions = null }) => 
     if (!id) return;
     try {
       await dispatch(banUser({ id, action }));
-      toast.success(action === "ban" ? "تم حظر المستخدم" : "تم إلغاء الحظر");
       dispatch(getAllUsers({ page, search: debouncedSearch }));
     } catch (err) {
       toast.error("حدث خطأ أثناء تغيير حالة الحظر");

@@ -9,6 +9,7 @@ export const productsThunkForMe = createAsyncThunk(
     try {
       console.log("id", id);
       const res = await axios.get(`/user/get_product_user/${id}`);
+      console.log(res.data)
       console.log(res.data);
       return res.data;
     } catch (error) {
