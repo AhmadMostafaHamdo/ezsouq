@@ -1,54 +1,54 @@
-// 🧩 CarStatsDashboard.jsx
-// Comments in English only
-// لوحة إحصائيات الإعلانات - Dashboard Statistics
-
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo } from "react";
 import { ResponsivePie } from "@nivo/pie";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { statisticThunkCategory } from "../../store/statistic/thunk/statisticThunkCategory";
 
 const CarStatsDashboard = () => {
-  const { statisticCategories } = useSelector((state) => state.statistic);
-
-  // ✅ Safely extract counts or default to 0
-  const realEstate = statisticCategories?.[1]?.count || 0;
-  const cars = statisticCategories?.[2]?.count || 0;
-  const electronics = statisticCategories?.[3]?.count || 0;
-
-  // ✅ Compute totals safely
-  const total = realEstate + cars + electronics;
-
-  // ✅ Prepare chart data using useMemo (optimization)
-  const pieData = useMemo(
-    () => [
-      {
-        id: "عقارات",
-        label: "إعلانات العقارات",
-        value: realEstate,
-        color: "#4c6ef5",
-      },
-      {
-        id: "سيارات",
-        label: "إعلانات السيارات",
-        value: cars,
-        color: "#5f3dc4",
-      },
-      {
-        id: "إلكترونيات",
-        label: "إعلانات الإلكترونيات",
-        value: electronics,
-        color: "#9775fa",
-      },
-      {
-        id: "منوعات",
-        label: "إعلانات منوعة",
-        value: total,
-        color: "#748ffc",
-      },
-    ],
-    [realEstate, cars, electronics, total]
+  const dispatch = useDispatch();
+  const { statisticCategories = [], loading } = useSelector(
+    (state) => state.statistic
   );
 
-  // ✅ Inner metric text in the center of the pie
+  // Load data once if empty
+  useEffect(() => {
+    if (!statisticCategories || statisticCategories.length === 0) {
+      dispatch(statisticThunkCategory());
+    }
+  }, [dispatch, statisticCategories]);
+
+  // Helper to get count by category name
+  const getCount = (name) =>
+    statisticCategories.find(
+      (item) => item.category?.toLowerCase() === name.toLowerCase()
+    )?.count || 0;
+
+  // Memoize chart data to prevent unnecessary re-renders
+  const pieData = useMemo(() => {
+    const cars = getCount("سيارات");
+    const mobiles = getCount("موبايلات");
+    const realEstate = getCount("عقارات");
+    const electronics = getCount("إلكترونيات");
+
+    // Other categories (not in the main list)
+    const known = ["سيارات", "موبايلات", "عقارات", "إلكترونيات"];
+    const others = statisticCategories
+      .filter((item) => !known.includes(item.category))
+      .reduce((sum, item) => sum + (item.count || 0), 0);
+
+    const total = cars + mobiles + realEstate + electronics + others;
+
+    return {
+      total,
+      data: [
+        { id: "سيارات", label: "إعلانات السيارات", value: cars, color: "#4c6ef5" },
+        { id: "موبايلات", label: "إعلانات الموبايلات", value: mobiles, color: "#9775fa" },
+        { id: "عقارات", label: "إعلانات العقارات", value: realEstate, color: "#5f3dc4" },
+        { id: "إلكترونيات", label: "إعلانات الإلكترونيات", value: electronics, color: "#748ffc" },
+        { id: "منوعات", label: "إعلانات منوعة", value: others, color: "#82c91e" },
+      ].filter((item) => item.value > 0),
+    };
+  }, [statisticCategories]);
+
   const CenteredMetric = ({ centerX, centerY }) => (
     <>
       <text
@@ -58,7 +58,7 @@ const CarStatsDashboard = () => {
         dominantBaseline="central"
         style={{ fontSize: 16, fontWeight: "bold", fill: "#111" }}
       >
-        {total}
+        {pieData.total}
       </text>
       <text
         x={centerX}
@@ -72,6 +72,13 @@ const CarStatsDashboard = () => {
     </>
   );
 
+  if (loading)
+    return (
+      <div className="text-center p-6 text-gray-500">
+        ...جاري تحميل الإحصاءات
+      </div>
+    );
+
   return (
     <div
       style={{
@@ -83,12 +90,11 @@ const CarStatsDashboard = () => {
         margin: "10px auto 0",
         paddingLeft: 10,
       }}
-      className="flex-col md:flex-row flex-between"
     >
-      {/* ✅ Pie chart section */}
-      <div style={{ height: 170, width: 240 }}>
+      {/* Pie chart */}
+      <div style={{ height: 120, width: 130, margin: "auto" }}>
         <ResponsivePie
-          data={pieData}
+          data={pieData.data}
           margin={{ top: 10, right: 10, bottom: 10, left: 10 }}
           innerRadius={0.75}
           padAngle={0.7}
@@ -101,16 +107,16 @@ const CarStatsDashboard = () => {
         />
       </div>
 
-      {/* ✅ Categories list below */}
+      {/* Categories list */}
       <div
         style={{
           display: "grid",
           gridTemplateColumns: "1fr 1fr",
           gap: 12,
-          marginTop: 20,
+          marginTop: -13,
         }}
       >
-        {pieData.map((item) => (
+        {pieData.data.map((item) => (
           <div
             key={item.id}
             style={{
@@ -128,7 +134,6 @@ const CarStatsDashboard = () => {
                 height: 8,
                 borderRadius: "50%",
                 backgroundColor: item.color,
-                display: "inline-block",
               }}
             />
             <span>{item.label}</span>

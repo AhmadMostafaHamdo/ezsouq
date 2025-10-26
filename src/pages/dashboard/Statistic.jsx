@@ -113,7 +113,7 @@ const Statistic = () => {
                 }}
                 transition={{ duration: 0.4 }}
               >
-                <StatisticComponent {...stat} />
+                     <StatisticComponent {...stat} />
               </motion.div>
             ))}
           </motion.div>
