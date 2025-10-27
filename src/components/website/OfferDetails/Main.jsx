@@ -283,7 +283,7 @@ const Main = () => {
 
               {/* Video Info */}
               {showVideo && hasVideo && (
-                <div className="hidden md:block text-center text-sm text-gray-600 bg-white px-4 py-2 rounded-lg shadow-sm">
+                <div className="hidden md:block text-center text-sm text-[#808080d8] bg-white px-4 py-2 rounded-lg shadow-sm">
                   <p className="flex items-center justify-center gap-2">
                     <svg
                       className="w-4 h-4"
