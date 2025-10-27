@@ -9,17 +9,15 @@ export const updateUserPhoto = createAsyncThunk(
     try {
       const formData = new FormData();
       formData.append("avatar", file);
-      const res = await axios.put("/user/photo", formData, {
+      const res = await axios.put(import.meta.env.VITE_USER_UPDATE_PHOTO_ENDPOINT, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
           authorization: `Bearer ${Cookies.get("token")}`,
         },
       });
       toast.success(res.data?.message);
-      console.log(res.data);
       return res.data;
     } catch (error) {
-      console.log(error);
       let errorMessage = "حدث خطأ غير متوقع";
 
       // Handle network errors (no internet connection)

@@ -17,16 +17,16 @@ import {
 } from "../../store/steps/stepsSlice";
 import { toast, ToastContainer } from "react-toastify";
 import Spinner from "../../feedback/loading/Spinner";
+import useUserId from "../../hooks/useUserId";
 
 const MainCreateOffer = () => {
   const dispatch = useDispatch();
   const offerRef = useRef();
 
   const { currentStep } = useSelector((state) => state.steps);
-  const { user } = useSelector((state) => state.users);
   const { selectedCategory } = useSelector((state) => state.category);
-
-  const userId = user?._id;
+  
+  const userId = useUserId();
   const token = Cookies.get("token");
 
   const [stepOneData, setStepOneData] = useState(null);
@@ -46,7 +46,20 @@ const MainCreateOffer = () => {
 
   // ================= Step Two =================
   const handleStepTwoSubmit = async (stepTwoData) => {
-    if (!stepOneData) return;
+    if (!stepOneData) {
+      toast.error("لم يتم حفظ بيانات الخطوة الأولى");
+      return;
+    }
+
+    if (!userId) {
+      toast.error("يجب تسجيل الدخول أولاً");
+      return;
+    }
+
+    if (!token) {
+      toast.error("جلسة المستخدم منتهية الصلاحية");
+      return;
+    }
 
     // Merge step one and step two data
     const finalData = {
@@ -79,6 +92,14 @@ const MainCreateOffer = () => {
 
     try {
       setIsSubmitting(true);
+      
+      // Log the data being sent for debugging
+      console.log('Sending data:', {
+        owner_id: userId,
+        formDataKeys: Array.from(formData.keys()),
+        finalData: Object.keys(finalData)
+      });
+      
       const res = await axios.post("/user/add_product", formData, {
         params: { owner_id: userId },
         headers: {
@@ -89,7 +110,9 @@ const MainCreateOffer = () => {
       toast.success(res.data?.message || "تم نشر الإعلان بنجاح");
       dispatch(clearStep());
     } catch (error) {
-      toast.error(error.response?.data?.message || "فشل في نشر الإعلان");
+      console.error('Error submitting offer:', error.response?.data || error.message);
+      const errorMessage = error.response?.data?.message || error.response?.data?.error || "فشل في نشر الإعلان";
+      toast.error(errorMessage);
     } finally {
       setIsSubmitting(false);
     }

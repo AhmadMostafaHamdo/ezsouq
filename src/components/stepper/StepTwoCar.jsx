@@ -62,7 +62,15 @@ const StepTwoCars = ({ onSubmit }) => {
         {errors.isnew && <p className="text-red">{errors.isnew.message}</p>}
 
         {/* Video Upload */}
-        <VideoUploader name="video" label="إضافة فيديو" />
+        <VideoUploader name="video" label="إضافة فيديو للسيارة (اختياري)" error={errors.video} />
+        
+        {/* Submit Button */}
+        <button
+          type="submit"
+          className="self-end bg-primary text-white rounded-xl py-1 px-5"
+        >
+          حفظ ومتابعة
+        </button>
 
       </form>
     </FormProvider>

@@ -8,7 +8,7 @@ export const thunkAddCommit = createAsyncThunk(
   async ({ product_id, comment }, { rejectWithValue }) => {
     try {
       const res = await axios.post(
-        "/user/comment",
+        import.meta.env.VITE_USER_COMMENT_ENDPOINT,
         {
           product_id,
           comment,

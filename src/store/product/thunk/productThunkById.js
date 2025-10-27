@@ -5,7 +5,7 @@ export const productThunkById = createAsyncThunk(
   "/product/id",
   async (id, { rejectWithValue }) => {
     try {
-      const res = await axios.get(`/user/product/${id}`);
+      const res = await axios.get(`${import.meta.env.VITE_USER_PRODUCT_ENDPOINT}/${id}`);
       return res.data;
     } catch (error) {
       return handleThunkError(error, rejectWithValue);

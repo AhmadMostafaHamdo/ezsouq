@@ -35,7 +35,7 @@ const ContactUs = () => {
     console.log(form);
     try {
       setLoading(true);
-      const res = await axios.post("/user/contact", form);
+      const res = await axios.post(import.meta.env.VITE_USER_CONTACT_ENDPOINT, form);
       setLoading(false);
       setForm({
         name: "",

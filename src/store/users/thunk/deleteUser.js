@@ -20,7 +20,7 @@ export const deleteUser = createAsyncThunk(
         return rejectWithValue("User ID is missing");
       }
 
-      const res = await axios.delete("admin/Delet_User", {
+      const res = await axios.delete(import.meta.env.VITE_ADMIN_DELETE_USER_ENDPOINT, {
         data: { user_id: id },
         headers: {
           authorization: `Bearer ${Cookies.get("token")}`,

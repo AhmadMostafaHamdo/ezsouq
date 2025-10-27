@@ -30,7 +30,7 @@ const MobileCards = ({ data, loading, onDelete }) => {
             <img
               src={
                 item.main_photos?.[0]
-                  ? `https://api.ezsouq.store/uploads/images/${item.main_photos[0]}`
+                  ? `${import.meta.env.VITE_API_BASE_URL}/uploads/images/${item.main_photos[0]}`
                   : profile
               }
               alt={item.name}

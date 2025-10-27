@@ -8,7 +8,7 @@ export const updateUser = createAsyncThunk(
   async (user, { rejectWithValue }) => {
     try {
       const res = await axios.put(
-        "/user/update_information",
+        import.meta.env.VITE_USER_UPDATE_INFO_ENDPOINT,
         {
           name: user?.name,
           avatar: user?.avatar,

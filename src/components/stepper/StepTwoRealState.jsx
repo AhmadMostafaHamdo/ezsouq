@@ -1,20 +1,15 @@
 import { useRef } from "react";
-import { useForm, Controller } from "react-hook-form";
+import { useForm, Controller, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Select from "../select/Select";
+import VideoUploader from "../common/VideoUploader";
 import { stepTwoRealStateSchema } from "../../validation/createOffer";
 
 const StepTwoRealState = ({ onSubmit }) => {
   const videoRef = useRef(null);
 
   // Initialize React Hook Form with Zod validation
-  const {
-    register,
-    handleSubmit,
-    setValue,
-    control,
-    formState: { errors },
-  } = useForm({
+  const methods = useForm({
     resolver: zodResolver(stepTwoRealStateSchema),
     defaultValues: {
       real_estate_type: "",
@@ -25,6 +20,14 @@ const StepTwoRealState = ({ onSubmit }) => {
     },
   });
 
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    control,
+    formState: { errors },
+  } = methods;
+
   // Auto-copy real_estate_type to name
   const handleRealEstateChange = (val) => {
     setValue("real_estate_type", val);
@@ -32,11 +35,12 @@ const StepTwoRealState = ({ onSubmit }) => {
   };
 
   return (
-    <form
-      id="form-step2"
-      onSubmit={handleSubmit(onSubmit)}
-      className="flex flex-col gap-3 w-[80vw] md:w-[60vw] lg:w-[45vw] pb-6 text-[#B9B5FF]"
-    >
+    <FormProvider {...methods}>
+      <form
+        id="form-step2"
+        onSubmit={handleSubmit(onSubmit)}
+        className="flex flex-col gap-3 w-[80vw] md:w-[60vw] lg:w-[45vw] pb-6 text-[#B9B5FF]"
+      >
       {/* Real Estate Type */}
       <Controller
         name="real_estate_type"
@@ -108,14 +112,11 @@ const StepTwoRealState = ({ onSubmit }) => {
       </div>
 
       {/* Video Upload */}
-      <input
-        type="file"
-        ref={videoRef}
-        accept="video/*"
-        className="hidden"
-        onChange={(e) => setValue("video", e.target.files?.[0])}
+      <VideoUploader 
+        name="video" 
+        label="إضافة فيديو للعقار (اختياري)" 
+        error={errors.video}
       />
-      {errors.video && <p className="text-red">{errors.video.message}</p>}
 
       {/* Submit Button */}
       <button
@@ -124,7 +125,8 @@ const StepTwoRealState = ({ onSubmit }) => {
       >
         حفظ ومتابعة
       </button>
-    </form>
+      </form>
+    </FormProvider>
   );
 };
 

@@ -17,6 +17,7 @@ import { thunkGovernorates } from "../store/governorates/thunk/thunkGovernorates
 import { thunkCities } from "../store/cities/thunk/citiesThunk";
 import Card from "../components/website/Card";
 import Spinner from "../feedback/loading/Spinner";
+import Heading from "../components/common/Heading";
 
 const Search = () => {
   const contactRef = useRef(null);
@@ -136,7 +137,9 @@ const Search = () => {
     searchedProducts.length > 0 && searchValue.trim() !== "";
 
   return (
-    <div className="bg-[#F7F7FF]" ref={contactRef}>
+    <div className="bg-[#F7F7FF] pt-14" ref={contactRef}>
+     
+        <Heading title='الرجوع' />
       <ToastContainer />
 
       {/* ===== Filter Sidebar ===== */}
@@ -283,7 +286,7 @@ const Search = () => {
       )}
 
       {/* ===== Search Results ===== */}
-      <div className="container pt-20">
+      <div className="container">
         <div className="flex items-center gap-4 md:gap-10 flex-col md:flex-row">
           <div className="flex items-center md:w-auto">
             <h1 className="font-normal text-[#2F2E41] text-xl md:text-[1.5rem] leading-9 mb-3 ml-4 md:mb-0">

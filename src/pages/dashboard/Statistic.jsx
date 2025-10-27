@@ -242,7 +242,7 @@ const Statistic = () => {
                               loading="lazy"
                               src={
                                 product?.main_photo
-                                  ? `https://api.ezsouq.store/uploads/images/${product.main_photo}`
+                                  ? `${import.meta.env.VITE_API_BASE_URL}/uploads/images/${product.main_photo}`
                                   : personalImg
                               }
                               alt="صورة المنتج"

@@ -20,7 +20,7 @@ const NewPassword = () => {
       setLoading(true);
 
       // استدعاء API الصحيح لتغيير كلمة المرور
-      const res = await axios.post(`/change_password_link?token=${token}`, {
+      const res = await axios.post(`${import.meta.env.VITE_CHANGE_PASSWORD_ENDPOINT}?token=${token}`, {
         newPassword: password,
       });
 

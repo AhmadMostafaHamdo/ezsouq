@@ -83,10 +83,7 @@ const StepTwoTec = ({ onSubmit }) => {
         )}
 
         {/* Video Upload */}
-        <VideoUploader name="video" label="إضافة فيديو" />
-        {methods.formState.errors.video && (
-          <p className="text-red">{methods.formState.errors.video.message}</p>
-        )}
+        <VideoUploader name="video" label="إضافة فيديو للجهاز (اختياري)" error={methods.formState.errors.video} />
 
         {/* Submit Button */}
         <button

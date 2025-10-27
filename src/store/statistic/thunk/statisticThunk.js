@@ -6,7 +6,7 @@ export const thunkStatistic = createAsyncThunk(
   "/statistics",
   async (_, { rejectWithValue }) => {
     try {
-      const res = await axios.get("/admin/statistics", {
+      const res = await axios.get(import.meta.env.VITE_ADMIN_STATISTICS_ENDPOINT, {
         headers: {
           authorization: `Bearer ${Cookies.get("token")}`,
         },

@@ -19,7 +19,7 @@ const ForgotPassword = () => {
 
     try {
       setLoading(true);
-      const res = await axios.post("/send_reset_link", { email });
+      const res = await axios.post(import.meta.env.VITE_SEND_RESET_LINK_ENDPOINT, { email });
       toast.success(res.data?.message || "تم إرسال رابط إعادة التعيين");
     } catch (error) {
       const message =

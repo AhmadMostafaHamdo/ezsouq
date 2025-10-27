@@ -1,17 +1,22 @@
 {
   "name": "ezsouq",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "private": true,
-  "description": "This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.",
-  "license": "ISC",
-  "author": "",
+  "description": "EzSouq - Modern marketplace application built with React and Vite",
+  "license": "MIT",
+  "author": "EzSouq Team",
   "type": "module",
-  "main": "eslint.config.js",
+  "main": "src/main.jsx",
+  "homepage": ".",
   "scripts": {
     "start": "vite",
+    "dev": "vite",
     "build": "vite build",
+    "preview": "vite preview",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "lint:fix": "eslint . --fix",
+    "clean": "rm -rf dist node_modules/.vite",
+    "analyze": "npm run build && npx vite-bundle-analyzer dist"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.1.1",

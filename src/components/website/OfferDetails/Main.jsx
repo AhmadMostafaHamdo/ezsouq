@@ -2,7 +2,7 @@ import { useEffect, useState, useRef, useMemo } from "react";
 import { Link, useLocation, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { motion, AnimatePresence } from "framer-motion";
-import { Maximize2, X } from "lucide-react"; // ✅ lucide-react icons
+import { Maximize2, X } from "lucide-react"; // lucide-react icons
 
 // Images
 import iconProfile from "../../../assets/images/profileIcon.svg";
@@ -29,14 +29,17 @@ import { viewsThunk } from "../../../store/views/thunk/thunkViews";
 const Main = () => {
   const { product, loading } = useSelector((state) => state.products);
   const dispatch = useDispatch();
+  console.log(product);
   const { id } = useParams();
   const location = useLocation();
   const [publisher, setPublisher] = useState(null);
   const [loadingPublisher, setLoadingPublisher] = useState(false);
   const [selectedImage, setSelectedImage] = useState("");
   const [isImageLoaded, setIsImageLoaded] = useState(false);
-  const [isFullScreen, setIsFullScreen] = useState(false); // ✅ full image state
+  const [isFullScreen, setIsFullScreen] = useState(false); // full image state
+  const [showVideo, setShowVideo] = useState(false); // video display state
   const imgRef = useRef(null);
+  const videoRef = useRef(null);
 
   // 🔹 Fetch product details by ID
   useEffect(() => {
@@ -73,6 +76,9 @@ const Main = () => {
     }
   }, [product]);
 
+  // 🔹 Check if product has video and decode filename
+  const hasVideo = product?.video && product.video.trim() !== "";
+  const videoFileName = hasVideo ? decodeURIComponent(product.video) : null;
   const mainPhotos = useMemo(() => product?.main_photos || [], [product]);
 
   const handleSelectImage = (img) => setSelectedImage(img);
@@ -118,11 +124,38 @@ const Main = () => {
 
           {/* 🔹 Main Layout */}
           <div className="container flex flex-col md:flex-row items-center md:items-start md:gap-8 lg:gap-11 -mt-5">
-            {/* ================= Left Section (Images) ================= */}
+            {/* ================= Left Section (Images & Video) ================= */}
             <div className="flex flex-col items-center w-fit gap-6 md:mt-5">
-              {/* Main Image */}
-              <div className="relative bg-[#F7F7FF] w-[100vw] h-[30vh] md:w-[50vh] lg:w-[60vh] md:h-[53vh] md:rounded-2xl">
-                {selectedImage && (
+              {/* Media Toggle Buttons */}
+              {hasVideo && (
+                <div className="flex bg-white rounded-lg p-1 shadow-sm border border-black/20">
+                  <button
+                    onClick={() => setShowVideo(false)}
+                    className={`px-4 py-2 rounded-md text-sm font-medium transition-all ${
+                      !showVideo
+                        ? "bg-primary text-white shadow-sm"
+                        : "text-[#808080b4] hover:text-black"
+                    }`}
+                  >
+                    الصور ({mainPhotos.length})
+                  </button>
+                  <button
+                    onClick={() => setShowVideo(true)}
+                    className={`px-4 py-2 rounded-md text-sm font-medium transition-all duration-300 ${
+                      showVideo
+                        ? "bg-primary text-white shadow-sm"
+                        : "text-[#808080b4] hover:text-black"
+                    }`}
+                  >
+                    الفيديو
+                  </button>
+                </div>
+              )}
+
+              {/* Main Media Container */}
+              <div className="relative bg-[#F7F7FF] w-[100vw] h-[30vh] md:w-[50vh] lg:w-[60vh] md:h-[53vh] md:rounded-2xl overflow-hidden">
+                {/* Image Display */}
+                {!showVideo && selectedImage && (
                   <>
                     {!isImageLoaded && (
                       <div className="absolute inset-0 flex items-center justify-center bg-white/50 backdrop-blur-sm">
@@ -131,7 +164,9 @@ const Main = () => {
                     )}
                     <img
                       ref={imgRef}
-                      src={`https://api.ezsouq.store/uploads/images/${selectedImage}`}
+                      src={`${
+                        import.meta.env.VITE_API_BASE_URL
+                      }/uploads/images/${selectedImage}`}
                       alt="Main Product Image"
                       className={`h-full w-full object-contain md:rounded-2xl bg-[#F7F7FF] transition-opacity duration-300 ${
                         isImageLoaded ? "opacity-100" : "opacity-0"
@@ -141,7 +176,7 @@ const Main = () => {
                       onError={() => setIsImageLoaded(true)}
                     />
 
-                    {/* ✅ expand icon */}
+                    {/* expand icon */}
                     <button
                       onClick={() => setIsFullScreen(true)}
                       className="absolute top-2 right-2 bg-white/80 hover:bg-white text-[#3F3D56] p-2 rounded-full shadow-md transition-all"
@@ -151,8 +186,67 @@ const Main = () => {
                   </>
                 )}
 
-                {/* Image navigation */}
-                {mainPhotos.length > 1 && (
+                {/* Video Display */}
+                {showVideo && hasVideo && (
+                  <div className="relative h-full w-full">
+                    <video
+                      ref={videoRef}
+                      controls
+                      className="h-full w-full object-contain md:rounded-2xl bg-[#F7F7FF]"
+                      poster={
+                        selectedImage
+                          ? `${
+                              import.meta.env.VITE_API_BASE_URL
+                            }/uploads/images/${selectedImage}`
+                          : undefined
+                      }
+                      onError={(e) => {
+                        console.error("Video loading error:", e);
+                        console.error("Video src:", e.target.src);
+                      }}
+                      onLoadStart={() => console.log("Video loading started")}
+                      onCanPlay={() => console.log("Video can play")}
+                    >
+                      <source
+                        src={`${
+                          import.meta.env.VITE_API_BASE_URL
+                        }/uploads/videos/optimized/${encodeURIComponent(
+                          product.video
+                        )}`}
+                        type="video/mp4"
+                      />
+                      <source
+                        src={`${
+                          import.meta.env.VITE_API_BASE_URL
+                        }/uploads/videos/${encodeURIComponent(product.video)}`}
+                        type="video/mp4"
+                      />
+                      <p className="text-center text-gray-500 p-4">
+                        متصفحك لا يدعم عرض الفيديو.
+                        <a
+                          href={`${
+                            import.meta.env.VITE_API_BASE_URL
+                          }/uploads/videos/optimized/${encodeURIComponent(
+                            product.video
+                          )}`}
+                          className="text-primary hover:underline"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          اضغط هنا لتحميل الفيديو
+                        </a>
+                      </p>
+                    </video>
+
+                    {/* Video Loading Indicator */}
+                    <div className="absolute top-2 left-2 bg-black/50 text-white px-2 py-1 rounded text-xs">
+                      🎥 فيديو
+                    </div>
+                  </div>
+                )}
+
+                {/* Image navigation - only show when viewing images */}
+                {!showVideo && mainPhotos.length > 1 && (
                   <div className="absolute inset-y-1/2 left-1/2 -translate-x-1/2 flex justify-between w-[92%]">
                     <button
                       onClick={previousImg}
@@ -170,17 +264,36 @@ const Main = () => {
                 )}
               </div>
 
-              {/* Thumbnails */}
-              {mainPhotos.length > 1 && (
+              {/* Thumbnails - only show when viewing images */}
+              {!showVideo && mainPhotos.length > 1 && (
                 <div className="hidden md:flex gap-[.3rem]">
                   {mainPhotos.map((img, index) => (
                     <ThumbnailImage
                       key={index}
                       src={img}
                       isSelected={selectedImage === img}
-                      onClick={() => handleSelectImage(img)}
+                      onClick={() => {
+                        handleSelectImage(img);
+                        setShowVideo(false);
+                      }}
                     />
                   ))}
+                </div>
+              )}
+
+              {/* Video Info */}
+              {showVideo && hasVideo && (
+                <div className="hidden md:block text-center text-sm text-gray-600 bg-white px-4 py-2 rounded-lg shadow-sm">
+                  <p className="flex items-center justify-center gap-2">
+                    <svg
+                      className="w-4 h-4"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path d="M2 6a2 2 0 012-2h6l2 2h6a2 2 0 012 2v6a2 2 0 01-2 2H4a2 2 0 01-2-2V6zM15 9a1 1 0 11-2 0 1 1 0 012 0z" />
+                    </svg>
+                    فيديو المنتج
+                  </p>
                 </div>
               )}
             </div>
@@ -301,7 +414,7 @@ const Main = () => {
             </div>
           </div>
 
-          {/* ✅ Fullscreen Image Modal */}
+          {/* Fullscreen Image Modal */}
           <AnimatePresence>
             {isFullScreen && (
               <motion.div
@@ -311,7 +424,9 @@ const Main = () => {
                 exit={{ opacity: 0 }}
               >
                 <motion.img
-                  src={`https://api.ezsouq.store/uploads/images/${selectedImage}`}
+                  src={`${
+                    import.meta.env.VITE_API_BASE_URL
+                  }/uploads/images/${selectedImage}`}
                   alt="Expanded Image"
                   className="max-h-[90vh] max-w-[95vw] object-contain rounded-lg"
                   initial={{ scale: 0.8, opacity: 0 }}

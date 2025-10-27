@@ -67,7 +67,7 @@ const AuthForm = ({ fields, schema, btnAuth }) => {
   const handleAuthGoogle = (e) => {
     e.preventDefault();
     setLoadingGoogle(true);
-    window.location.href = `https://api.ezsouq.store/auth/google?redirect_uri=${encodeURIComponent(
+    window.location.href = `${import.meta.env.VITE_API_BASE_URL}/auth/google?redirect_uri=${encodeURIComponent(
       window.location.origin + "/google-callback"
     )}`;
   };

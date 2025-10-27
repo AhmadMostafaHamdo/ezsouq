@@ -6,7 +6,7 @@ export const thunkCities = createAsyncThunk(
   "/user/cities",
   async (governorateName, { rejectWithValue }) => {
     try {
-      const res = await axios.get(`user/cities/${governorateName}`);
+      const res = await axios.get(`${import.meta.env.VITE_USER_CITIES_ENDPOINT}/${governorateName}`);
       return res.data;
     } catch (error) {
       let errorMessage = "حدث خطأ غير متوقع";

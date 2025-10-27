@@ -25,7 +25,7 @@ const ThumbnailImage = ({ src, isSelected, onClick }) => {
       {/* Thumbnail image */}
       <img
         ref={imgRef}
-        src={`https://api.ezsouq.store/uploads/images/${src}`}
+        src={`${import.meta.env.VITE_API_BASE_URL}/uploads/images/${src}`}
         alt={`صورة مصغرة للمنتج`} // Arabic alt for SEO
         className={`w-20 h-16 object-cover cursor-pointer rounded-[6px] border-2 transition-opacity duration-300 ${
           isSelected

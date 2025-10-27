@@ -271,7 +271,7 @@ const Offers = () => {
                           loading="lazy"
                           src={
                             product?.main_photos?.[0]
-                              ? `https://api.ezsouq.store/uploads/images/${product.main_photos[0]}`
+                              ? `${import.meta.env.VITE_API_BASE_URL}/uploads/images/${product.main_photos[0]}`
                               : profile
                           }
                           alt="product"
@@ -344,7 +344,7 @@ const Offers = () => {
                 <img
                   src={
                     product?.main_photos?.[0]
-                      ? `https://api.ezsouq.store/uploads/images/${product.main_photos[0]}`
+                      ? `${import.meta.env.VITE_API_BASE_URL}/uploads/images/${product.main_photos[0]}`
                       : profile
                   }
                   alt="product"

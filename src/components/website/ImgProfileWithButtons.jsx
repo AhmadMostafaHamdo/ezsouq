@@ -60,7 +60,7 @@ const ImgProfileWithButtons = ({ setActiveTab, activeTab }) => {
     (profileData?.avatar
       ? profileData.avatar.startsWith("http")
         ? profileData.avatar.replace(/^http:/, "https:")
-        : `https://api.ezsouq.store/${profileData.avatar}`
+        : `${import.meta.env.VITE_API_BASE_URL}/${profileData.avatar}`
       : personalImg);
 
   useEffect(() => {

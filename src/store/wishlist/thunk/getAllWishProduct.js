@@ -5,7 +5,7 @@ import { toast } from "react-toastify";
 
 export const getAllWishes = createAsyncThunk("/wishlist", async (id) => {
   try {
-    const res = await axios.get("/user/get_all_wishes", {
+    const res = await axios.get(import.meta.env.VITE_USER_GET_ALL_WISHES_ENDPOINT, {
       headers: {
         authorization: `Bearer ${Cookies.get("token")}`,
       },

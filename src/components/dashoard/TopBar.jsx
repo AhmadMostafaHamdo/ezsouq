@@ -38,7 +38,7 @@ const TopBar = () => {
   const avatarUrl = adminData?.avatar
     ? adminData.avatar.startsWith("http")
       ? adminData.avatar.replace(/^http:/, "https:")
-      : `https://api.ezsouq.store/${adminData.avatar}`
+      : `${import.meta.env.VITE_API_BASE_URL}/${adminData.avatar}`
     : personalImg;
 
   return (

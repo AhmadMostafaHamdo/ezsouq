@@ -16,12 +16,9 @@ export const productThunk = createAsyncThunk(
       if (filters.limit) queryParams.append("limit", filters.limit);
       const url =
         filters.category != "منوعات"
-          ? `/user/fliteredProducts?${queryParams.toString()}`
-          : `/user/fliteredProducts?page=${filters.page}&city=${filters.city}&governorate=${filters.governorate}&limit=3`;
+          ? `${import.meta.env.VITE_USER_FILTERED_PRODUCTS_ENDPOINT}?${queryParams.toString()}`
+          : `${import.meta.env.VITE_USER_FILTERED_PRODUCTS_ENDPOINT}?page=${filters.page}&city=${filters.city}&governorate=${filters.governorate}&limit=3`;
       const res = await axios.get(url);
-      console.log(res.data)
-      console.log(res.data);
-      console.log("first");
       return {
         products: res?.data?.items,
         totalItems: res?.data?.totalItems,

@@ -104,7 +104,7 @@ const Card = ({
   const imageUrl = useMemo(
     () =>
       main_photos?.[0]
-        ? `https://api.ezsouq.store/uploads/images/${main_photos[0]}`
+        ? `${import.meta.env.VITE_API_BASE_URL}/uploads/images/${main_photos[0]}`
         : null,
     [main_photos]
   );
@@ -380,7 +380,7 @@ const Card = ({
                           {
                             name: "WhatsApp",
                             icon: whatsappIcon,
-                            url: `https://api.whatsapp.com/send?text=${encodeURIComponent(
+                            url: `${import.meta.env.VITE_WHATSAPP_API_URL}?text=${encodeURIComponent(
                               window.location.origin + "/offer-details/" + _id
                             )}`,
                           },

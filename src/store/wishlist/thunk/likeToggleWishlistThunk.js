@@ -14,7 +14,7 @@ export const likeToggleWishlistThunk = createAsyncThunk(
 
       // إرسال الطلب للسيرفر بشكل غير متزامن
       await axios.post(
-        "/user/favorite/toggle",
+        import.meta.env.VITE_USER_FAVORITE_TOGGLE_ENDPOINT,
         { product_id: _id },
         { headers: { authorization: `Bearer ${Cookies.get("token")}` } }
       );
