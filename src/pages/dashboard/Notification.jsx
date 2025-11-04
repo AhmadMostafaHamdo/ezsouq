@@ -11,7 +11,7 @@ import Pagination from "../../components/dashoard/Pagination";
 import DeleteOrBanModal from "../../components/dashoard/DeleteOrBanModal";
 import { getAllMessages } from "../../store/messages/thunk/getAllMessages";
 
-// ✅ Modal component to show message details
+// Modal component to show message details
 const MessageDetailsModal = ({ message, onClose }) => (
   <motion.div
     initial={{ opacity: 0 }}
@@ -62,12 +62,12 @@ const Notification = () => {
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
 
-  // ✅ Delete modal state
+  // Delete modal state
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedMessage, setSelectedMessage] = useState(null);
   const [deleting, setDeleting] = useState(false);
 
-  // ✅ Message details modal state
+  // Message details modal state
   const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [detailsMessage, setDetailsMessage] = useState(null);
 

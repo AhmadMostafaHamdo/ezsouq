@@ -4,7 +4,6 @@ import deleteUser from "../../assets/images/dashboard/deleteUser.svg";
 import profile from "../../assets/images/profileIcon.svg";
 import search from "../../assets/images/search.svg";
 import views from "../../assets/images/views.svg";
-import deleteIcon from "../../assets/images/dashboard/deleteIcon.svg";
 import arrowLeft from "../../assets/images/dashboard/arrowLeftTable.svg";
 import menuTable2 from "../../assets/images/dashboard/menuTable2.svg";
 import deleteOffer from "../../assets/images/dashboard/deleteOffer.svg";
@@ -159,11 +158,11 @@ const Offers = () => {
             />
           </div>
 
-          <div className="flex justify-end gap-2 relative" ref={menuRef}>
+          <div className="flex justify-end gap-2 relative left-16" ref={menuRef}>
             <img
               src={menuTable2}
               className="cursor-pointer w-8"
-              alt=""
+              alt="اعدادات"
               onClick={handelViews}
             />
             {infoTable && (
@@ -180,10 +179,6 @@ const Offers = () => {
                   <img src={views} alt="views" />
                   عرض/إخفاء
                   <img src={arrowLeft} alt="" width={6} />
-                </div>
-                <div className="flex items-center gap-2 cursor-pointer">
-                  <img src={deleteIcon} alt="delete" />
-                  حذف
                 </div>
               </motion.div>
             )}

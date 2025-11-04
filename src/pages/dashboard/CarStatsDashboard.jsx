@@ -44,7 +44,7 @@ const CarStatsDashboard = () => {
         { id: "موبايلات", label: "إعلانات الموبايلات", value: mobiles, color: "#9775fa" },
         { id: "عقارات", label: "إعلانات العقارات", value: realEstate, color: "#5f3dc4" },
         { id: "إلكترونيات", label: "إعلانات الإلكترونيات", value: electronics, color: "#748ffc" },
-        { id: "منوعات", label: "إعلانات منوعة", value: others, color: "#82c91e" },
+        { id: "منوعات", label: "إعلانات منوعة", value: total, color: "#82c91e" },
       ].filter((item) => item.value > 0),
     };
   }, [statisticCategories]);

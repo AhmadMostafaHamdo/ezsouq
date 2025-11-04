@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { ToastContainer, toast } from "react-toastify";
+import { motion, AnimatePresence } from "framer-motion";
 
 // Components
 import Pagination from "../../components/dashoard/Pagination";
@@ -48,7 +49,7 @@ const Offers = () => {
     dispatch(thunkGovernorates());
   }, [dispatch]);
 
-  // Debounce search input
+  // Debounce search
   useEffect(() => {
     const timeout = setTimeout(() => {
       setSearchTerm(inputValue);
@@ -57,7 +58,7 @@ const Offers = () => {
     return () => clearTimeout(timeout);
   }, [inputValue]);
 
-  // Filter logic
+  // Filter results
   const filteredGovernorates = useMemo(() => {
     if (!Array.isArray(governorates)) return [];
     if (!searchTerm.trim()) return governorates;
@@ -69,7 +70,7 @@ const Offers = () => {
     );
   }, [searchTerm, governorates]);
 
-  // Pagination logic
+  // Pagination
   const totalPages = Math.ceil((filteredGovernorates?.length || 0) / limit);
   const paginatedGovernorates = filteredGovernorates?.slice(
     (page - 1) * limit,
@@ -90,14 +91,12 @@ const Offers = () => {
       cities: prev.cities.filter((_, i) => i !== index),
     }));
 
-  // Add Modal
+  // Modal Actions
   const openAddModal = () => {
     setCurrentGov({ name: "", cities: [""] });
     setError("");
     setModal({ show: true, type: "add" });
   };
-
-  // Update Modal
   const openUpdateModal = (gov) => {
     setCurrentGov({
       name: gov.name,
@@ -107,11 +106,9 @@ const Offers = () => {
     setError("");
     setModal({ show: true, type: "update" });
   };
-
-  // Delete Modal
   const openDeleteModal = (id) => setDeleteModal({ show: true, id });
 
-  // Confirm Delete
+  // Delete governorate
   const handleDelete = async () => {
     setActionLoading(true);
     try {
@@ -124,14 +121,13 @@ const Offers = () => {
       setDeleteModal({ show: false, id: null });
       if (paginatedGovernorates.length === 1 && page > 1) setPage(page - 1);
     } catch (error) {
-      console.error("Error deleting governorate:", error);
       toast.error("حدث خطأ أثناء الحذف");
     } finally {
       setActionLoading(false);
     }
   };
 
-  // Save (Add / Update)
+  // Save governorate
   const saveGovernorate = async () => {
     const trimmedName = currentGov.name.trim();
     const filteredCities = currentGov.cities
@@ -161,19 +157,16 @@ const Offers = () => {
           autoClose: 1500,
         });
       }
-
       setModal({ show: false, type: "add" });
       setError("");
       await dispatch(thunkGovernorates());
     } catch (err) {
-      console.error("Error saving governorate:", err);
       toast.error("حدث خطأ أثناء الحفظ");
     } finally {
       setActionLoading(false);
     }
   };
 
-  // Spinner during initial load
   if (loading)
     return (
       <div className="mt-48">
@@ -185,110 +178,123 @@ const Offers = () => {
     <div className="overflow-hidden font-sans h-[60vh] relative">
       <ToastContainer />
 
-      {/* 🔹 Spinner Overlay during add/update/delete */}
+      {/* 🔹 Spinner Overlay */}
       {actionLoading && (
         <div className="fixed inset-0 bg-[#00000060] z-50 flex justify-center items-center">
           <Spinner />
         </div>
       )}
 
-      {/* Add / Update Modal */}
-      {modal.show && (
-        <div className="fixed inset-0 bg-[#67676780] z-30 flex justify-center items-center p-2">
-          <div className="w-full max-w-md bg-white rounded-2xl p-6 shadow-2xl relative overflow-auto max-h-[90vh]">
-            <button
-              onClick={() => setModal({ show: false, type: "add" })}
-              className="absolute top-4 right-4"
+      {/* 🔹 Add / Update Modal with animation */}
+      <AnimatePresence>
+        {modal.show && (
+          <motion.div
+            className="fixed inset-0 bg-[#67676780] z-30 flex justify-center items-center p-2"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <motion.div
+              className="w-full max-w-md bg-white rounded-2xl p-6 shadow-2xl relative overflow-auto max-h-[90vh]"
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.8, opacity: 0 }}
+              transition={{ type: "spring", stiffness: 150 }}
             >
-              <img
-                src={closeIcon}
-                alt="إغلاق النافذة"
-                width={20}
-                loading="lazy"
-              />
-            </button>
-
-            <h2 className="text-lg font-bold text-center mb-4">
-              {modal.type === "add" ? "إضافة محافظة جديدة" : "تعديل المحافظة"}
-            </h2>
-
-            {error && (
-              <p className="text-[#ff0000bb] text-sm mb-2 text-center">
-                {error}
-              </p>
-            )}
-
-            {/* Governorate Name */}
-            <div className="mb-4">
-              <label className="block text-sm font-medium mb-2">
-                اسم المحافظة
-              </label>
-              <input
-                type="text"
-                value={currentGov.name}
-                onChange={(e) =>
-                  setCurrentGov((prev) => ({ ...prev, name: e.target.value }))
-                }
-                placeholder="أدخل اسم المحافظة"
-                className="w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-[#4F46E5]"
-              />
-            </div>
-
-            {/* Cities */}
-            <div className="mb-4">
-              <label className="block text-sm font-medium mb-2">
-                المدن التابعة لها
-              </label>
-              <div className="space-y-2 max-h-44 p-1 overflow-auto">
-                {currentGov.cities.map((city, idx) => (
-                  <div
-                    key={idx}
-                    className="flex flex-col sm:flex-row items-stretch gap-2"
-                  >
-                    <input
-                      type="text"
-                      value={city}
-                      onChange={(e) => handleCityChange(idx, e.target.value)}
-                      placeholder={`أدخل اسم المدينة ${idx + 1}`}
-                      className="flex-1 border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-[#4F46E5]"
-                    />
-                    {currentGov.cities.length > 1 && (
-                      <button
-                        onClick={() => removeCity(idx)}
-                        className="px-2 py-1 bg-[#EF4444] text-white rounded-md hover:bg-[#DC2626]"
-                      >
-                        حذف
-                      </button>
-                    )}
-                  </div>
-                ))}
-              </div>
-              <button
-                onClick={addCity}
-                className="text-[#4F46E5] mt-2 text-sm hover:underline"
-              >
-                + إضافة مدينة جديدة
-              </button>
-            </div>
-
-            {/* Modal Actions */}
-            <div className="flex flex-col sm:flex-row justify-between gap-2 mt-4">
               <button
                 onClick={() => setModal({ show: false, type: "add" })}
-                className="w-full sm:w-1/2 px-4 py-2 rounded-md border border-gray-400 text-gray-600 hover:bg-gray-100"
+                className="absolute top-4 right-4"
               >
-                إلغاء
+                <img
+                  src={closeIcon}
+                  alt="إغلاق النافذة"
+                  width={20}
+                  loading="lazy"
+                />
               </button>
-              <button
-                onClick={saveGovernorate}
-                className="w-full sm:w-1/2 px-4 py-2 rounded-md bg-[#4F46E5] text-white hover:bg-[#4338CA]"
-              >
-                حفظ
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+
+              <h2 className="text-lg font-bold text-center mb-4">
+                {modal.type === "add" ? "إضافة محافظة جديدة" : "تعديل المحافظة"}
+              </h2>
+
+              {error && (
+                <p className="text-[#ff0000bb] text-sm mb-2 text-center">
+                  {error}
+                </p>
+              )}
+
+              {/* Governorate Name */}
+              <div className="mb-4">
+                <label className="block text-sm font-medium mb-2">
+                  اسم المحافظة
+                </label>
+                <input
+                  type="text"
+                  value={currentGov.name}
+                  onChange={(e) =>
+                    setCurrentGov((prev) => ({ ...prev, name: e.target.value }))
+                  }
+                  placeholder="أدخل اسم المحافظة"
+                  className="w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-[#4F46E5]"
+                />
+              </div>
+
+              {/* Cities */}
+              <div className="mb-4">
+                <label className="block text-sm font-medium mb-2">
+                  المدن التابعة لها
+                </label>
+                <div className="space-y-2 max-h-44 p-1 overflow-auto">
+                  {currentGov.cities.map((city, idx) => (
+                    <div
+                      key={idx}
+                      className="flex flex-col sm:flex-row items-stretch gap-2"
+                    >
+                      <input
+                        type="text"
+                        value={city}
+                        onChange={(e) => handleCityChange(idx, e.target.value)}
+                        placeholder={`أدخل اسم المدينة ${idx + 1}`}
+                        className="flex-1 border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-[#4F46E5]"
+                      />
+                      {currentGov.cities.length > 1 && (
+                        <button
+                          onClick={() => removeCity(idx)}
+                          className="px-2 py-1 bg-[#EF4444] text-white rounded-md hover:bg-[#DC2626]"
+                        >
+                          حذف
+                        </button>
+                      )}
+                    </div>
+                  ))}
+                </div>
+                <button
+                  onClick={addCity}
+                  className="text-[#4F46E5] mt-2 text-sm hover:underline"
+                >
+                  + إضافة مدينة جديدة
+                </button>
+              </div>
+
+              {/* Modal Actions */}
+              <div className="flex flex-col sm:flex-row justify-between gap-2 mt-4">
+                <button
+                  onClick={() => setModal({ show: false, type: "add" })}
+                  className="w-full sm:w-1/2 px-4 py-2 rounded-md border border-gray-400 text-gray-600 hover:bg-gray-100"
+                >
+                  إلغاء
+                </button>
+                <button
+                  onClick={saveGovernorate}
+                  className="w-full sm:w-1/2 px-4 py-2 rounded-md bg-[#4F46E5] text-white hover:bg-[#4338CA]"
+                >
+                  حفظ
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Delete Modal */}
       {deleteModal.show && (
@@ -334,7 +340,12 @@ const Offers = () => {
         </div>
 
         {/* Desktop Table */}
-        <div className="hidden sm:block p-4 bg-white rounded-t-3xl shadow">
+        <motion.div
+          className="hidden sm:block p-4 bg-white rounded-t-3xl shadow"
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
+        >
           <table className="w-full">
             <thead>
               <tr className="text-[#6B7280] text-sm sm:text-base">
@@ -346,9 +357,12 @@ const Offers = () => {
             <tbody>
               {paginatedGovernorates?.length > 0 ? (
                 paginatedGovernorates.map((gov) => (
-                  <tr
+                  <motion.tr
                     key={gov._id}
-                    className="border-t hover:bg-[#adadad2c] border-gray-300"
+                    className="border-t hover:bg-[#adadad2c] border-[#80808023]"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3 }}
                   >
                     <td className="text-center py-2">{gov.name}</td>
                     <td className="text-center py-2">
@@ -376,7 +390,7 @@ const Offers = () => {
                         />
                       </div>
                     </td>
-                  </tr>
+                  </motion.tr>
                 ))
               ) : (
                 <tr>
@@ -391,7 +405,6 @@ const Offers = () => {
             </tbody>
           </table>
 
-          {/* Pagination */}
           {totalPages > 1 && (
             <Pagination
               currentPage={page}
@@ -401,58 +414,7 @@ const Offers = () => {
               onPageChange={(p) => setPage(p)}
             />
           )}
-        </div>
-
-        {/* Mobile Cards */}
-        <div className="sm:hidden grid grid-cols-1 gap-4 mt-4">
-          {paginatedGovernorates?.length > 0 ? (
-            paginatedGovernorates.map((gov) => (
-              <div
-                key={gov._id}
-                className="bg-white p-4 rounded-xl shadow flex flex-col gap-2"
-              >
-                <h2 className="font-bold text-lg text-[#111827]">{gov.name}</h2>
-                <p className="text-sm text-gray-600">
-                  المدن:{" "}
-                  {gov.cities.length > 5
-                    ? gov.cities.slice(0, 4).join(" - ") + " ..."
-                    : gov.cities.join(" - ")}
-                </p>
-
-                <div className="flex justify-end gap-3 mt-2">
-                  <button
-                    onClick={() => openUpdateModal(gov)}
-                    className="text-[#4F46E5] underline text-sm"
-                  >
-                    تعديل
-                  </button>
-                  <button
-                    onClick={() => openDeleteModal(gov._id)}
-                    className="text-[#EF4444] underline text-sm"
-                  >
-                    حذف
-                  </button>
-                </div>
-              </div>
-            ))
-          ) : (
-            <p className="text-center text-gray-500 font-medium">
-              لا توجد نتائج مطابقة للبحث
-            </p>
-          )}
-
-          {totalPages > 1 && (
-            <div className="mt-4">
-              <Pagination
-                currentPage={page}
-                totalPages={totalPages}
-                totalItems={filteredGovernorates.length}
-                itemsPerPage={limit}
-                onPageChange={(p) => setPage(p)}
-              />
-            </div>
-          )}
-        </div>
+        </motion.div>
       </div>
     </div>
   );

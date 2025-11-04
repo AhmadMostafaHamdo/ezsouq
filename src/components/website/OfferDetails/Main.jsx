@@ -14,7 +14,7 @@ import start from "../../../assets/images/start.svg";
 import leftArrow from "../../../assets/images/leftArrow.svg";
 import rightArrow from "../../../assets/images/rightArrow.svg";
 import car from "../../../assets/images/carIconDetails.svg";
-import location from "../../../assets/images/locationIcondDetails.svg";
+import locationImg from "../../../assets/images/locationIcondDetails.svg";
 import time from "../../../assets/images/timeIconDetails.svg";
 
 // Components & Thunks
@@ -322,7 +322,7 @@ const Main = () => {
                   <span>{product?.name}</span>
                 </li>
                 <li className="flex gap-2 items-center mb-2 text-[#716D97]">
-                  <img src={location} alt="Location icon" />
+                  <img src={locationImg} alt="Location icon" />
                   <span>
                     {product?.Governorate_name} - {product?.city}
                   </span>

@@ -3,6 +3,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import { UserPlus, UserMinus } from "lucide-react";
 import block from "../../assets/images/dashboard/block.svg";
 import deleteUser from "../../assets/images/dashboard/deleteIcon.svg";
+import isGrantImg from "../../assets/images/dashboard/isGrant.png";
+import isWithdrawImg from "../../assets/images/dashboard/isWithdraw.jpeg";
 import close from "../../assets/images/close.svg";
 
 /**
@@ -16,8 +18,22 @@ const DeleteOrBanModal = ({ type, action, onConfirm, onCancel }) => {
   const isWithdraw = type === "withdraw";
   const governorate = type === "governorate";
   const offer = type === "offer";
+  const msg = type === "msg";
   const img =
-    type === "ban" ? block : type === "delete" || "offer" ? deleteUser : "";
+    type === "ban"
+      ? block
+      : type === ("delete" || "offer")
+      ? deleteUser
+      : type === "grant"
+      ? isGrantImg
+      : type === "withdraw"
+      ? isWithdrawImg
+      : type === "governorate"
+      ? deleteUser
+      : type === "msg"
+      ? deleteUser
+      : "";
+  console.log(type);
   const title = isDelete
     ? "حذف مستخدم"
     : isUnban
@@ -32,6 +48,8 @@ const DeleteOrBanModal = ({ type, action, onConfirm, onCancel }) => {
     ? "حذف الإعلان"
     : governorate
     ? "حذف محافظة"
+    : msg
+    ? "حذف رسالة"
     : "";
 
   const description = isDelete
@@ -64,6 +82,8 @@ const DeleteOrBanModal = ({ type, action, onConfirm, onCancel }) => {
     ? "حذف"
     : governorate
     ? "حذف المحافظة"
+    : msg
+    ? "حذف الرسالة"
     : "";
 
   const confirmColor = isGrant
