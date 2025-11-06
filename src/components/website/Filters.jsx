@@ -1,6 +1,6 @@
 import { useEffect, useRef, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { motion } from "framer-motion"; // ✅ أضفنا هذا
+import { motion } from "framer-motion";
 import { allCategory, sortOptions } from "../../data/filterData";
 import scrollPostsIcon from "../../assets/images/Group 6.svg";
 import Card from "./Card";
@@ -8,6 +8,7 @@ import TabFilter from "./TapFilter";
 import IconFilter from "./IconFilter";
 import SortDropdown from "./SortDropdown";
 import CardSkeleton from "../../assets/sketlon/product";
+import CitiesSketlon from "../../assets/sketlon/CitiesSketlon";
 import { productThunk } from "../../store/product/thunk/productThunk";
 import { thunkGovernorates } from "../../store/governorates/thunk/thunkGovernorates";
 import { thunkCities } from "../../store/cities/thunk/citiesThunk";
@@ -23,11 +24,13 @@ const Filters = () => {
     loading,
     totalPages = 1,
   } = useSelector((state) => state.products);
+
   const { governorates = [] } = useSelector((state) => state.governorates);
   const { cities = [], loadingCity } = useSelector((state) => state.cities);
 
   const observerRef = useRef(null);
 
+  // Fetch products whenever filters change (with debounce)
   useEffect(() => {
     const debouncedFetch = debounce(() => {
       dispatch(productThunk(filters));
@@ -36,10 +39,19 @@ const Filters = () => {
     return () => debouncedFetch.cancel();
   }, [dispatch, filters]);
 
+  // Fetch all governorates on mount
   useEffect(() => {
     dispatch(thunkGovernorates());
   }, [dispatch]);
 
+  // Select the first governorate automatically after loading
+  useEffect(() => {
+    if (governorates.length > 0 && !filters.governorate) {
+      dispatch(setFilter({ governorate: governorates[0].name }));
+    }
+  }, [governorates, filters.governorate, dispatch]);
+
+  // Fetch cities when governorate changes
   useEffect(() => {
     if (filters.governorate) {
       dispatch(thunkCities(filters.governorate));
@@ -48,6 +60,7 @@ const Filters = () => {
     }
   }, [dispatch, filters.governorate]);
 
+  // Automatically select the first city after cities load or when governorate changes
   useEffect(() => {
     if (filters.governorate && cities.length > 0) {
       if (!filters.city || !cities.includes(filters.city)) {
@@ -56,6 +69,7 @@ const Filters = () => {
     }
   }, [dispatch, cities, filters.governorate, filters.city]);
 
+  // Handle filter updates
   const handleFilterChange = useCallback(
     (name, value) => {
       dispatch(
@@ -68,12 +82,14 @@ const Filters = () => {
     [dispatch]
   );
 
+  // Infinite scroll: load more items
   const loadMore = useCallback(() => {
     if (filters.page < totalPages && !loading) {
       handleFilterChange("page", filters.page + 1);
     }
   }, [filters.page, totalPages, loading, handleFilterChange]);
 
+  // Observe scroll for infinite loading
   useEffect(() => {
     if (observerRef.current) observerRef.current.disconnect();
 
@@ -148,7 +164,6 @@ const Filters = () => {
               transition={{ duration: 0.6, delay: i * 0.05 }}
               className="relative overflow-hidden rounded-2xl"
             >
-              {/* shimmer overlay */}
               <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent animate-[shimmer_1.5s_infinite]" />
               <CardSkeleton />
             </motion.div>

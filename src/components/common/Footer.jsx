@@ -169,7 +169,9 @@ const Footer = () => {
         <p className="text-[12px] font-semibold">
           © 2025 ezsouq - جميع الحقوق محفوظة
         </p>
-        <img src={googlPlay} alt="جوجل بلاي" loading="lazy" />
+        <Link target="_blank" to="https://play.google.com/store/apps/details?id=store.ezsouq.ezsouq" className="hover:scale-110">
+          <img src={googlPlay} alt="جوجل بلاي" loading="lazy" />
+        </Link>
       </div>
     </div>
   );

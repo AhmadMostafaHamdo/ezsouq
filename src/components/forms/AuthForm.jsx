@@ -213,15 +213,15 @@ const AuthForm = ({ fields, schema, btnAuth }) => {
 
               {isLogin && (
                 <Link to="/forgot-password" className="mb-3 block text-[.9rem]">
-                  هل نسيت كلمة المرور؟
+                  هل نسيت <span className="text-primary underline">كلمة المرور</span>؟
                 </Link>
               )}
 
               <motion.button
-initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.4 }}
-                whileHover={{ scale: 1.05 }}            
+                whileHover={{ scale: 1.05 }}
                 disabled={isSubmitting}
                 className="w-full h-[2.9rem] text-white bg-primary rounded-xl"
               >
