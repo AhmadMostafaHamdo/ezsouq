@@ -175,17 +175,17 @@ const Offers = () => {
     );
 
   return (
-    <div className="overflow-hidden font-sans h-[60vh] relative">
+    <div className="overflow-hidden font-sans min-h-[60vh] relative">
       <ToastContainer />
 
-      {/* 🔹 Spinner Overlay */}
+      {/* Spinner Overlay */}
       {actionLoading && (
         <div className="fixed inset-0 bg-[#00000060] z-50 flex justify-center items-center">
           <Spinner />
         </div>
       )}
 
-      {/* 🔹 Add / Update Modal with animation */}
+      {/* Add / Update Modal */}
       <AnimatePresence>
         {modal.show && (
           <motion.div
@@ -413,6 +413,48 @@ const Offers = () => {
               itemsPerPage={limit}
               onPageChange={(p) => setPage(p)}
             />
+          )}
+        </motion.div>
+
+        {/* Mobile List */}
+        <motion.div
+          className="sm:hidden p-2 space-y-2"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
+        >
+          {paginatedGovernorates?.length > 0 ? (
+            paginatedGovernorates.map((gov) => (
+              <div
+                key={gov._id}
+                className="border p-3 rounded-lg shadow flex flex-col gap-1"
+              >
+                <p className="font-bold text-[#1F2937]">{gov.name}</p>
+                <p className="text-sm text-gray-600">
+                  {gov.cities.length > 5
+                    ? gov.cities.slice(0, 4).join(" - ") + " ..."
+                    : gov.cities.join(" - ")}
+                </p>
+                <div className="flex gap-3 mt-2">
+                  <button
+                    onClick={() => openUpdateModal(gov)}
+                    className="flex-1 bg-[#4F46E5] text-white py-1 rounded-md text-sm"
+                  >
+                    تعديل
+                  </button>
+                  <button
+                    onClick={() => openDeleteModal(gov._id)}
+                    className="flex-1 bg-[#EF4444] text-white py-1 rounded-md text-sm"
+                  >
+                    حذف
+                  </button>
+                </div>
+              </div>
+            ))
+          ) : (
+            <p className="text-center text-gray-500 py-4">
+              لا توجد نتائج مطابقة للبحث
+            </p>
           )}
         </motion.div>
       </div>
