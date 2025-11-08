@@ -4,6 +4,7 @@ import axios from "axios";
 import Cookies from "js-cookie";
 import { toast } from "react-toastify";
 import { handleThunkError } from "../../../utils/utils";
+import { replace } from "lodash";
 
 export const thunkReport = createAsyncThunk(
   "user/report",
@@ -26,7 +27,7 @@ export const thunkReport = createAsyncThunk(
 
       // Smooth redirect after success
       setTimeout(() => {
-        navigate(`/offer-details/${productId}`);
+        navigate(`/offer-details/${productId}`, { replace: true });
       }, 700);
 
       return res.data;

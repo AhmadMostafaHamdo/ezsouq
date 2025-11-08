@@ -445,7 +445,10 @@ const Main = () => {
             []
           </AnimatePresence>
 
-          <Link to={`/offer-details/${id}/report/${product?.Owner?._id}`}>
+          <Link
+            to={`/offer-details/${id}/report/${product?.Owner?._id}`}
+            replace={true}
+          >
             <p className="text-center text-[12px] font-normal text-[#7E7E7E] pt-5 pb-10 underline cursor-pointer hover:text-[#918AFF] transition-colors duration-200">
               ابلاغ عن هذا المستخدم
             </p>

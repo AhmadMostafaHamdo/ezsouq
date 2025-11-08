@@ -26,7 +26,7 @@ const Report = () => {
   }, []);
 
   // Close modal and go back
-  const handleClose = () => navigate(-1, replace(true));
+  const handleClose = () => navigate(-1, { replace: true });
 
   // Select report reason
   const handleSelectReason = (selectedReason) => {
