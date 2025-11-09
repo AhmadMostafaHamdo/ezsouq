@@ -118,7 +118,7 @@ const Main = () => {
       ) : (
         <>
           {/* 🔹 Heading */}
-          <div className="mt-[4rem]">
+          <div className="mt-[4rem] mb-8 md:mb-0">
             <Heading title="الرجوع" />
           </div>
 
