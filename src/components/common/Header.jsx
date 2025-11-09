@@ -1,6 +1,7 @@
 import { useState, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
+import { motion, AnimatePresence } from "framer-motion"; // ✅ Animation
 import logo from "../../assets/images/logoWithTitleWhite.svg";
 import menuIcon from "../../assets/images/menu.svg";
 import searchIcon from "../../assets/images/search.svg";
@@ -15,6 +16,7 @@ import Spinner from "../../feedback/loading/Spinner";
 
 /* =========================================
    Debounce function to delay execution
+   // دالة تأخير تنفيذ البحث لمنع إرسال عدة طلبات بسرعة
 ========================================= */
 function debounce(func, wait) {
   let timeout;
@@ -35,7 +37,6 @@ const Header = () => {
   const isScrolled = useScrolled(10);
   const dispatch = useDispatch();
 
-  // Redux search state
   const { data: searchedProducts = [], loading } = useSelector(
     (state) => state.search
   );
@@ -141,7 +142,7 @@ const Header = () => {
             </div>
           )}
 
-          {/* Desktop Search (Category + Input) */}
+          {/* Desktop Search */}
           <div className="hidden md:flex flex-1 items-center ml-8 max-w-xl h-10 gap-2">
             <select
               value={category}
@@ -170,60 +171,82 @@ const Header = () => {
           </div>
         </div>
 
-        {/* Sidebar */}
-        <div
-          className={`fixed inset-0 z-50 ${
-            isSidebarOpen ? "visible" : "invisible"
-          }`}
-        >
-          <div
-            className={`fixed inset-0 bg-black transition-opacity duration-300 ${
-              isSidebarOpen ? "opacity-50" : "opacity-0"
-            }`}
-            onClick={toggleSidebar}
-            aria-hidden="true"
-          />
-          <Sidebar
-            toggleSidebar={toggleSidebar}
-            logo={logo}
-            isSidebarOpen={isSidebarOpen}
-          />
-        </div>
+        {/* ================== Sidebar Animation ================== */}
+        <AnimatePresence>
+          {isSidebarOpen && (
+            <>
+              {/* Overlay animation */}
+              <motion.div
+                key="overlay"
+                className="fixed inset-0 bg-black z-40"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 0.5 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.3 }}
+                onClick={toggleSidebar}
+                aria-hidden="true"
+              />
+              {/* Sidebar slide-in animation */}
+              <motion.div
+                key="sidebar"
+                initial={{ x: "-100%" }}
+                animate={{ x: 0 }}
+                exit={{ x: "-100%" }}
+                transition={{ type: "tween", duration: 0.4 }}
+                className="fixed inset-y-0 left-0 z-50"
+              >
+                <Sidebar
+                  toggleSidebar={toggleSidebar}
+                  logo={logo}
+                  isSidebarOpen={isSidebarOpen}
+                />
+              </motion.div>
+            </>
+          )}
+        </AnimatePresence>
       </header>
 
-      {/* ================== SEARCH RESULTS ================== */}
-      {(searchValue || category) && (
-        <div className="absolute top-[4rem] left-0 w-full bg-white z-10 shadow-lg p-6 min-h-[200px]">
-          {/* Clear Search */}
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="text-lg font-bold text-gray-700">
-              نتائج البحث عن: {searchValue || "بدون كلمة"}{" "}
-              {category && `في ${category}`}
-            </h2>
-            <button
-              onClick={handleClearSearch}
-              className="text-red font-bold text-lg hover:underline"
-              aria-label="مسح البحث"
-            >
-              ✖
-            </button>
-          </div>
+      {/* ================== SEARCH RESULTS (Animated) ================== */}
+      <AnimatePresence>
+        {(searchValue || category) && (
+          <motion.div
+            key="results"
+            initial={{ opacity: 0, y: -10 }} // Fade and slide down
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.3 }}
+            className="absolute top-[4rem] left-0 w-full bg-white z-10 shadow-lg p-6 min-h-[200px]"
+          >
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-lg font-bold text-gray-700">
+                نتائج البحث عن: {searchValue || "بدون كلمة"}{" "}
+                {category && `في ${category}`}
+              </h2>
+              <button
+                onClick={handleClearSearch}
+                className="text-red font-bold text-lg hover:underline"
+                aria-label="مسح البحث"
+              >
+                ✖
+              </button>
+            </div>
 
-          {loading ? (
-            <div className="flex justify-center items-center h-40">
-              <Spinner />
-            </div>
-          ) : hasSearchResults ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {searchedProducts.map((product) => (
-                <Card key={product.id} {...product} />
-              ))}
-            </div>
-          ) : (
-            <p className="text-center text-gray-500">لا توجد نتائج مطابقة</p>
-          )}
-        </div>
-      )}
+            {loading ? (
+              <div className="flex justify-center items-center h-40">
+                <Spinner />
+              </div>
+            ) : hasSearchResults ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                {searchedProducts.map((product) => (
+                  <Card key={product.id} {...product} />
+                ))}
+              </div>
+            ) : (
+              <p className="text-center text-gray-500">لا توجد نتائج مطابقة</p>
+            )}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };
