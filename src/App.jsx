@@ -6,6 +6,8 @@ import { jwtDecode } from "jwt-decode";
 import Cookies from "js-cookie";
 import { useNavigate, useLocation } from "react-router-dom";
 import { logout } from "./store/auth/thunk/logout";
+import UpdateHandler from "./components/UpdateHandler";
+import { registerServiceWorker } from "./utils/registerSW";
 
 const App = () => {
   const { user } = useSelector((state) => state.auth);
@@ -78,11 +80,20 @@ const App = () => {
     }
   }, [user, location.pathname, navigate, dispatch]);
 
+  // Register service worker in production
+  useEffect(() => {
+    if (process.env.NODE_ENV === 'production') {
+      registerServiceWorker();
+    }
+  }, []);
+
   return (
-    <>
-      <ToastContainer />
-      <MainLayout />
-    </>
+    <div className="app">
+      <MainLayout>
+        <ToastContainer />
+        <UpdateHandler />
+      </MainLayout>
+    </div>
   );
 };
 

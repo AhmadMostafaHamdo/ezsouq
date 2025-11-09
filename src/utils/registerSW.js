@@ -1,51 +1,50 @@
 // Register Service Worker for PWA functionality
 export const registerServiceWorker = () => {
   if ('serviceWorker' in navigator) {
+    // Register service worker
     window.addEventListener('load', () => {
       navigator.serviceWorker.register('/sw.js')
-        .then((registration) => {
-          console.log('SW registered: ', registration);
+        .then(registration => {
+          console.log('Service Worker registered with scope: ', registration.scope);
           
-          // Check for updates
-          registration.addEventListener('updatefound', () => {
-            const newWorker = registration.installing;
-            if (newWorker) {
-              newWorker.addEventListener('statechange', () => {
-                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                  // New content is available, show update notification
-                  showUpdateNotification();
-                }
-              });
+          // Check for updates every 1 hour
+          setInterval(() => {
+            registration.update().catch(console.error);
+          }, 60 * 60 * 1000);
+
+          // Check for updates when the page regains focus
+          window.addEventListener('visibilitychange', () => {
+            if (!document.hidden) {
+              registration.update().catch(console.error);
+            }
+          });
+
+          // Listen for controller change (when a new service worker takes over)
+          let refreshing = false;
+          navigator.serviceWorker.addEventListener('controllerchange', () => {
+            if (!refreshing) {
+              refreshing = true;
+              window.location.reload();
             }
           });
         })
-        .catch((registrationError) => {
-          console.log('SW registration failed: ', registrationError);
+        .catch(error => {
+          console.error('Service Worker registration failed: ', error);
         });
     });
-
-    // Listen for messages from service worker
-    navigator.serviceWorker.addEventListener('message', (event) => {
-      if (event.data && event.data.type === 'SKIP_WAITING') {
-        window.location.reload();
-      }
-    });
-  }
-};
-
-// Show update notification to user
-const showUpdateNotification = () => {
-  // You can integrate this with your toast system
-  if (window.confirm('يتوفر تحديث جديد للتطبيق. هل تريد إعادة التحميل؟')) {
-    window.location.reload();
   }
 };
 
 // Request notification permission
 export const requestNotificationPermission = async () => {
   if ('Notification' in window) {
-    const permission = await Notification.requestPermission();
-    return permission === 'granted';
+    try {
+      const permission = await Notification.requestPermission();
+      return permission === 'granted';
+    } catch (error) {
+      console.error('Error requesting notification permission:', error);
+      return false;
+    }
   }
   return false;
 };
