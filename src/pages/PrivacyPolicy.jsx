@@ -1,9 +1,12 @@
-import { Link } from "react-router";
+import { Link } from "react-router-dom";
 import security from "../assets/images/security.svg";
 import { useEffect, useRef } from "react";
 import Heading from "../components/common/Heading";
 import Cookies from "js-cookie";
+import { Helmet } from "react-helmet";
+
 const PrivacyPolicy = () => {
+  // Define all sections of the privacy policy
   const sections = [
     {
       title: "1. المعلومات التي نقوم بجمعها:",
@@ -52,50 +55,97 @@ const PrivacyPolicy = () => {
         "البريد الإلكتروني: support@ezsouq.sy",
         "رقم الواتساب: 0999 999 999",
         <>
-          أو من خلال صفحة <Link to="/contact-us">تواصل معنا</Link>
+          أو من خلال صفحة{" "}
+          <Link
+            to="/contact-us"
+            className="text-primary hover:underline font-semibold"
+          >
+            تواصل معنا
+          </Link>
         </>,
       ],
     },
   ];
+
   const offer = useRef();
+
+  // Scroll to the top of the page when component mounts
   useEffect(() => {
     offer.current.scrollIntoView();
   }, []);
+
   return (
     <div className="pt-16" ref={offer}>
-      <div className="container">
+      {/* SEO Meta Tags */}
+      <Helmet>
+        <title>سياسة الخصوصية | EzSouq</title>
+        <meta
+          name="description"
+          content="تعرف على سياسة الخصوصية في تطبيق EzSouq وكيفية حماية بياناتك الشخصية."
+        />
+        <meta name="robots" content="index, follow" />
+        <link
+          rel="canonical"
+          href={`https://www.ezsouq.store/privacy-policy`}
+        />
+        <meta
+          property="og:url"
+          content={`https://www.ezsouq.store/privacy-policy`}
+        />
+        <meta name="twitter:card" content="summary" />
+      </Helmet>
+
+      <div className="container mx-auto px-4">
+        {/* Heading with back link based on login status */}
         <Heading
           title="سياسة الخصوصية"
           url={Cookies.get("token") ? "/" : "/register"}
         />
+
+        {/* Introductory paragraph */}
         <p className="text-primary text-[.87rem] py-2">
           نحن نُقدّر خصوصيتك ونحرص على حماية بياناتك الشخصية. توضح هذه السياسة
           كيفية جمع واستخدام ومشاركة المعلومات عند استخدامك لتطبيقنا.
         </p>
-        <img src={security} className="block md:hidden my-6" alt="" />
-        <div className="leading-10">
+
+        {/* Security image for mobile devices */}
+        <img
+          src={security}
+          className="block md:hidden my-6"
+          alt="أمان البيانات"
+        />
+
+        {/* Render all sections */}
+        <div className="leading-8">
           {sections.map((section, index) => (
             <div key={index} className="mb-8 w-full md:w-3/5 lg:w-full">
-              <p className="text-[#23193E] text-[1.25rem] font-normal">
+              {/* Section title */}
+              <h2 className="text-[#23193E] text-[1.25rem] font-semibold mb-4">
                 {section.title}
-              </p>
-              <div className="pr-2">
-                {section?.points?.map((point, index) => (
-                  <li key={index} className="font-medium">
+              </h2>
+
+              {/* Section points as bullet list */}
+              <ul className="pr-4 list-disc list-inside space-y-2 text-[#716D97]">
+                {section.points.map((point, idx) => (
+                  <li key={idx} className="font-medium">
                     {point}
                   </li>
                 ))}
-              </div>
+              </ul>
             </div>
           ))}
         </div>
-        <p className="text-[#23193E] text-[.87rem] text-center m-10">
+
+        {/* Last updated date */}
+        <p className="text-[#23193E] text-[.87rem] text-center my-10">
           آخر تحديث: 11 يوليو 2025
         </p>
+
+        {/* Security image for larger devices */}
         <img
           src={security}
-          alt=""
-          className="hidden md:absolute top-40 left-28 md:w-1/3 lg:w-fit"
+          alt="أمان البيانات"
+          className="hidden md:block md:absolute top-40 left-28 md:w-1/3 lg:w-fit"
         />
       </div>
     </div>

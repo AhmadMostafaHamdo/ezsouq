@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import Heading from "../components/common/Heading";
-
+import { Helmet } from "react-helmet";
 const AboutUs = () => {
   const about = useRef(null);
 
@@ -29,6 +29,41 @@ const AboutUs = () => {
       className="pt-[5rem] min-h-screen"
       style={{ backgroundColor: "#F9FAFB", color: "#374151" }}
     >
+      {/* SEO Configuration */}
+      <Helmet>
+        <title>EzSouq | بيع وشراء سيارات وعقارات وتقنيات في سوريا</title>
+        <meta
+          name="description"
+          content="منصة EzSouq تقدم لك تجربة مميزة وسهلة لبيع وشراء السيارات، العقارات، والتقنيات في سوريا. تواصل مباشرة مع المعلنين واحصل على أفضل العروض."
+        />
+        <meta
+          name="keywords"
+          content="EzSouq, بيع سيارات سوريا, عقارات سوريا, موبايلات, لابتوبات, موقع سهل, تسوق سوري"
+        />
+        <meta name="robots" content="index, follow" />
+        <link rel="canonical" href="https://www.ezsouq.store/about-us" />
+
+        {/* Open Graph Meta Tags */}
+        <meta
+          property="og:title"
+          content=" EzSouq | بيع وشراء سيارات وعقارات وتقنيات في سوريا"
+        />
+        <meta
+          property="og:description"
+          content="منصة سورية موثوقة وسهلة الاستخدام لتداول السيارات والعقارات والموبايلات واللابتوبات."
+        />
+        <meta property="og:type" content="website" />
+        <meta property="og:locale" content="ar_SY" />
+        <meta property="og:url" content="https://www.ezsouq.com/about" />
+
+        {/* Twitter Card Meta Tags */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="عن EzSouq | بيع وشراء في سوريا" />
+        <meta
+          name="twitter:description"
+          content="منصة موثوقة وسهلة لبيع وشراء السيارات والعقارات والتقنيات."
+        />
+      </Helmet>
       <Heading title={"الرجوع"} />
       <div className="max-w-6xl mx-auto px-4 text-center">
         <h1

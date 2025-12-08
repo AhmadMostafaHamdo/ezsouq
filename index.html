@@ -1,12 +1,18 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
   <head>
+    <!-- Character encoding and viewport -->
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- SEO meta tags -->
     <meta name="description" content="سوق إلكتروني سوري لعرض وبيع السيارات والعقارات والأجهزة التقنية مثل سيارات سرفيس وغيرها من الخدمات في سوريا">
     <meta name="keywords" content="سيارات سوريا, عقارات سوريا, أجهزة تقنية سوريا, سوق إلكتروني سوري, بيع سيارات سوريا, شراء عقارات سوريا, سرفيس سوريا">
     <meta name="author" content="ezsouq">
     <meta name="geo.region" content="SY">
+    <meta name="robots" content="index, follow">
+
+    <!-- Open Graph tags for social media -->
     <meta property="og:title" content="ezsouq - السوق الإلكتروني السوري">
     <meta property="og:description" content="أكبر سوق إلكتروني لبيع وشراء السيارات والعقارات والأجهزة التقنية في سوريا">
     <meta property="og:type" content="website">
@@ -14,38 +20,46 @@
     <meta property="og:image" content="https://www.ezsouq.com/og-image.jpg">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
-    
-    <!-- Twitter Card -->
+
+    <!-- Twitter Card metadata -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="ezsouq - السوق الإلكتروني السوري">
     <meta name="twitter:description" content="أكبر سوق إلكتروني لبيع وشراء السيارات والعقارات والأجهزة التقنية في سوريا">
     <meta name="twitter:image" content="https://www.ezsouq.com/og-image.jpg">
-    
-    <!-- PWA Meta Tags -->
+
+    <!-- Progressive Web App (PWA) settings -->
     <meta name="theme-color" content="#6C63FF">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="ezsouq">
     <meta name="msapplication-TileColor" content="#6C63FF">
-    
-    <!-- Preconnect for performance -->
+
+    <!-- Performance optimization -->
     <link rel="preconnect" href="https://api.ezsouq.store">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    
+    <link rel="dns-prefetch" href="https://api.ezsouq.store">
+
+    <!-- Favicon -->
     <link rel="icon" type="image/svg+xml" href="./src/assets/images/logoWithTitle.svg" />
+
+    <!-- Canonical link to avoid duplicate content -->
     <link rel="canonical" href="https://www.ezsouq.com" />
-    
+
     <!-- Web App Manifest -->
     <link rel="manifest" href="/manifest.json">
-    
+
+    <!-- Page title -->
     <title>ezsouq - السوق الإلكتروني السوري لبيع السيارات والعقارات والتقنيات</title>
   </head>
   <body>
+    <!-- Root element for React -->
     <div id="root"></div>
+
+    <!-- React main script -->
     <script type="module" src="/src/main.jsx"></script>
-    
-    <!-- Structured data for better SEO -->
+
+    <!-- Structured data for SEO -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",

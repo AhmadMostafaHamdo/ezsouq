@@ -16,8 +16,12 @@ const Footer = () => {
   let userId = null;
 
   if (token) {
-    const { id } = jwtDecode(token);
-    userId = id;
+    try {
+      const { id } = jwtDecode(token);
+      userId = id;
+    } catch (e) {
+      userId = null;
+    }
   }
 
   const navigate = useNavigate();

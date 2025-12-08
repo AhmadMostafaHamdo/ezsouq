@@ -2,9 +2,21 @@ import { useEffect, useRef, useState } from "react";
 import VerifyCodeImg from "../assets/images/undraw_two-factor-authentication_8tds 1.svg";
 import Logo from "../components/logo/Logo";
 import { useForm } from "react-hook-form";
+import Cookies from "js-cookie";
+
+import axios from "axios";
 
 const VerifyCode = () => {
+  const [method, setMethod] = useState("phone");
+  useEffect(() => {
+    // حاول قراءة طريقة التحقق من localStorage إذا كانت مخزنة
+    const savedMethod = localStorage.getItem("verifyMethod");
+    if (savedMethod) setMethod(savedMethod);
+  }, []);
   const [digits, setDigits] = useState(["", "", "", "", "", ""]);
+  const [errorMsg, setErrorMsg] = useState("");
+  const [successMsg, setSuccessMsg] = useState("");
+  const [loading, setLoading] = useState(false);
   const inputRefs = useRef([]);
   const {
     handleSubmit,
@@ -12,11 +24,9 @@ const VerifyCode = () => {
     formState: { errors },
   } = useForm();
   useEffect(() => {
-    // Focus the first input on mount
-    if (inputRefs.current[0]) {
-      inputRefs.current[0].focus();
-    }
+    if (inputRefs.current[0]) inputRefs.current[0].focus();
   }, []);
+  console.log(method);
 
   const handleChange = (index, e) => {
     const value = e.target.value;
@@ -33,9 +43,9 @@ const VerifyCode = () => {
       }
 
       // Check if all digits are filled
-      if (newDigits.every((digit) => digit !== "") && onComplete) {
-        onComplete(newDigits.join(""));
-      }
+      // تم حذف onComplete لأنها غير معرفة
+      // يمكنك وضع أي إجراء هنا عند اكتمال الكود إذا أردت
+
     }
   };
 
@@ -64,12 +74,43 @@ const VerifyCode = () => {
         inputRefs.current[5].focus();
       }
 
-      if (onComplete) {
-        onComplete(pasteData);
-      }
+      // تم حذف onComplete لأنها غير معرفة
+      // يمكنك وضع أي إجراء هنا عند اكتمال الكود إذا أردت
+
     }
   };
-  const onSubmit = (data) => {};
+  const onSubmit = async () => {
+    setLoading(true);
+    setErrorMsg("");
+    setSuccessMsg("");
+    try {
+      // يفترض أن sessionId محفوظ في localStorage بعد التسجيل
+      const sessionId = localStorage.getItem("sessionId");
+      if (!sessionId) {
+        setErrorMsg("لا يوجد sessionId. أعد التسجيل.");
+        setLoading(false);
+        return;
+      }
+      const code = digits.join("");
+      const res = await axios.post("/verfied_code_store_information", {
+        sessionId,
+        code,
+      });
+      setLoading(false);
+      if (res.data.success && res.data.token) {
+      Cookies.set("token", res.data.token, { expires: 7 });
+        window.location.href = "/login";
+        return;
+      }
+      setSuccessMsg(res.data.message || "تم التحقق بنجاح");
+    } catch (err) {
+      console.log(err);
+      setErrorMsg(
+        err.response?.data?.message || "حدث خطأ أثناء التحقق من الكود"
+      );
+    }
+    setLoading(false);
+  };
   return (
     <div className="h-[100vh] flex-center ">
       <div className="w-[90vw] h-[90vh] md:[90vw]  flex-center shadow-custom">
@@ -95,7 +136,9 @@ const VerifyCode = () => {
             <div className="h-[157px]">
               <h1 className="text-primary font-bold text-[2.25rem]  h-[67px]"></h1>
               <p className=" font-normal text-[#282828] text-[1.25rem] sm:text-[1.5rem] ">
-                لقد أرسلنا رمزًا مكوّنًا من 6 أرقام إلى بريدك الإلكتروني.
+                {method === "email"
+                  ? "لقد أرسلنا رمزًا مكوّنًا من 6 أرقام إلى بريدك الإلكتروني."
+                  : "لقد أرسلنا رمزًا مكوّنًا من 6 أرقام إلى هاتفك."}
               </p>
             </div>
             <div className="h-[235px] flex flex-col justify-between md:w-[329.2px] lg:w-[487px]">
@@ -123,7 +166,32 @@ const VerifyCode = () => {
                 تأكيد
               </button>
               <p className="text-red font-[14px] h-3"></p>
-              <p className="text-center  text-[12px] text-primary cursor-pointer">
+              <p
+                className="text-center  text-[12px] text-primary cursor-pointer"
+                onClick={async () => {
+                  setLoading(true);
+                  setErrorMsg("");
+                  setSuccessMsg("");
+                  try {
+                    const sessionId = localStorage.getItem("sessionId");
+                    if (!sessionId) {
+                      setErrorMsg("لا يوجد sessionId. أعد التسجيل.");
+                      setLoading(false);
+                      return;
+                    }
+                                        const res = await axios.post("/send_code", {
+                      sessionId,
+                      method,
+                    });
+                    setSuccessMsg(res.data.message || "تم إرسال الكود بنجاح");
+                  } catch (err) {
+                    setErrorMsg(
+                      err.response?.data?.message || "حدث خطأ أثناء إرسال الكود"
+                    );
+                  }
+                  setLoading(false);
+                }}
+              >
                 إرسال الرمز مرة أخرى؟
               </p>
             </div>

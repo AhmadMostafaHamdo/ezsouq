@@ -25,6 +25,7 @@ import Heading from "../../common/Heading";
 import { productThunkById } from "../../../store/product/thunk/productThunkById";
 import { userThunkById } from "../../../store/users/thunk/userThunkById";
 import { viewsThunk } from "../../../store/views/thunk/thunkViews";
+import { Helmet } from "react-helmet";
 
 const Main = () => {
   const { product, loading } = useSelector((state) => state.products);
@@ -111,6 +112,28 @@ const Main = () => {
 
   return (
     <div className="bg-[#F7F7FF] md:pt-2 overflow-x-hidden h-fit relative">
+      <Helmet>
+        <title>{product?.name} | EzSouq</title>
+        <meta
+          name="description"
+          content={product?.description || "تفاصيل الإعلان"}
+        />
+        <link
+          rel="canonical"
+          href={`https://www.ezsouq.store/offer-details/${id}`}
+        />
+        <meta property="og:title" content={product?.name} />
+        <meta property="og:description" content={product?.description} />
+        <meta property="og:type" content="website" />
+        <meta
+          property="og:url"
+          content={`https://www.ezsouq.store/offer-details/${id}`}
+        />
+        <meta name="twitter:card" content="summary" />
+        <meta name="twitter:title" content={product?.name} />
+        <meta name="twitter:description" content={product?.description} />
+      </Helmet>
+
       {loading ? (
         <div className="mt-56">
           <Spinner />

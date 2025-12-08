@@ -22,7 +22,9 @@ const DeleteOrBanModal = ({ type, action, onConfirm, onCancel }) => {
   const img =
     type === "ban"
       ? block
-      : type === ("delete" || "offer")
+      : type === "delete"
+      ? deleteUser
+      : type === "offer"
       ? deleteUser
       : type === "grant"
       ? isGrantImg

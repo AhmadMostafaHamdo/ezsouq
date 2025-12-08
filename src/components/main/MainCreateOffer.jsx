@@ -25,7 +25,6 @@ const MainCreateOffer = () => {
 
   const { currentStep } = useSelector((state) => state.steps);
   const { selectedCategory } = useSelector((state) => state.category);
-  
   const userId = useUserId();
   const token = Cookies.get("token");
 

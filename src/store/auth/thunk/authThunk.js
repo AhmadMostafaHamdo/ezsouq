@@ -1,8 +1,8 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 import { toast } from "react-toastify";
-import { handleThunkError } from "../../../utils/utils";
-
+import  {handleThunkError } from  '../../../utils/utils'
+''
 export const thunkAuth = createAsyncThunk(
   "authThunk/auth",
   async ({ info, isLogin }, { rejectWithValue }) => {

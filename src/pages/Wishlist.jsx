@@ -7,49 +7,79 @@ import Spinner from "../feedback/loading/Spinner";
 import Heading from "../components/common/Heading";
 import emptyWishlist from "../assets/images/emptyWishlist.svg";
 import { Link } from "react-router-dom";
+import { Helmet } from "react-helmet";
 
 const Wishlist = () => {
   const dispatch = useDispatch();
   const ref = useRef();
   const { products = [], loading } = useSelector((state) => state.wishlist);
 
+  // Scroll to top & fetch wishlist items on mount
   useEffect(() => {
     ref.current.scrollIntoView();
     dispatch(getAllWishes());
   }, [dispatch]);
 
+  // Handle toggle favorite for wishlist
   const handleToggleFavorite = (_id) => {
-    // ✅ Toggle المفضلة ثم إعادة جلب wishlist تلقائيًا
+    // ✅ Toggle favorite then auto-refresh wishlist
     dispatch(likeToggleWishlistThunk(_id));
   };
 
   return (
     <div className="container pt-14" ref={ref}>
+      {/* SEO */}
+      <Helmet>
+        <title>المفضلة | EzSouq</title>
+        <meta
+          name="description"
+          content="تصفح الإعلانات المفضلة لديك في EzSouq وأضف ما يعجبك إلى قائمة المفضلة بسهولة."
+        />
+        <meta property="og:url" content="https://www.ezsouq.store/wishlist" />
+        <link rel="canonical" href="https://www.ezsouq.store/wishlist" />
+        <meta name="robots" content="index, follow" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta
+          name="twitter:title"
+          content="EzSouq - السوق الإلكتروني في سوريا"
+        />
+        <meta
+          name="twitter:description"
+          content="تصفح وبيع وشراء العقارات، السيارات، والتقنيات بسهولة على EzSouq. أحدث الإعلانات، فلترة حسب الفئة والموقع."
+        />
+      </Helmet>
+
       <Heading title={"الرجوع للرئيسية"} />
+
       <div className="pb-20 pt-2">
         {loading ? (
+          // Loading spinner
           <div className="mt-32">
             <Spinner size={100} />
           </div>
         ) : Array.isArray(products) && products.length > 0 ? (
+          // Wishlist items grid
           <div className="flex flex-wrap gap-5">
-            {products.map((product) => {
-              return (
-                <Card
-                  key={product._id}
-                  {...product}
-                  onToggleFavorite={() => handleToggleFavorite(product._id)}
-                />
-              );
-            })}
+            {products.map((product) => (
+              <Card
+                key={product._id}
+                {...product}
+                onToggleFavorite={() => handleToggleFavorite(product._id)}
+              />
+            ))}
           </div>
         ) : (
+          // Empty wishlist view
           <div className="-mt-6">
             <h1 className="font-normal text-[#2F2E41] translate-y-2 text-[1.5rem]">
               إعلاناتك المفضلة
             </h1>
             <div className="flex-center flex-col gap-4 mb-10">
-              <img src={emptyWishlist} className="h-48" alt="" />
+              <img
+                src={emptyWishlist}
+                className="h-48"
+                alt="لا توجد إعلانات في المفضلة" // Alt text in Arabic
+              />
               <p className="font-semibold text-[#3F3D56] text-[1.5rem]">
                 لم تقم بعد بإضافة أي إعلان إلى المفضلة
               </p>

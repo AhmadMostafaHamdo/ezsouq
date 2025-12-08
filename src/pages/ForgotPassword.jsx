@@ -4,6 +4,7 @@ import { useState } from "react";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import { motion } from "framer-motion";
+import { Helmet } from "react-helmet";
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState("");
@@ -32,6 +33,37 @@ const ForgotPassword = () => {
 
   return (
     <div className="h-[100vh] flex-center bg-gray-50">
+      {/* SEO Helmet */}
+      <Helmet>
+        <title>نسيت كلمة المرور | EzSouq</title>
+        <meta
+          name="description"
+          content="إعادة تعيين كلمة المرور في EzSouq، أدخل البريد الإلكتروني أو رقم الهاتف للحصول على رمز التحقق لإعادة تعيين كلمة المرور في سوريا."
+        />
+        <meta name="robots" content="index, follow" />
+        <link rel="canonical" href="https://www.ezsouq.store/forgot-password" />
+
+        {/* Open Graph */}
+        <meta property="og:title" content="نسيت كلمة المرور | EzSouq" />
+        <meta
+          property="og:description"
+          content="أدخل البريد الإلكتروني أو رقم الهاتف لإعادة تعيين كلمة المرور في EzSouq بسهولة وأمان."
+        />
+        <meta property="og:type" content="website" />
+        <meta property="og:locale" content="ar_SY" />
+        <meta
+          property="og:url"
+          content="https://www.ezsouq.store/forgot-password"
+        />
+
+        {/* Twitter Card */}
+        <meta name="twitter:card" content="summary" />
+        <meta name="twitter:title" content="نسيت كلمة المرور | EzSouq" />
+        <meta
+          name="twitter:description"
+          content="أدخل البريد الإلكتروني أو رقم الهاتف لإعادة تعيين كلمة المرور في EzSouq بسهولة وأمان."
+        />
+      </Helmet>
       <ToastContainer />
       <div className="w-[100vw] h-[100vh] flex-center shadow-custom">
         {/* Right Section */}

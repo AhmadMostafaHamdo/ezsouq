@@ -15,13 +15,17 @@ import ImageSlider from "../slider/Swiper";
 import { thunkAuth } from "../../store/auth/thunk/authThunk";
 
 // Icons & Images
-import { Eye, EyeOff } from "lucide-react";
+import { CloudCog, Eye, EyeOff } from "lucide-react";
 import logo from "../../assets/images/logoWithTitle.svg";
 import loginImage from "../../assets/images/loginImage.svg";
 import googleIcon from "../../assets/images/googleLogo.svg";
 import { resetLoading } from "../../store/auth/authSlice";
-
+import VerificationChoiceModal from "../common/VerificationChoiceModal";
+import axios from "axios";
 const AuthForm = ({ fields, schema, btnAuth }) => {
+  const [showVerifyModal, setShowVerifyModal] = useState(false);
+  const [verifyChoice, setVerifyChoice] = useState(null);
+
   const isLogin = btnAuth !== "إنشاء حساب";
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -46,11 +50,30 @@ const AuthForm = ({ fields, schema, btnAuth }) => {
 
   const onSubmit = async (data) => {
     try {
-      const { name, email, password } = data;
-      const info = isLogin ? { email, password } : { name, email, password };
+      let info;
+      if (isLogin) {
+        const { login, password } = data;
+        // Determine if login is email or phone
+        const emailRegex = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
+        if (emailRegex.test(login)) {
+          info = { email: login, password };
+        } else {
+          info = { phone: login, password };
+        }
+      } else {
+        const { name, email, phone, password } = data;
+        info = { name, email, password, phone };
+      }
+      console.log(info);
 
       const res = await dispatch(thunkAuth({ info, isLogin })).unwrap();
-
+      if (!isLogin && res?.success) {
+        if (res.sessionId) {
+          localStorage.setItem("sessionId", res.sessionId);
+        }
+        setShowVerifyModal(true);
+        return;
+      }
       if (res?.token) {
         Cookies.set("token", res.token, { expires: 7 });
         const decoded = jwtDecode(res.token);
@@ -67,7 +90,9 @@ const AuthForm = ({ fields, schema, btnAuth }) => {
   const handleAuthGoogle = (e) => {
     e.preventDefault();
     setLoadingGoogle(true);
-    window.location.href = `${import.meta.env.VITE_API_BASE_URL}/auth/google?redirect_uri=${encodeURIComponent(
+    window.location.href = `${
+      import.meta.env.VITE_API_BASE_URL
+    }/auth/google?redirect_uri=${encodeURIComponent(
       window.location.origin + "/google-callback"
     )}`;
   };
@@ -84,8 +109,32 @@ const AuthForm = ({ fields, schema, btnAuth }) => {
   useEffect(() => {
     dispatch(resetLoading());
   }, [dispatch]);
+  CloudCog
   return (
     <div className="relative flex-center h-screen overflow-hidden bg-white">
+      <VerificationChoiceModal
+        open={showVerifyModal}
+        onClose={() => setShowVerifyModal(false)}
+        onChoose={async (choice) => {
+          setVerifyChoice(choice);
+          setShowVerifyModal(false);
+          localStorage.setItem('verifyMethod', choice);
+          // تنفيذ إرسال الكود مباشرة
+          try {
+            const sessionId = localStorage.getItem("sessionId");
+            if (!sessionId) {
+              alert("لا يوجد sessionId. أعد التسجيل.");
+              return;
+            }
+            
+            await axios.post("/send_code", { sessionId, method: choice });
+            // انتقل إلى صفحة التحقق بعد إرسال الكود
+            navigate("/verify-code");
+          } catch (err) {
+            alert(err.response?.data?.message || "حدث خطأ أثناء إرسال الكود");
+          }
+        }}
+      />
       {(loadingGoogle || loading) && (
         <div className="absolute inset-0 bg-white/70 flex-center z-50">
           <Spinner />
@@ -213,7 +262,8 @@ const AuthForm = ({ fields, schema, btnAuth }) => {
 
               {isLogin && (
                 <Link to="/forgot-password" className="mb-3 block text-[.9rem]">
-                  هل نسيت <span className="text-primary underline">كلمة المرور</span>؟
+                  هل نسيت{" "}
+                  <span className="text-primary underline">كلمة المرور</span>؟
                 </Link>
               )}
 

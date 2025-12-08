@@ -23,7 +23,7 @@ const Main = () => {
   const androidLink = "https://play.google.com"; // Google Play URL
 
   return (
-    <div className="flex w-screen overflow-hidden pt-24 md:pt-44 flex-col-reverse bg-primary pb-24 text-white md:h-[100vh] md:flex-row md:px-20">
+    <div className="flex w-screen overflow-hidden pt-24 flex-col-reverse bg-primary pb-24 text-white md:h-[100vh] md:flex-row md:px-20">
       {/* Text Content Section */}
       <div className="container text-center md:text-start flex w-screen justify-center md:items-start flex-col items-center md:w-[50vw] md:pr-0 lg:pr-[4.7rem]">
         <h1 className="mt-12 text-wrap w-[300px] md:w-fit md:text-nowrap text-[24px] font-[800] md:text-[1.5rem] lg:text-[2.25rem]">
@@ -40,7 +40,7 @@ const Main = () => {
           onClick={() =>
             requireAuth(() => (window.location.href = "/create-offer"))
           }
-          className="mt-8 block h-[8vh] w-[70vw] flex-center h-[55px] md:p-3 rounded-xl bg-white text-[1rem] font-bold text-primary md:h-[60px] md:w-[262px] hover:scale-105 hover:bg-[#ffffffe8]"
+          className="mt-8 block h-[8vh] w-[70vw] flex-center  md:p-3 rounded-xl bg-white text-[1rem] font-bold text-primary md:h-[60px] md:w-[262px] hover:scale-105 hover:bg-[#ffffffe8]"
           aria-label="Publish Offer"
         >
           نشر إعلان
@@ -50,8 +50,10 @@ const Main = () => {
             Download App Buttons (iPhone & Android)
             - Mobile: buttons fit screen width without scroll
            ========================================= */}
-        <div className="flex flex-col sm:flex-row justify-center md:justify-start items-center gap-3 mt-8
-                        max-h-[200px] overflow-hidden sm:max-h-full">
+        <div
+          className="flex flex-col sm:flex-row justify-center md:justify-start items-center gap-3 mt-8
+                        max-h-[200px] overflow-hidden sm:max-h-full"
+        >
           {/* iPhone Download Button */}
           <a
             href={iosLink}
@@ -92,7 +94,9 @@ const Main = () => {
               <path d="M325.3 234.3L104.6 13.7C99.3 8.4 92.7 5.3 85.8 5.3 70.4 5.3 58 17.7 58 33.1V478.9c0 15.4 12.4 27.8 27.8 27.8 6.9 0 13.5-3 18.8-8.4l220.6-220.6c6.6-6.6 10.2-15.3 10.2-24.6 0-9.2-3.6-18-10.1-24.5zM372.2 190.9L312.9 250.2l59.3 59.3 100.8 56.8c5.5 3.1 8.9 8.9 8.9 15.2 0 9.7-7.8 17.5-17.5 17.5-2.9 0-5.8-.7-8.4-2.1l-143-80.6v-99.3l143-80.6c2.6-1.5 5.5-2.1 8.4-2.1 9.7 0 17.5 7.8 17.5 17.5 0 6.3-3.4 12.1-8.9 15.2l-100.8 56.8z" />
             </svg>
             <div className="text-start leading-tight">
-              <p className="text-[15px] font-semibold text-white">Google Play</p>
+              <p className="text-[15px] font-semibold text-white">
+                Google Play
+              </p>
             </div>
           </a>
         </div>
@@ -100,7 +104,7 @@ const Main = () => {
 
       {/* Animation Section */}
       <div className="flex w-full items-center justify-center md:justify-end">
-        <div className="md:mt-0 ml-[-2rem] w-[43%] transform md:ml-20 md:-translate-x-[2rem] translate-y-4 md:-translate-y-[5vh] scale-[1.4] md:scale-[2.5] lg:-translate-y-[.2rem] lg:translate-x-[0px] lg:scale-[1.4]">
+        <div className="md:mt-0 ml-[-2rem] w-[43%] md:w-[60%] transform md:ml-20 md:-translate-x-[2rem] translate-y-4 md:-translate-y-[5vh] scale-[1.4] md:scale-[2.5] lg:-translate-y-[.2rem] lg:translate-x-[0px] lg:scale-[1.4]">
           <Suspense fallback={<Spinner size={80} className="mx-auto" />}>
             <Lottie
               animationData={animationData}

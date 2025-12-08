@@ -67,7 +67,7 @@ const RatingDetails = () => {
 
             {/* المحتوى القابل للتمرير */}
             <div
-              className="mt-6 space-y-5 overflow-y-auto pr-2 custom-scroll"
+              className="mt-6 space-y-5 overflow-y-auto p-2 custom-scroll"
               style={{
                 maxHeight: "70vh",
               }}

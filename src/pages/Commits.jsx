@@ -16,6 +16,7 @@ import { productThunkById } from "../store/product/thunk/productThunkById";
 import { getAllCommentsByIdThunk } from "../store/commits/thunk/getAllCommentsById";
 import { thunkAddCommit } from "../store/commits/thunk/thunkAddCommit";
 import { getRepliesByCommentId } from "../store/commits/thunk/getRepliesByCommentId";
+import { Helmet } from "react-helmet";
 
 const Commits = () => {
   // ------------------- State & Refs -------------------
@@ -112,9 +113,54 @@ const Commits = () => {
       dispatch(getRepliesByCommentId(commentId));
     }
   };
-  // ------------------- JSX -------------------
   return (
     <div className="container pt-16" ref={topPage}>
+      {/* ✅ SEO Helmet for Product Comments Page */}
+      <Helmet>
+        <title>{product?.title || "تعليقات الإعلان"} | EzSouq</title>
+        <meta
+          name="description"
+          content={`تصفح تعليقات المستخدمين حول ${
+            product?.title || "هذا الإعلان"
+          } في سوريا عبر EzSouq.`}
+        />
+        <meta name="robots" content="index, follow" />
+        <link
+          rel="canonical"
+          href={`https://www.ezsouq.com/product/${product?._id}/comments`}
+        />
+
+        {/* Open Graph */}
+        <meta
+          property="og:title"
+          content={`${product?.title || "تعليقات الإعلان"} | EzSouq`}
+        />
+        <meta
+          property="og:description"
+          content={`تعرف على آراء المستخدمين حول ${
+            product?.title || "هذا الإعلان"
+          } في سوريا.`}
+        />
+        <meta property="og:type" content="website" />
+        <meta property="og:locale" content="ar_SY" />
+        <meta
+          property="og:url"
+          content={`https://www.ezsouq.store/commits/${product?._id}`}
+        />
+
+        {/* Twitter Card */}
+        <meta name="twitter:card" content="summary" />
+        <meta
+          name="twitter:title"
+          content={`${product?.title || "تعليقات الإعلان"} | EzSouq`}
+        />
+        <meta
+          name="twitter:description"
+          content={`تعليقات المستخدمين حول ${
+            product?.title || "هذا الإعلان"
+          } في سوريا.`}
+        />
+      </Helmet>
       <Heading title="تعليقات هذا الإعلان" />
       <ToastContainer position="top-right" autoClose={3000} />
 

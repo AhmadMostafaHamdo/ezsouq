@@ -12,6 +12,7 @@ import Heading from "../components/common/Heading";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import Spinner from "../feedback/loading/Spinner";
+import { Helmet } from "react-helmet";
 
 const ContactUs = () => {
   const contact = useRef();
@@ -35,7 +36,10 @@ const ContactUs = () => {
     console.log(form);
     try {
       setLoading(true);
-      const res = await axios.post(import.meta.env.VITE_USER_CONTACT_ENDPOINT, form);
+      const res = await axios.post(
+        import.meta.env.VITE_USER_CONTACT_ENDPOINT,
+        form
+      );
       setLoading(false);
       setForm({
         name: "",
@@ -52,6 +56,35 @@ const ContactUs = () => {
 
   return (
     <div className="pt-20 pb-8" ref={contact}>
+      {/* SEO Helmet for Contact Page */}
+      <Helmet>
+        <title>تواصل معنا | EzSouq</title>
+        <meta
+          name="description"
+          content="تواصل معنا في EzSouq للإجابة على استفساراتك حول السيارات، العقارات، والموبايلات في سوريا. نحن هنا لمساعدتك في أي وقت."
+        />
+        <meta name="robots" content="index, follow" />
+        <link rel="canonical" href="https://www.ezsouq.store/contact-us" />
+
+        {/* Open Graph */}
+        <meta property="og:title" content="تواصل معنا | EzSouq" />
+        <meta
+          property="og:description"
+          content="تواصل معنا عبر النموذج أو الروابط الاجتماعية للحصول على المساعدة والإجابة على استفساراتك في سوريا."
+        />
+        <meta property="og:type" content="website" />
+        <meta property="og:locale" content="ar_SY" />
+        <meta property="og:url" content="https://www.ezsouq.store/contact-us" />
+
+        {/* Twitter Card */}
+        <meta name="twitter:card" content="summary" />
+        <meta name="twitter:title" content="تواصل معنا | EzSouq" />
+        <meta
+          name="twitter:description"
+          content="نحن هنا للإجابة على استفساراتك حول السيارات، العقارات، والموبايلات في سوريا عبر EzSouq."
+        />
+      </Helmet>
+
       <ToastContainer />
       <div className="container flex flex-col md:flex-row gap-6 md:gap-40">
         {/* قسم الفورم */}

@@ -25,9 +25,10 @@ const StepOne = ({ onSubmit }) => {
       description: "",
       price: "",
       main_photos: [],
+      currency: "",
     },
   });
-
+const currencyOptions = ["العملة", "دولار", "سوري"];
   const {
     control,
     register,
@@ -113,10 +114,24 @@ const StepOne = ({ onSubmit }) => {
 
           {/* Price */}
           <InputCreateOffer
-            placeholder="السعر بالليرة السورية مثال (1000)  "
+            placeholder="السعر بالارقام مثال 1000000"
             {...register("price")}
           />
           <Error error={errors.price?.message} />
+          {/* Currency Selection */}
+          <Controller
+            name="currency"
+            control={control}
+            render={({ field }) => (
+              <Select
+                options={currencyOptions}
+                type="currency"
+                value={field.value}
+                onSelect={(val) => field.onChange(val)}
+              />
+            )}
+          />
+          <Error error={errors.currency?.message} />
 
           {/* Main Photos Upload */}
           <Controller

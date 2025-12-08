@@ -21,7 +21,7 @@ import { updateGovernorate } from "../../store/governorates/thunk/handleUpdateGo
 import { thunkGovernorates } from "../../store/governorates/thunk/thunkGovernorates";
 import { deleteGovernorate } from "../../store/governorates/thunk/deleteGovernorate";
 
-const Offers = () => {
+const Setting = () => {
   const dispatch = useDispatch();
   const { governorates, loading } = useSelector((state) => state.governorates);
 
@@ -40,9 +40,28 @@ const Offers = () => {
     name: "",
     cities: [""],
     id: null,
+    _availableNames: [],
   });
   const [error, setError] = useState("");
   const [deleteModal, setDeleteModal] = useState({ show: false, id: null });
+
+  // Syrian governorates list
+  const allGovernorates = [
+    "دمشق",
+    "ريف دمشق",
+    "حلب",
+    "حماة",
+    "حمص",
+    "اللاذقية",
+    "طرطوس",
+    "إدلب",
+    "درعا",
+    "القنيطرة",
+    "دير الزور",
+    "الرقة",
+    "الحسكة",
+    "السويداء",
+  ];
 
   // Load governorates on mount
   useEffect(() => {
@@ -93,19 +112,30 @@ const Offers = () => {
 
   // Modal Actions
   const openAddModal = () => {
-    setCurrentGov({ name: "", cities: [""] });
+    const usedNames = governorates.map((g) => g.name);
+    const available = allGovernorates.filter((n) => !usedNames.includes(n));
+
+    setCurrentGov({ name: "", cities: [""], _availableNames: available });
     setError("");
     setModal({ show: true, type: "add" });
   };
+
   const openUpdateModal = (gov) => {
+    const usedNames = governorates
+      .filter((g) => g._id !== gov._id)
+      .map((g) => g.name);
+    const available = allGovernorates.filter((n) => !usedNames.includes(n));
+
     setCurrentGov({
       name: gov.name,
       cities: gov.cities.length ? gov.cities : [""],
       id: gov._id,
+      _availableNames: available,
     });
     setError("");
     setModal({ show: true, type: "update" });
   };
+
   const openDeleteModal = (id) => setDeleteModal({ show: true, id });
 
   // Delete governorate
@@ -135,12 +165,12 @@ const Offers = () => {
       .filter(Boolean);
 
     if (!trimmedName) return setError("يرجى إدخال اسم المحافظة");
-    if (filteredCities.length === 0)
+    if (!filteredCities.length)
       return setError("يجب إدخال مدينة واحدة على الأقل");
 
     const data = { name: trimmedName, cities: filteredCities };
-
     setActionLoading(true);
+
     try {
       if (modal.type === "add") {
         await dispatch(addGovernorate({ data })).unwrap();
@@ -213,7 +243,7 @@ const Offers = () => {
                 />
               </button>
 
-              <h2 className="text-lg font-bold text-center mb-4">
+              <h2 className="text-lg text-[#645d5d] font-bold text-center mb-4">
                 {modal.type === "add" ? "إضافة محافظة جديدة" : "تعديل المحافظة"}
               </h2>
 
@@ -223,9 +253,9 @@ const Offers = () => {
                 </p>
               )}
 
-              {/* Governorate Name */}
-              <div className="mb-4">
-                <label className="block text-sm font-medium mb-2">
+              {/* Governorate Name with Autocomplete */}
+              <div className="mb-4 relative">
+                <label className="block  text-[#363434] text-sm font-medium mb-2">
                   اسم المحافظة
                 </label>
                 <input
@@ -234,14 +264,37 @@ const Offers = () => {
                   onChange={(e) =>
                     setCurrentGov((prev) => ({ ...prev, name: e.target.value }))
                   }
-                  placeholder="أدخل اسم المحافظة"
+                  placeholder="ابدأ بكتابة اسم المحافظة"
                   className="w-full border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-[#4F46E5]"
                 />
+
+                {/* Suggestions List */}
+                {currentGov.name && currentGov._availableNames?.length > 0 && (
+                  <ul className="absolute z-20 bg-white w-full border border-gray-300 mt-1 rounded-md max-h-40 overflow-auto shadow-md">
+                    {currentGov._availableNames
+                      .filter((name) =>
+                        name
+                          .toLowerCase()
+                          .includes(currentGov.name.toLowerCase())
+                      )
+                      .map((name) => (
+                        <li
+                          key={name}
+                          onClick={() =>
+                            setCurrentGov((prev) => ({ ...prev, name }))
+                          }
+                          className="px-3 py-2 cursor-pointer hover:bg-[#E0E7FF]"
+                        >
+                          {name}
+                        </li>
+                      ))}
+                  </ul>
+                )}
               </div>
 
               {/* Cities */}
               <div className="mb-4">
-                <label className="block text-sm font-medium mb-2">
+                <label className="block text-sm font-medium mb-2 text-[#363434]">
                   المدن التابعة لها
                 </label>
                 <div className="space-y-2 max-h-44 p-1 overflow-auto">
@@ -456,10 +509,20 @@ const Offers = () => {
               لا توجد نتائج مطابقة للبحث
             </p>
           )}
+
+          {totalPages > 1 && (
+            <Pagination
+              currentPage={page}
+              totalPages={totalPages}
+              totalItems={filteredGovernorates.length}
+              itemsPerPage={limit}
+              onPageChange={(p) => setPage(p)}
+            />
+          )}
         </motion.div>
       </div>
     </div>
   );
 };
 
-export default Offers;
+export default Setting;
